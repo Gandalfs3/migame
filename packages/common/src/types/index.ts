@@ -8,11 +8,15 @@ export type PlayerClass = 'WARRIOR' | 'CLERIC' | 'MAGE';
 
 export interface PlayerDTO {
   id: string;
+  name: string;
   x: number;
   z: number;
   rotation: number;
   color: string;
   classType: PlayerClass;
+  level: number;
+  experience: number;
+  gold: number;
   health: number;
   maxHealth: number;
   targetId: string | null;
@@ -84,6 +88,14 @@ export interface CombatFeedback {
   targetId: string;
   amount: number;
   isHeal: boolean;
+  x: number;
+  z: number;
+}
+
+export interface LevelUpFeedback {
+  playerId: string;
+  playerName: string;
+  newLevel: number;
   x: number;
   z: number;
 }

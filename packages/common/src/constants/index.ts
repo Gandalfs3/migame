@@ -24,6 +24,15 @@ export const CLASS_STATS: Record<PlayerClass, { maxHealth: number; speedBonus: n
   MAGE: { maxHealth: 90, speedBonus: 0.2 }
 };
 
+export function getXpForNextLevel(level: number): number {
+  return level * 100;
+}
+
+export const MONSTER_REWARDS = {
+  GOBLIN: { xp: 35, gold: 8 },
+  BOSS_GOLEM: { xp: 200, gold: 60 }
+};
+
 export const SPELLS: Record<string, Spell> = {
   // GUERRERO (Tanque)
   slash: {

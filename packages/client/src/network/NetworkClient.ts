@@ -7,6 +7,8 @@ import {
   InputMessage,
   PingMessage,
   PlayerClass,
+  LoginMessage,
+  LevelUpMessage,
   SelectClassMessage,
   SelectTargetMessage,
   CastSpellMessage,
@@ -23,6 +25,7 @@ export class NetworkClient {
   public onWelcome?: (msg: WelcomeMessage) => void;
   public onWorldState?: (msg: WorldStateMessage) => void;
   public onCombatFeedback?: (feedbacks: CombatFeedback[]) => void;
+  public onLevelUp?: (msg: LevelUpMessage) => void;
   public onConnectionChange?: (connected: boolean) => void;
 
   constructor() {
@@ -79,8 +82,21 @@ export class NetworkClient {
       this.onWorldState?.(msg);
     } else if (msg.type === MessageType.COMBAT_FEEDBACK) {
       this.onCombatFeedback?.(msg.feedbacks);
+    } else if (msg.type === MessageType.LEVEL_UP) {
+      this.onLevelUp?.(msg);
     } else if (msg.type === MessageType.PONG) {
       this.lastPing = Math.round(performance.now() - msg.clientTime);
+    }
+  }
+
+  public sendLogin(name: string, classType: PlayerClass): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      const msg: LoginMessage = {
+        type: MessageType.LOGIN,
+        name,
+        classType
+      };
+      this.socket.send(JSON.stringify(msg));
     }
   }
 

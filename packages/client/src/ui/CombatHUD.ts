@@ -1,4 +1,4 @@
-import { PlayerClass, Spell, SPELLS } from '@migame/common';
+import { PlayerClass, Spell, SPELLS, getXpForNextLevel } from '@migame/common';
 
 export class CombatHUD {
   private container: HTMLElement;
@@ -6,6 +6,7 @@ export class CombatHUD {
   private actionBarEl: HTMLElement;
   private targetFrameEl: HTMLElement;
   private playerVitalsEl: HTMLElement;
+  private levelUpBannerEl: HTMLElement;
 
   private currentClass: PlayerClass = 'WARRIOR';
   private cooldowns: Map<string, { duration: number; endsAt: number }> = new Map();
@@ -29,11 +30,13 @@ export class CombatHUD {
     this.actionBarEl = this.createActionBar();
     this.targetFrameEl = this.createTargetFrame();
     this.playerVitalsEl = this.createPlayerVitals();
+    this.levelUpBannerEl = this.createLevelUpBanner();
 
     this.container.appendChild(this.classSelectorEl);
     this.container.appendChild(this.actionBarEl);
     this.container.appendChild(this.targetFrameEl);
     this.container.appendChild(this.playerVitalsEl);
+    this.container.appendChild(this.levelUpBannerEl);
 
     this.setupKeybindings();
     this.startCooldownTick();
@@ -97,36 +100,72 @@ export class CombatHUD {
     el.style.bottom = '96px';
     el.style.left = '50%';
     el.style.transform = 'translateX(-50%)';
-    el.style.width = '260px';
+    el.style.width = '300px';
     el.style.pointerEvents = 'auto';
-    el.style.background = 'rgba(15, 23, 42, 0.85)';
-    el.style.backdropFilter = 'blur(6px)';
-    el.style.padding = '6px 10px';
-    el.style.borderRadius = '8px';
+    el.style.background = 'rgba(15, 23, 42, 0.88)';
+    el.style.backdropFilter = 'blur(8px)';
+    el.style.padding = '8px 14px';
+    el.style.borderRadius = '10px';
     el.style.border = '1px solid rgba(255, 255, 255, 0.15)';
     el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5)';
 
     el.innerHTML = `
-      <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; font-weight: bold;">
-        <span id="player-vital-label">Tu Vida</span>
-        <span id="player-vital-value">100 / 100</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 4px; font-weight: bold;">
+        <span id="player-vital-name" style="color: #60a5fa;">[Nvl. 1] Aventurero</span>
+        <span id="player-vital-gold" style="color: #fbbf24;">🪙 10 Oro</span>
       </div>
-      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 12px; overflow: hidden;">
+
+      <!-- Barra de Salud -->
+      <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
+        <span style="color: #94a3b8;">Salud</span>
+        <span id="player-vital-value" style="font-weight: bold;">100 / 100</span>
+      </div>
+      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 12px; overflow: hidden; margin-bottom: 6px;">
         <div id="player-vital-fill" style="width: 100%; height: 100%; background: #22c55e; transition: width 0.2s;"></div>
+      </div>
+
+      <!-- Barra de Experiencia -->
+      <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; color: #a855f7;">
+        <span>Experiencia (XP)</span>
+        <span id="player-xp-value">0 / 100</span>
+      </div>
+      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 6px; overflow: hidden;">
+        <div id="player-xp-fill" style="width: 0%; height: 100%; background: #a855f7; transition: width 0.3s;"></div>
       </div>
     `;
 
     return el;
   }
 
-  public updatePlayerVitals(current: number, max: number): void {
-    const valEl = document.getElementById('player-vital-value');
-    const fillEl = document.getElementById('player-vital-fill');
-    if (valEl) valEl.textContent = `${Math.round(current)} / ${max}`;
-    if (fillEl) {
-      const pct = Math.max(0, Math.min(100, (current / max) * 100));
-      fillEl.style.width = `${pct}%`;
-      fillEl.style.background = pct > 50 ? '#22c55e' : (pct > 25 ? '#eab308' : '#ef4444');
+  public updatePlayerVitals(
+    name: string,
+    level: number,
+    currentHp: number,
+    maxHp: number,
+    experience: number,
+    gold: number
+  ): void {
+    const nameEl = document.getElementById('player-vital-name');
+    const goldEl = document.getElementById('player-vital-gold');
+    const hpValEl = document.getElementById('player-vital-value');
+    const hpFillEl = document.getElementById('player-vital-fill');
+    const xpValEl = document.getElementById('player-xp-value');
+    const xpFillEl = document.getElementById('player-xp-fill');
+
+    if (nameEl) nameEl.textContent = `[Nvl. ${level}] ${name}`;
+    if (goldEl) goldEl.textContent = `🪙 ${gold} Oro`;
+    if (hpValEl) hpValEl.textContent = `${Math.round(currentHp)} / ${maxHp}`;
+    if (hpFillEl) {
+      const pct = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+      hpFillEl.style.width = `${pct}%`;
+      hpFillEl.style.background = pct > 50 ? '#22c55e' : (pct > 25 ? '#eab308' : '#ef4444');
+    }
+
+    const neededXp = getXpForNextLevel(level);
+    if (xpValEl) xpValEl.textContent = `${experience} / ${neededXp}`;
+    if (xpFillEl) {
+      const xpPct = Math.max(0, Math.min(100, (experience / neededXp) * 100));
+      xpFillEl.style.width = `${xpPct}%`;
     }
   }
 
@@ -193,8 +232,6 @@ export class CombatHUD {
 
   private refreshActionBar(): void {
     this.actionBarEl.innerHTML = '';
-
-    // Filtrar habilidades de la clase seleccionada
     const classSpells = Object.values(SPELLS).filter(s => s.classType === this.currentClass);
 
     classSpells.forEach((spell, idx) => {
@@ -241,10 +278,9 @@ export class CombatHUD {
   private triggerCast(spell: Spell): void {
     const cd = this.cooldowns.get(spell.id);
     if (cd && Date.now() < cd.endsAt) {
-      return; // Aún en cooldown
+      return;
     }
 
-    // Registrar cooldown local predictivo
     this.cooldowns.set(spell.id, {
       duration: spell.cooldownMs,
       endsAt: Date.now() + spell.cooldownMs
@@ -281,5 +317,44 @@ export class CombatHUD {
         }
       }
     }, 50);
+  }
+
+  private createLevelUpBanner(): HTMLElement {
+    const el = document.createElement('div');
+    el.style.position = 'absolute';
+    el.style.top = '140px';
+    el.style.left = '50%';
+    el.style.transform = 'translateX(-50%) scale(0.8)';
+    el.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95))';
+    el.style.color = '#fff';
+    el.style.padding = '12px 24px';
+    el.style.borderRadius = '14px';
+    el.style.fontWeight = '800';
+    el.style.fontSize = '20px';
+    el.style.boxShadow = '0 0 25px rgba(245, 158, 11, 0.8)';
+    el.style.display = 'none';
+    el.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    el.style.pointerEvents = 'none';
+
+    return el;
+  }
+
+  public showLevelUp(name: string, level: number): void {
+    this.levelUpBannerEl.textContent = `⭐ ¡${name} HA SUBIDO AL NIVEL ${level}! ⭐`;
+    this.levelUpBannerEl.style.display = 'block';
+    this.levelUpBannerEl.style.transform = 'translateX(-50%) scale(1.1)';
+
+    setTimeout(() => {
+      this.levelUpBannerEl.style.transform = 'translateX(-50%) scale(1)';
+    }, 200);
+
+    setTimeout(() => {
+      this.levelUpBannerEl.style.transform = 'translateX(-50%) scale(0.8)';
+      this.levelUpBannerEl.style.opacity = '0';
+      setTimeout(() => {
+        this.levelUpBannerEl.style.display = 'none';
+        this.levelUpBannerEl.style.opacity = '1';
+      }, 300);
+    }, 2500);
   }
 }

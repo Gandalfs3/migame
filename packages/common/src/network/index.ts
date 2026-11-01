@@ -4,12 +4,14 @@ import {
   ObstacleDTO,
   MonsterDTO,
   PlayerClass,
-  CombatFeedback
+  CombatFeedback,
+  LevelUpFeedback
 } from '../types/index.js';
 
 export enum MessageType {
   WELCOME = 'welcome',
   INPUT = 'input',
+  LOGIN = 'login',
   WORLD_STATE = 'world_state',
   PLAYER_JOINED = 'player_joined',
   PLAYER_LEFT = 'player_left',
@@ -17,6 +19,7 @@ export enum MessageType {
   SELECT_TARGET = 'select_target',
   CAST_SPELL = 'cast_spell',
   COMBAT_FEEDBACK = 'combat_feedback',
+  LEVEL_UP = 'level_up',
   PING = 'ping',
   PONG = 'pong'
 }
@@ -29,6 +32,16 @@ export interface WelcomeMessage {
   color: string;
   mapBound: number;
   obstacles: ObstacleDTO[];
+}
+
+export interface LoginMessage {
+  type: MessageType.LOGIN;
+  name: string;
+  classType: PlayerClass;
+}
+
+export interface LevelUpMessage extends LevelUpFeedback {
+  type: MessageType.LEVEL_UP;
 }
 
 export interface InputMessage extends InputState {
@@ -86,6 +99,8 @@ export interface PongMessage {
 
 export type NetworkMessage =
   | WelcomeMessage
+  | LoginMessage
+  | LevelUpMessage
   | InputMessage
   | SelectClassMessage
   | SelectTargetMessage

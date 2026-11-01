@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"cyan.bold,magenta.bold\" \"npm run dev -w @migame/server\" \"npm run dev -w @migame/client\"",
+    "serve:lan": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"cyan.bold,magenta.bold\" \"npm run dev -w @migame/server\" \"npm run dev -w @migame/client\"",
     "build": "npm run build --workspaces",
     "grafify": "node scripts/grafify.js"
   },

@@ -8,6 +8,8 @@ export class PlayerEntity {
   public targetZ: number = 0;
   public targetRot: number = 0;
   public isLocal: boolean;
+  public name: string = 'Aventurero';
+  public level: number = 1;
   public health: number = 100;
   public maxHealth: number = 100;
   public classType: PlayerClass = 'WARRIOR';
@@ -19,8 +21,9 @@ export class PlayerEntity {
   private selectionRing: THREE.Mesh;
   private bodyMesh: THREE.Mesh;
 
-  constructor(scene: THREE.Scene, id: string, colorHex: string, isLocal: boolean) {
+  constructor(scene: THREE.Scene, id: string, colorHex: string, isLocal: boolean, name: string = 'Aventurero') {
     this.id = id;
+    this.name = name;
     this.isLocal = isLocal;
     this.group = new THREE.Group();
 
@@ -36,7 +39,7 @@ export class PlayerEntity {
     shadow.position.y = 0.03;
     this.group.add(shadow);
 
-    // Anillo de Selección en el suelo (si este jugador es objetivo)
+    // Anillo de Selección en el suelo
     const ringGeo = new THREE.RingGeometry(0.85, 1.0, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
@@ -49,7 +52,7 @@ export class PlayerEntity {
     this.selectionRing.position.y = 0.04;
     this.group.add(this.selectionRing);
 
-    // Cuerpo (cápsula estilizada)
+    // Cuerpo
     const bodyGeo = new THREE.CapsuleGeometry(0.5, 0.8, 8, 16);
     const bodyMat = new THREE.MeshStandardMaterial({
       color: new THREE.Color(colorHex),
@@ -68,7 +71,7 @@ export class PlayerEntity {
     visor.position.set(0, 1.15, 0.4);
     this.group.add(visor);
 
-    // Barra de Vida Flotante
+    // Barra de Vida y Nombre Flotante
     this.healthCanvas = document.createElement('canvas');
     this.healthCanvas.width = 256;
     this.healthCanvas.height = 64;
@@ -77,8 +80,8 @@ export class PlayerEntity {
     this.healthTexture = new THREE.CanvasTexture(this.healthCanvas);
     const spriteMat = new THREE.SpriteMaterial({ map: this.healthTexture, depthTest: false });
     this.healthBarMesh = new THREE.Sprite(spriteMat);
-    this.healthBarMesh.scale.set(2.0, 0.5, 1);
-    this.healthBarMesh.position.y = 2.0;
+    this.healthBarMesh.scale.set(2.2, 0.55, 1);
+    this.healthBarMesh.position.y = 2.1;
     this.group.add(this.healthBarMesh);
 
     this.renderHealthBar();
@@ -91,11 +94,30 @@ export class PlayerEntity {
     mat.opacity = selected ? 0.9 : 0;
   }
 
-  public setStats(health: number, maxHealth: number, classType: PlayerClass): void {
+  public setStats(
+    health: number,
+    maxHealth: number,
+    classType: PlayerClass,
+    name?: string,
+    level?: number
+  ): void {
+    let changed = false;
     if (this.health !== health || this.maxHealth !== maxHealth || this.classType !== classType) {
       this.health = health;
       this.maxHealth = maxHealth;
       this.classType = classType;
+      changed = true;
+    }
+    if (name && this.name !== name) {
+      this.name = name;
+      changed = true;
+    }
+    if (level && this.level !== level) {
+      this.level = level;
+      changed = true;
+    }
+
+    if (changed) {
       this.renderHealthBar();
     }
   }
@@ -109,7 +131,7 @@ export class PlayerEntity {
     ctx.roundRect ? ctx.roundRect(10, 20, 236, 22, 6) : ctx.fillRect(10, 20, 236, 22);
     ctx.fill();
 
-    // Barra verde/amarilla/roja
+    // Relleno de vida
     const pct = Math.max(0, Math.min(1, this.health / this.maxHealth));
     ctx.fillStyle = pct > 0.5 ? '#22c55e' : (pct > 0.25 ? '#eab308' : '#ef4444');
     const barWidth = 232 * pct;
@@ -118,12 +140,12 @@ export class PlayerEntity {
       ctx.fill();
     }
 
-    // Texto: Nombre + Clase
-    const classBadge = this.classType === 'WARRIOR' ? '🛡️ Tanque' : (this.classType === 'CLERIC' ? '💚 Healer' : '🔥 Mago');
+    // Texto: [Nvl. X] Nombre
+    const classBadge = this.classType === 'WARRIOR' ? '🛡️' : (this.classType === 'CLERIC' ? '💚' : '🔥');
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 14px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${this.isLocal ? 'Tú' : this.id} (${classBadge})`, 128, 16);
+    ctx.fillText(`${classBadge} [Nv.${this.level}] ${this.isLocal ? (this.name || 'Tú') : this.name}`, 128, 16);
 
     this.healthTexture.needsUpdate = true;
   }
@@ -135,7 +157,6 @@ export class PlayerEntity {
   }
 
   public update(posLerp: number = 0.25, rotLerp: number = 0.3): void {
-    // Si está muerto, desvanecer temporalmente
     if (this.health <= 0) {
       this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, Math.PI / 2, 0.15);
       this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.1, 0.15);

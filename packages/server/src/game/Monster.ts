@@ -1,4 +1,4 @@
-import { MonsterDTO, MonsterState, MAP_BOUND } from '@migame/common';
+import { MonsterDTO, MonsterState, MONSTER_REWARDS } from '@migame/common';
 import { MapManager } from './MapManager.js';
 import { Player } from './Player.js';
 
@@ -23,7 +23,7 @@ export class Monster {
 
   public state: MonsterState = 'IDLE';
   public targetId: string | null = null;
-  public aggroTable: Map<string, number> = new Map(); // playerId -> threat
+  public aggroTable: Map<string, number> = new Map();
 
   public respawnTimer: number = 0;
   public respawnDelaySeconds: number;
@@ -64,11 +64,10 @@ export class Monster {
     this.health = this.maxHealth;
   }
 
-  public takeDamage(amount: number, attackerId: string): boolean {
-    if (this.state === 'DEAD') return false;
+  public takeDamage(amount: number, attackerId: string): { died: boolean; xp: number; gold: number } {
+    if (this.state === 'DEAD') return { died: false, xp: 0, gold: 0 };
 
     this.health = Math.max(0, this.health - amount);
-    // Incrementar aggro contra el atacante
     const currentThreat = this.aggroTable.get(attackerId) || 0;
     this.aggroTable.set(attackerId, currentThreat + amount);
 
@@ -77,16 +76,17 @@ export class Monster {
       this.targetId = null;
       this.aggroTable.clear();
       this.respawnTimer = this.respawnDelaySeconds;
-      return true;
+
+      const reward = MONSTER_REWARDS[this.type];
+      return { died: true, xp: reward.xp, gold: reward.gold };
     }
 
-    // Si estaba IDLE, pasa a perseguir al atacante
     if (this.state === 'IDLE') {
       this.state = 'CHASE';
       this.targetId = attackerId;
     }
 
-    return false;
+    return { died: false, xp: 0, gold: 0 };
   }
 
   public addThreat(playerId: string, threatBonus: number): void {
@@ -101,7 +101,6 @@ export class Monster {
     if (this.state === 'DEAD') {
       this.respawnTimer -= dt;
       if (this.respawnTimer <= 0) {
-        // Revivir
         this.health = this.maxHealth;
         this.x = this.spawnX;
         this.z = this.spawnZ;
@@ -112,12 +111,10 @@ export class Monster {
       return;
     }
 
-    // 1. Determinar objetivo con más aggro o jugador más cercano
     let targetPlayer: Player | null = null;
     if (this.targetId && players.has(this.targetId)) {
       targetPlayer = players.get(this.targetId)!;
     } else {
-      // Buscar jugador más cercano en radio de aggro
       let closestDist = this.aggroRange;
       let closestPlayer: Player | null = null;
 
@@ -140,9 +137,7 @@ export class Monster {
       }
     }
 
-    // 2. Ejecutar estado
     if (this.state === 'IDLE') {
-      // Retornar suavemente al punto de aparición si está lejos
       const distToSpawn = Math.hypot(this.spawnX - this.x, this.spawnZ - this.z);
       if (distToSpawn > 1.0) {
         const dirX = (this.spawnX - this.x) / distToSpawn;
@@ -162,7 +157,6 @@ export class Monster {
       const dz = targetPlayer.z - this.z;
       const dist = Math.hypot(dx, dz);
 
-      // Si el jugador se alejó demasiado, perder aggro y regresar
       if (dist > this.aggroRange * 1.8) {
         this.targetId = null;
         this.aggroTable.clear();
@@ -174,7 +168,6 @@ export class Monster {
 
       if (dist <= this.attackRange) {
         this.state = 'ATTACK';
-        // Atacar si expiró el cooldown
         const now = Date.now();
         if (now - this.lastAttackTime >= this.attackCooldownMs) {
           this.lastAttackTime = now;
@@ -182,7 +175,6 @@ export class Monster {
         }
       } else {
         this.state = 'CHASE';
-        // Moverse hacia el jugador resolviendo colisiones con obstáculos
         const dirX = dx / dist;
         const dirZ = dz / dist;
         const proposedX = this.x + dirX * this.speed * dt;

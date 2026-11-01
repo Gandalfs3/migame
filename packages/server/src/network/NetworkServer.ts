@@ -66,7 +66,8 @@ export class NetworkServer {
         playersOnline: this.gameWorld.getPlayerCount(),
         tickRate: TICK_RATE,
         obstaclesCount: this.gameWorld.getObstacles().length,
-        monstersCount: this.gameWorld.monsters.size
+        monstersCount: this.gameWorld.monsters.size,
+        persistence: 'SQLite (dev.db)'
       });
     });
   }
@@ -96,7 +97,11 @@ export class NetworkServer {
       ws.on('message', (data: Buffer | string) => {
         try {
           const msg = JSON.parse(data.toString());
-          if (msg.type === MessageType.INPUT) {
+
+          if (msg.type === MessageType.LOGIN) {
+            this.gameWorld.loginPlayer(player, msg.name, msg.classType);
+            console.log(`[NetworkServer] Login exitoso: ${player.name} (${player.classType}, Nivel ${player.level}) para socket ${player.id}`);
+          } else if (msg.type === MessageType.INPUT) {
             player.input = {
               up: Boolean(msg.up),
               down: Boolean(msg.down),
@@ -107,7 +112,8 @@ export class NetworkServer {
           } else if (msg.type === MessageType.SELECT_CLASS) {
             if (msg.classType === 'WARRIOR' || msg.classType === 'CLERIC' || msg.classType === 'MAGE') {
               player.setClass(msg.classType);
-              console.log(`[NetworkServer] ${player.id} cambió su clase a ${msg.classType}`);
+              this.gameWorld.savePlayer(player);
+              console.log(`[NetworkServer] ${player.name} cambió su clase a ${msg.classType}`);
             }
           } else if (msg.type === MessageType.SELECT_TARGET) {
             player.targetId = msg.targetId || null;
@@ -130,7 +136,7 @@ export class NetworkServer {
 
       ws.on('close', () => {
         this.gameWorld.removePlayer(player.id);
-        console.log(`[NetworkServer] Desconexión de ${player.id}. Online: ${this.gameWorld.getPlayerCount()}`);
+        console.log(`[NetworkServer] Desconexión de ${player.name} (${player.id}). Guardado en SQLite. Online: ${this.gameWorld.getPlayerCount()}`);
         const left: PlayerLeftMessage = {
           type: MessageType.PLAYER_LEFT,
           playerId: player.id
@@ -157,7 +163,7 @@ export class NetworkServer {
     return new Promise((resolve) => {
       this.httpServer.listen(this.port, '0.0.0.0', () => {
         console.log('================================================================');
-        console.log(' RPG COOPERATIVO WLAN - SERVIDOR CON COMBATE PVE (FASE 3)      ');
+        console.log(' RPG COOPERATIVO WLAN - SERVIDOR CON PERSISTENCIA SQLITE (FASE 4)');
         console.log('================================================================');
         console.log(` Servidor local escuchando en: http://localhost:${this.port}`);
         console.log(` Para jugar con tu familia en la misma red Wi-Fi:`);

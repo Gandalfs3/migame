@@ -3,6 +3,8 @@ import { Engine } from './core/Engine.js';
 import { HUD } from './ui/HUD.js';
 import { CombatHUD } from './ui/CombatHUD.js';
 import { FloatingTextManager } from './ui/FloatingText.js';
+import { CharacterLoginModal } from './ui/CharacterLoginModal.js';
+import { AssetManager } from './core/AssetManager.js';
 import { NetworkClient } from './network/NetworkClient.js';
 import { InputManager } from './input/InputManager.js';
 import { PlayerEntity } from './entities/PlayerEntity.js';
@@ -15,6 +17,7 @@ const hud = new HUD();
 const combatHud = new CombatHUD();
 const floatingText = new FloatingTextManager();
 const obstacleRenderer = new ObstacleRenderer(engine.scene);
+const assetManager = new AssetManager();
 const network = new NetworkClient();
 
 const inputManager = new InputManager((state) => {
@@ -24,6 +27,12 @@ const inputManager = new InputManager((state) => {
 const playerEntities = new Map<string, PlayerEntity>();
 const monsterEntities = new Map<string, MonsterEntity>();
 let selectedTargetId: string | null = null;
+
+// Modal de Creación / Login de Personaje
+new CharacterLoginModal((name, chosenClass) => {
+  network.sendLogin(name, chosenClass);
+  combatHud.setClass(chosenClass);
+});
 
 // Conexión y Bienvenida
 network.onConnectionChange = (connected) => {
@@ -36,8 +45,12 @@ network.onWelcome = (msg) => {
 
   if (msg.obstacles && Array.isArray(msg.obstacles)) {
     obstacleRenderer.renderObstacles(msg.obstacles);
-    console.log(`[Cliente] ${msg.obstacles.length} obstáculos generados.`);
   }
+};
+
+// Subida de Nivel
+network.onLevelUp = (msg) => {
+  combatHud.showLevelUp(msg.playerName, msg.newLevel);
 };
 
 // Cambio de Clase y Habilidades
@@ -56,7 +69,7 @@ network.onCombatFeedback = (feedbacks) => {
   }
 };
 
-// Estado del Mundo (Jugadores y Monstruos)
+// Estado del Mundo
 network.onWorldState = (msg) => {
   hud.updateStats(msg.players.length, network.lastPing);
 
@@ -68,18 +81,18 @@ network.onWorldState = (msg) => {
 
     if (!entity) {
       const isLocal = p.id === network.localPlayerId;
-      entity = new PlayerEntity(engine.scene, p.id, p.color, isLocal);
+      entity = new PlayerEntity(engine.scene, p.id, p.color, isLocal, p.name);
       entity.group.position.set(p.x, 0, p.z);
       entity.group.rotation.y = p.rotation;
       playerEntities.set(p.id, entity);
     }
 
     entity.setTarget(p.x, p.z, p.rotation);
-    entity.setStats(p.health, p.maxHealth, p.classType);
+    entity.setStats(p.health, p.maxHealth, p.classType, p.name, p.level);
     entity.setSelected(p.id === selectedTargetId);
 
     if (p.id === network.localPlayerId) {
-      combatHud.updatePlayerVitals(p.health, p.maxHealth);
+      combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold);
     }
   }
 
@@ -106,7 +119,6 @@ network.onWorldState = (msg) => {
 
       mon.setSelected(m.id === selectedTargetId);
 
-      // Si el objetivo seleccionado es este monstruo, actualizar su vida en el HUD
       if (m.id === selectedTargetId) {
         combatHud.updateTarget(m.name, m.health, m.maxHealth);
       }
@@ -121,7 +133,7 @@ network.onWorldState = (msg) => {
   }
 };
 
-// Raycasting para Selección de Objetivo con Clic / Tap
+// Raycasting para Selección de Objetivo
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -143,7 +155,6 @@ function handlePointerSelection(event: MouseEvent | TouchEvent) {
 
   raycaster.setFromCamera(mouse, engine.camera);
 
-  // Recolectar todos los grupos seleccionables
   const candidates: { id: string; name: string; obj: THREE.Object3D; isMonster: boolean }[] = [];
 
   for (const [id, mon] of monsterEntities.entries()) {
@@ -162,7 +173,6 @@ function handlePointerSelection(event: MouseEvent | TouchEvent) {
   const intersects = raycaster.intersectObjects(clickableObjects, true);
 
   if (intersects.length > 0) {
-    // Encontrar cuál candidato fue intersectado
     const hitObj = intersects[0].object;
     for (const c of candidates) {
       let cur: THREE.Object3D | null = hitObj;
@@ -181,11 +191,10 @@ function selectTarget(id: string | null) {
   selectedTargetId = id;
   network.selectTarget(id);
 
-  // Actualizar indicadores visuales
   for (const [pId, p] of playerEntities) {
     p.setSelected(pId === id);
     if (pId === id) {
-      combatHud.updateTarget(pId, p.health, p.maxHealth);
+      combatHud.updateTarget(p.name, p.health, p.maxHealth);
     }
   }
 
@@ -202,32 +211,27 @@ function selectTarget(id: string | null) {
 }
 
 window.addEventListener('mousedown', (e) => {
-  // Ignorar clics dentro del HUD de DOM
-  if ((e.target as HTMLElement).closest('.hud-overlay, #combat-hud-container')) return;
+  if ((e.target as HTMLElement).closest('.hud-overlay, #combat-hud-container, #character-login-modal')) return;
   handlePointerSelection(e);
 });
 
-// Bucle de renderizado a 60 FPS con interpolación
+// Bucle de renderizado
 function renderLoop(): void {
   requestAnimationFrame(renderLoop);
 
-  // Actualizar interpolación de jugadores
   for (const entity of playerEntities.values()) {
     entity.update(0.25, 0.3);
   }
 
-  // Actualizar interpolación de monstruos
   for (const entity of monsterEntities.values()) {
     entity.update(0.25, 0.3);
   }
 
-  // Cámara suave siguiendo al jugador local
   if (network.localPlayerId && playerEntities.has(network.localPlayerId)) {
     const localEntity = playerEntities.get(network.localPlayerId)!;
     engine.followTarget(localEntity.group.position.x, localEntity.group.position.z, 0.08);
   }
 
-  // Actualizar textos flotantes
   floatingText.update(engine.camera);
 
   engine.render();
