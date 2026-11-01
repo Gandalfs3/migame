@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-01T17:09:23.709Z",
-  "totalFiles": 30,
+  "generatedAt": "2026-11-01T17:25:45.327Z",
+  "totalFiles": 55,
   "tree": [
     {
       "type": "directory",
@@ -256,22 +256,326 @@
       "type": "file",
       "name": "package.json",
       "path": "package.json",
-      "size": 329,
+      "size": 509,
       "extension": ".json",
       "summary": "Source / Asset file"
     },
     {
       "type": "directory",
-      "name": "public",
-      "path": "public",
+      "name": "packages",
+      "path": "packages",
       "children": [
         {
-          "type": "file",
-          "name": "index.html",
-          "path": "public/index.html",
-          "size": 17118,
-          "extension": ".html",
-          "summary": "Source / Asset file"
+          "type": "directory",
+          "name": "client",
+          "path": "packages/client",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.html",
+              "path": "packages/client/index.html",
+              "size": 5982,
+              "extension": ".html",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "package.json",
+              "path": "packages/client/package.json",
+              "size": 422,
+              "extension": ".json",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "directory",
+              "name": "src",
+              "path": "packages/client/src",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "core",
+                  "path": "packages/client/src/core",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "Engine.ts",
+                      "path": "packages/client/src/core/Engine.ts",
+                      "size": 3388,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "directory",
+                  "name": "entities",
+                  "path": "packages/client/src/entities",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "PlayerEntity.ts",
+                      "path": "packages/client/src/entities/PlayerEntity.ts",
+                      "size": 2265,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "directory",
+                  "name": "input",
+                  "path": "packages/client/src/input",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "InputManager.ts",
+                      "path": "packages/client/src/input/InputManager.ts",
+                      "size": 2930,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "file",
+                  "name": "main.ts",
+                  "path": "packages/client/src/main.ts",
+                  "size": 2099,
+                  "extension": ".ts",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "directory",
+                  "name": "network",
+                  "path": "packages/client/src/network",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "NetworkClient.ts",
+                      "path": "packages/client/src/network/NetworkClient.ts",
+                      "size": 3022,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "directory",
+                  "name": "ui",
+                  "path": "packages/client/src/ui",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "HUD.ts",
+                      "path": "packages/client/src/ui/HUD.ts",
+                      "size": 1873,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "tsconfig.json",
+              "path": "packages/client/tsconfig.json",
+              "size": 344,
+              "extension": ".json",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "tsconfig.tsbuildinfo",
+              "path": "packages/client/tsconfig.tsbuildinfo",
+              "size": 83215,
+              "extension": ".tsbuildinfo",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "vite.config.ts",
+              "path": "packages/client/vite.config.ts",
+              "size": 124,
+              "extension": ".ts",
+              "summary": "Source / Asset file"
+            }
+          ]
+        },
+        {
+          "type": "directory",
+          "name": "common",
+          "path": "packages/common",
+          "children": [
+            {
+              "type": "file",
+              "name": "package.json",
+              "path": "packages/common/package.json",
+              "size": 242,
+              "extension": ".json",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "directory",
+              "name": "src",
+              "path": "packages/common/src",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "constants",
+                  "path": "packages/common/src/constants",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "index.ts",
+                      "path": "packages/common/src/constants/index.ts",
+                      "size": 546,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "file",
+                  "name": "index.ts",
+                  "path": "packages/common/src/index.ts",
+                  "size": 108,
+                  "extension": ".ts",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "directory",
+                  "name": "network",
+                  "path": "packages/common/src/network",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "index.ts",
+                      "path": "packages/common/src/network/index.ts",
+                      "size": 1154,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "directory",
+                  "name": "types",
+                  "path": "packages/common/src/types",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "index.ts",
+                      "path": "packages/common/src/types/index.ts",
+                      "size": 277,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "tsconfig.json",
+              "path": "packages/common/tsconfig.json",
+              "size": 142,
+              "extension": ".json",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "tsconfig.tsbuildinfo",
+              "path": "packages/common/tsconfig.tsbuildinfo",
+              "size": 34509,
+              "extension": ".tsbuildinfo",
+              "summary": "Source / Asset file"
+            }
+          ]
+        },
+        {
+          "type": "directory",
+          "name": "server",
+          "path": "packages/server",
+          "children": [
+            {
+              "type": "file",
+              "name": "package.json",
+              "path": "packages/server/package.json",
+              "size": 413,
+              "extension": ".json",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "directory",
+              "name": "src",
+              "path": "packages/server/src",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "game",
+                  "path": "packages/server/src/game",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "GameWorld.ts",
+                      "path": "packages/server/src/game/GameWorld.ts",
+                      "size": 2529,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "Player.ts",
+                      "path": "packages/server/src/game/Player.ts",
+                      "size": 1618,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "file",
+                  "name": "index.ts",
+                  "path": "packages/server/src/index.ts",
+                  "size": 407,
+                  "extension": ".ts",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "directory",
+                  "name": "network",
+                  "path": "packages/server/src/network",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "NetworkServer.ts",
+                      "path": "packages/server/src/network/NetworkServer.ts",
+                      "size": 5091,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "tsconfig.json",
+              "path": "packages/server/tsconfig.json",
+              "size": 193,
+              "extension": ".json",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "tsconfig.tsbuildinfo",
+              "path": "packages/server/tsconfig.tsbuildinfo",
+              "size": 35439,
+              "extension": ".tsbuildinfo",
+              "summary": "Source / Asset file"
+            }
+          ]
         }
       ]
     },
@@ -292,10 +596,18 @@
     },
     {
       "type": "file",
-      "name": "server.js",
-      "path": "server.js",
-      "size": 6386,
-      "extension": ".js",
+      "name": "tsconfig.base.json",
+      "path": "tsconfig.base.json",
+      "size": 382,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.json",
+      "path": "tsconfig.json",
+      "size": 114,
+      "extension": ".json",
       "summary": "Source / Asset file"
     }
   ],
@@ -512,16 +824,208 @@
       "type": "file",
       "name": "package.json",
       "path": "package.json",
-      "size": 329,
+      "size": 509,
       "extension": ".json",
       "summary": "Source / Asset file"
     },
     {
       "type": "file",
       "name": "index.html",
-      "path": "public/index.html",
-      "size": 17118,
+      "path": "packages/client/index.html",
+      "size": 5982,
       "extension": ".html",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "package.json",
+      "path": "packages/client/package.json",
+      "size": 422,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "Engine.ts",
+      "path": "packages/client/src/core/Engine.ts",
+      "size": 3388,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "PlayerEntity.ts",
+      "path": "packages/client/src/entities/PlayerEntity.ts",
+      "size": 2265,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "InputManager.ts",
+      "path": "packages/client/src/input/InputManager.ts",
+      "size": 2930,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "main.ts",
+      "path": "packages/client/src/main.ts",
+      "size": 2099,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "NetworkClient.ts",
+      "path": "packages/client/src/network/NetworkClient.ts",
+      "size": 3022,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "HUD.ts",
+      "path": "packages/client/src/ui/HUD.ts",
+      "size": 1873,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.json",
+      "path": "packages/client/tsconfig.json",
+      "size": 344,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.tsbuildinfo",
+      "path": "packages/client/tsconfig.tsbuildinfo",
+      "size": 83215,
+      "extension": ".tsbuildinfo",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "vite.config.ts",
+      "path": "packages/client/vite.config.ts",
+      "size": 124,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "package.json",
+      "path": "packages/common/package.json",
+      "size": 242,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "index.ts",
+      "path": "packages/common/src/constants/index.ts",
+      "size": 546,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "index.ts",
+      "path": "packages/common/src/index.ts",
+      "size": 108,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "index.ts",
+      "path": "packages/common/src/network/index.ts",
+      "size": 1154,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "index.ts",
+      "path": "packages/common/src/types/index.ts",
+      "size": 277,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.json",
+      "path": "packages/common/tsconfig.json",
+      "size": 142,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.tsbuildinfo",
+      "path": "packages/common/tsconfig.tsbuildinfo",
+      "size": 34509,
+      "extension": ".tsbuildinfo",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "package.json",
+      "path": "packages/server/package.json",
+      "size": 413,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "GameWorld.ts",
+      "path": "packages/server/src/game/GameWorld.ts",
+      "size": 2529,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "Player.ts",
+      "path": "packages/server/src/game/Player.ts",
+      "size": 1618,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "index.ts",
+      "path": "packages/server/src/index.ts",
+      "size": 407,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "NetworkServer.ts",
+      "path": "packages/server/src/network/NetworkServer.ts",
+      "size": 5091,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.json",
+      "path": "packages/server/tsconfig.json",
+      "size": 193,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.tsbuildinfo",
+      "path": "packages/server/tsconfig.tsbuildinfo",
+      "size": 35439,
+      "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
     {
@@ -534,10 +1038,18 @@
     },
     {
       "type": "file",
-      "name": "server.js",
-      "path": "server.js",
-      "size": 6386,
-      "extension": ".js",
+      "name": "tsconfig.base.json",
+      "path": "tsconfig.base.json",
+      "size": 382,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tsconfig.json",
+      "path": "tsconfig.json",
+      "size": 114,
+      "extension": ".json",
       "summary": "Source / Asset file"
     }
   ]

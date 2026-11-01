@@ -1,15 +1,19 @@
 {
-  "name": "migame-bootstrap",
-  "version": "0.1.0",
+  "name": "migame-monorepo",
+  "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "description": "Demo multijugador autoritativa WLAN - Fase Cero",
-  "main": "server.js",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "node server.js",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"cyan.bold,magenta.bold\" \"npm run dev -w @migame/server\" \"npm run dev -w @migame/client\"",
+    "build": "npm run build --workspaces",
     "grafify": "node scripts/grafify.js"
   },
-  "dependencies": {
-    "express": "^4.19.2",
-    "ws": "^8.17.1"
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
   }
 }

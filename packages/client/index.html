@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>RPG Cooperativo WLAN</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #090d16;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #f8fafc;
+    }
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .hud-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+    }
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .badge-card {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      margin-right: 6px;
+      animation: pulse 1.5s infinite;
+    }
+    .status-indicator.connected {
+      background: #10b981;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .title {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .lan-banner {
+      pointer-events: auto;
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-radius: 12px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+    }
+    .lan-url {
+      font-family: monospace;
+      font-weight: bold;
+      color: #60a5fa;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .btn-copy {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-copy:hover {
+      background: #1d4ed8;
+    }
+    .controls-panel {
+      pointer-events: auto;
+      align-self: center;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 12px;
+      color: #cbd5e1;
+      display: flex;
+      gap: 16px;
+    }
+    .key-badge {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .mobile-dpad {
+      pointer-events: auto;
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      width: 140px;
+      height: 140px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 6px;
+      opacity: 0.85;
+    }
+    .dpad-btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f1f5f9;
+      font-size: 18px;
+      touch-action: none;
+    }
+    .dpad-btn:active, .dpad-btn.active {
+      background: #3b82f6;
+      border-color: #60a5fa;
+    }
+    .dpad-up { grid-column: 2; grid-row: 1; }
+    .dpad-left { grid-column: 1; grid-row: 2; }
+    .dpad-center { grid-column: 2; grid-row: 2; background: transparent; border: none; }
+    .dpad-right { grid-column: 3; grid-row: 2; }
+    .dpad-down { grid-column: 2; grid-row: 3; }
+
+    @media (min-width: 1024px) {
+      .mobile-dpad {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <div class="hud-overlay">
+    <div class="hud-header">
+      <div class="badge-card">
+        <div class="title">
+          <span class="status-indicator" id="status-dot"></span>
+          <span id="status-text">Conectando...</span>
+        </div>
+        <div class="subtitle" id="player-id-text">ID: Asignando...</div>
+        <div class="subtitle" id="ping-text" style="margin-top: 2px;">Jugadores: 1 | Latencia: -- ms</div>
+      </div>
+
+      <div class="lan-banner" id="lan-banner">
+        <div>
+          <span>🌐 Unirse en Wi-Fi:</span>
+          <span class="lan-url" id="lan-url">Cargando...</span>
+        </div>
+        <button class="btn-copy" id="btn-copy">Copiar</button>
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <div>🎮 Moverse: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span> o Flechas</div>
+      <div>📱 En Móvil/Tablet: Cruceta táctil</div>
+    </div>
+
+    <div class="mobile-dpad" id="mobile-dpad">
+      <button class="dpad-btn dpad-up" id="btn-up">▲</button>
+      <button class="dpad-btn dpad-left" id="btn-left">◀</button>
+      <div class="dpad-center"></div>
+      <button class="dpad-btn dpad-right" id="btn-right">▶</button>
+      <button class="dpad-btn dpad-down" id="btn-down">▼</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Project Knowledge Graph (Grafify)
 
-> **Generado automáticamente**: 2026-11-01T17:09:23.711Z
+> **Generado automáticamente**: 2026-11-01T17:25:45.330Z
 > **Propósito**: Mapa de alta velocidad para que agentes de IA y desarrolladores ubiquen componentes, flujos de red y responsabilidades sin tener que leer todo el proyecto.
 
 ## 1. Índice Rápido de Componentes y Archivos
@@ -34,9 +34,34 @@
 | [`documentacion/plan_maestro_de_desarrollo_f2.md`](file:///documentacion/plan_maestro_de_desarrollo_f2.md) | `.md` | Master Game Document & Bootstrap: RPG Cooperativo WLAN / Futuro MMORPG Cloud |
 | [`GEMINI.md`](file:///GEMINI.md) | `.md` | Reglas del Proyecto: RPG Cooperativo WLAN / MMORPG |
 | [`package.json`](file:///package.json) | `.json` | Source / Asset file |
-| [`public/index.html`](file:///public/index.html) | `.html` | Source / Asset file |
+| [`packages/client/index.html`](file:///packages/client/index.html) | `.html` | Source / Asset file |
+| [`packages/client/package.json`](file:///packages/client/package.json) | `.json` | Source / Asset file |
+| [`packages/client/src/core/Engine.ts`](file:///packages/client/src/core/Engine.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/entities/PlayerEntity.ts`](file:///packages/client/src/entities/PlayerEntity.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/input/InputManager.ts`](file:///packages/client/src/input/InputManager.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/main.ts`](file:///packages/client/src/main.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/network/NetworkClient.ts`](file:///packages/client/src/network/NetworkClient.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/ui/HUD.ts`](file:///packages/client/src/ui/HUD.ts) | `.ts` | Source / Asset file |
+| [`packages/client/tsconfig.json`](file:///packages/client/tsconfig.json) | `.json` | Source / Asset file |
+| [`packages/client/tsconfig.tsbuildinfo`](file:///packages/client/tsconfig.tsbuildinfo) | `.tsbuildinfo` | Source / Asset file |
+| [`packages/client/vite.config.ts`](file:///packages/client/vite.config.ts) | `.ts` | Source / Asset file |
+| [`packages/common/package.json`](file:///packages/common/package.json) | `.json` | Source / Asset file |
+| [`packages/common/src/constants/index.ts`](file:///packages/common/src/constants/index.ts) | `.ts` | Source / Asset file |
+| [`packages/common/src/index.ts`](file:///packages/common/src/index.ts) | `.ts` | Source / Asset file |
+| [`packages/common/src/network/index.ts`](file:///packages/common/src/network/index.ts) | `.ts` | Source / Asset file |
+| [`packages/common/src/types/index.ts`](file:///packages/common/src/types/index.ts) | `.ts` | Source / Asset file |
+| [`packages/common/tsconfig.json`](file:///packages/common/tsconfig.json) | `.json` | Source / Asset file |
+| [`packages/common/tsconfig.tsbuildinfo`](file:///packages/common/tsconfig.tsbuildinfo) | `.tsbuildinfo` | Source / Asset file |
+| [`packages/server/package.json`](file:///packages/server/package.json) | `.json` | Source / Asset file |
+| [`packages/server/src/game/GameWorld.ts`](file:///packages/server/src/game/GameWorld.ts) | `.ts` | Source / Asset file |
+| [`packages/server/src/game/Player.ts`](file:///packages/server/src/game/Player.ts) | `.ts` | Source / Asset file |
+| [`packages/server/src/index.ts`](file:///packages/server/src/index.ts) | `.ts` | Source / Asset file |
+| [`packages/server/src/network/NetworkServer.ts`](file:///packages/server/src/network/NetworkServer.ts) | `.ts` | Source / Asset file |
+| [`packages/server/tsconfig.json`](file:///packages/server/tsconfig.json) | `.json` | Source / Asset file |
+| [`packages/server/tsconfig.tsbuildinfo`](file:///packages/server/tsconfig.tsbuildinfo) | `.tsbuildinfo` | Source / Asset file |
 | [`scripts/grafify.js`](file:///scripts/grafify.js) | `.js` | !/usr/bin/env node |
-| [`server.js`](file:///server.js) | `.js` | Source / Asset file |
+| [`tsconfig.base.json`](file:///tsconfig.base.json) | `.json` | Source / Asset file |
+| [`tsconfig.json`](file:///tsconfig.json) | `.json` | Source / Asset file |
 
 ## 2. Mapa de Arquitectura y Flujo
 
