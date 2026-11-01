@@ -3,6 +3,7 @@ import { Engine } from './core/Engine.js';
 import { HUD } from './ui/HUD.js';
 import { CombatHUD } from './ui/CombatHUD.js';
 import { FloatingTextManager } from './ui/FloatingText.js';
+import { SettingsMenu } from './ui/SettingsMenu.js';
 import { CharacterLoginModal } from './ui/CharacterLoginModal.js';
 import { RangeIndicator } from './entities/RangeIndicator.js';
 import { AssetManager } from './core/AssetManager.js';
@@ -22,6 +23,21 @@ const rangeIndicator = new RangeIndicator(engine.scene);
 const assetManager = new AssetManager();
 const network = new NetworkClient();
 
+// Menú de Ajustes de Interfaz (⚙️)
+const settingsMenu = new SettingsMenu((settings) => {
+  rangeIndicator.setVisible(settings.showRangeIndicator);
+});
+rangeIndicator.setVisible(settingsMenu.settings.showRangeIndicator);
+
+// Botón de descarte rápido de guía de controles
+const dismissControlsBtn = document.getElementById('btn-dismiss-controls');
+if (dismissControlsBtn) {
+  dismissControlsBtn.onclick = () => {
+    settingsMenu.settings.showControlsGuide = false;
+    settingsMenu.applySettingsToDOM();
+  };
+}
+
 const inputManager = new InputManager((state) => {
   network.sendInput(state);
 });
@@ -31,7 +47,7 @@ const monsterEntities = new Map<string, MonsterEntity>();
 let selectedTargetId: string | null = null;
 let currentLocalClass: PlayerClass = 'WARRIOR';
 
-// Modal de Inicio Simplificado (solo pide nombre para entrar directo)
+// Modal de Inicio Simplificado
 new CharacterLoginModal((name) => {
   network.sendLogin(name, currentLocalClass);
 });
@@ -55,7 +71,7 @@ network.onLevelUp = (msg) => {
   combatHud.showLevelUp(msg.playerName, msg.newLevel);
 };
 
-// Cambio de Clase dinámico durante la partida
+// Cambio de Clase dinámico
 combatHud.onSelectClass = (classType) => {
   currentLocalClass = classType;
   network.selectClass(classType);
@@ -66,8 +82,9 @@ combatHud.onCastSpell = (spellId) => {
   network.castSpell(spellId, selectedTargetId);
 };
 
-// Feedbacks de Combate (Números flotantes)
+// Feedbacks de Combate
 network.onCombatFeedback = (feedbacks) => {
+  if (!settingsMenu.settings.showFloatingCombatText) return;
   for (const fb of feedbacks) {
     floatingText.spawn(fb.amount, fb.isHeal, fb.x, fb.z);
   }
@@ -220,7 +237,7 @@ function selectTarget(id: string | null) {
 }
 
 window.addEventListener('mousedown', (e) => {
-  if ((e.target as HTMLElement).closest('.hud-overlay, #combat-hud-container, #character-login-modal')) return;
+  if ((e.target as HTMLElement).closest('.hud-overlay, #combat-hud-container, #character-login-modal, #settings-modal-overlay, #btn-settings-gear')) return;
   handlePointerSelection(e);
 });
 
@@ -240,8 +257,9 @@ function renderLoop(): void {
     const localEntity = playerEntities.get(network.localPlayerId)!;
     engine.followTarget(localEntity.group.position.x, localEntity.group.position.z, 0.08);
 
-    // Actualizar posición del círculo indicador de alcance
-    rangeIndicator.update(localEntity.group.position.x, localEntity.group.position.z);
+    if (settingsMenu.settings.showRangeIndicator) {
+      rangeIndicator.update(localEntity.group.position.x, localEntity.group.position.z);
+    }
   }
 
   floatingText.update(engine.camera);

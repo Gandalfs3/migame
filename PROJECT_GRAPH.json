@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-01T18:11:54.084Z",
-  "totalFiles": 67,
+  "generatedAt": "2026-11-01T18:18:21.224Z",
+  "totalFiles": 68,
   "tree": [
     {
       "type": "directory",
@@ -274,7 +274,7 @@
               "type": "file",
               "name": "index.html",
               "path": "packages/client/index.html",
-              "size": 5982,
+              "size": 7149,
               "extension": ".html",
               "summary": "Source / Asset file"
             },
@@ -372,7 +372,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 7492,
+                  "size": 8090,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -408,7 +408,7 @@
                       "type": "file",
                       "name": "CombatHUD.ts",
                       "path": "packages/client/src/ui/CombatHUD.ts",
-                      "size": 13611,
+                      "size": 14060,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -425,6 +425,14 @@
                       "name": "HUD.ts",
                       "path": "packages/client/src/ui/HUD.ts",
                       "size": 1873,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "SettingsMenu.ts",
+                      "path": "packages/client/src/ui/SettingsMenu.ts",
+                      "size": 10456,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -444,7 +452,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86311,
+              "size": 86521,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -935,7 +943,7 @@
       "type": "file",
       "name": "index.html",
       "path": "packages/client/index.html",
-      "size": 5982,
+      "size": 7149,
       "extension": ".html",
       "summary": "Source / Asset file"
     },
@@ -1007,7 +1015,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 7492,
+      "size": 8090,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1031,7 +1039,7 @@
       "type": "file",
       "name": "CombatHUD.ts",
       "path": "packages/client/src/ui/CombatHUD.ts",
-      "size": 13611,
+      "size": 14060,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1053,6 +1061,14 @@
     },
     {
       "type": "file",
+      "name": "SettingsMenu.ts",
+      "path": "packages/client/src/ui/SettingsMenu.ts",
+      "size": 10456,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "tsconfig.json",
       "path": "packages/client/tsconfig.json",
       "size": 344,
@@ -1063,7 +1079,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86311,
+      "size": 86521,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

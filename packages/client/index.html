@@ -28,6 +28,8 @@
       height: 100%;
       z-index: 1;
     }
+
+    /* HUD Overlay Maestro */
     .hud-overlay {
       position: absolute;
       top: 0;
@@ -41,21 +43,40 @@
       justify-content: space-between;
       padding: 16px;
     }
+
+    /* Fila Superior (Top Bar) */
     .hud-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 12px;
     }
-    .badge-card {
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       pointer-events: auto;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      margin-right: 52px; /* Espacio para el engranaje ⚙️ */
+    }
+
+    .badge-card {
       background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
-      padding: 12px 16px;
+      padding: 8px 14px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: none; /* Oculto por defecto para limpiar la UX */
     }
+
     .status-indicator {
       display: inline-block;
       width: 10px;
@@ -72,30 +93,17 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
-    .title {
-      font-weight: 700;
-      font-size: 16px;
-      letter-spacing: 0.5px;
-      color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    .subtitle {
-      font-size: 12px;
-      color: #94a3b8;
-    }
+
     .lan-banner {
-      pointer-events: auto;
-      background: linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.88), rgba(15, 23, 42, 0.88));
+      border: 1px solid rgba(59, 130, 246, 0.35);
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 13px;
-      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+      font-size: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     }
     .lan-url {
       font-family: monospace;
@@ -119,18 +127,22 @@
     .btn-copy:hover {
       background: #1d4ed8;
     }
+
+    /* Panel Central de Controles Descartable */
     .controls-panel {
       pointer-events: auto;
       align-self: center;
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 20px;
-      padding: 8px 18px;
+      padding: 6px 16px;
       font-size: 12px;
       color: #cbd5e1;
-      display: flex;
-      gap: 16px;
+      display: none; /* Oculto por defecto para UX limpia */
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
     .key-badge {
       background: rgba(255, 255, 255, 0.15);
@@ -139,6 +151,16 @@
       font-weight: bold;
       color: #fff;
     }
+    .btn-dismiss-controls {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 6px;
+    }
+
+    /* D-pad táctil para móviles / tablets */
     .mobile-dpad {
       pointer-events: auto;
       position: absolute;
@@ -146,11 +168,12 @@
       left: 24px;
       width: 140px;
       height: 140px;
-      display: grid;
+      display: none;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(3, 1fr);
       gap: 6px;
       opacity: 0.85;
+      z-index: 25;
     }
     .dpad-btn {
       background: rgba(30, 41, 59, 0.8);
@@ -172,42 +195,48 @@
     .dpad-center { grid-column: 2; grid-row: 2; background: transparent; border: none; }
     .dpad-right { grid-column: 3; grid-row: 2; }
     .dpad-down { grid-column: 2; grid-row: 3; }
-
-    @media (min-width: 1024px) {
-      .mobile-dpad {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body>
   <div id="canvas-container"></div>
 
   <div class="hud-overlay">
+    <!-- Top Bar -->
     <div class="hud-header">
-      <div class="badge-card">
-        <div class="title">
-          <span class="status-indicator" id="status-dot"></span>
-          <span id="status-text">Conectando...</span>
+      <div class="header-left">
+        <!-- El selector de clases se inserta limpiamente aquí -->
+        <div id="class-selector-slot"></div>
+
+        <!-- Tarjeta de estado de red (activable desde ⚙️ ajustes) -->
+        <div class="badge-card" id="badge-card-container">
+          <div style="font-weight: 700; font-size: 13px; color: #e2e8f0; display: flex; align-items: center; margin-bottom: 2px;">
+            <span class="status-indicator" id="status-dot"></span>
+            <span id="status-text">Conectando...</span>
+          </div>
+          <div style="font-size: 11px; color: #94a3b8;" id="player-id-text">ID: Asignando...</div>
+          <div style="font-size: 11px; color: #94a3b8;" id="ping-text">Jugadores: 1 | Latencia: -- ms</div>
         </div>
-        <div class="subtitle" id="player-id-text">ID: Asignando...</div>
-        <div class="subtitle" id="ping-text" style="margin-top: 2px;">Jugadores: 1 | Latencia: -- ms</div>
       </div>
 
-      <div class="lan-banner" id="lan-banner">
-        <div>
-          <span>🌐 Unirse en Wi-Fi:</span>
-          <span class="lan-url" id="lan-url">Cargando...</span>
+      <div class="header-right">
+        <!-- Banner Wi-Fi para unirse -->
+        <div class="lan-banner" id="lan-banner">
+          <div>
+            <span>🌐 Wi-Fi:</span>
+            <span class="lan-url" id="lan-url">Cargando...</span>
+          </div>
+          <button class="btn-copy" id="btn-copy">Copiar</button>
         </div>
-        <button class="btn-copy" id="btn-copy">Copiar</button>
       </div>
     </div>
 
-    <div class="controls-panel">
-      <div>🎮 Moverse: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span> o Flechas</div>
-      <div>📱 En Móvil/Tablet: Cruceta táctil</div>
+    <!-- Guía de Controles (Activables desde ajustes o cerrables con X) -->
+    <div class="controls-panel" id="controls-panel">
+      <div>🎮 Moverse: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span> o Flechas | 📱 Cruceta táctil</div>
+      <button class="btn-dismiss-controls" id="btn-dismiss-controls" title="Ocultar guía">✕</button>
     </div>
 
+    <!-- D-Pad Táctil para Dispositivos Móviles -->
     <div class="mobile-dpad" id="mobile-dpad">
       <button class="dpad-btn dpad-up" id="btn-up">▲</button>
       <button class="dpad-btn dpad-left" id="btn-left">◀</button>

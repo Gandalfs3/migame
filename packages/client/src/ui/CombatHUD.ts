@@ -32,7 +32,17 @@ export class CombatHUD {
     this.playerVitalsEl = this.createPlayerVitals();
     this.levelUpBannerEl = this.createLevelUpBanner();
 
-    this.container.appendChild(this.classSelectorEl);
+    // Insertar el selector de clases en su slot dedicado en el header si existe
+    const classSlot = document.getElementById('class-selector-slot');
+    if (classSlot) {
+      classSlot.appendChild(this.classSelectorEl);
+    } else {
+      this.classSelectorEl.style.position = 'absolute';
+      this.classSelectorEl.style.top = '16px';
+      this.classSelectorEl.style.left = '16px';
+      this.container.appendChild(this.classSelectorEl);
+    }
+
     this.container.appendChild(this.actionBarEl);
     this.container.appendChild(this.targetFrameEl);
     this.container.appendChild(this.playerVitalsEl);
@@ -45,17 +55,15 @@ export class CombatHUD {
   private createClassSelector(): HTMLElement {
     const el = document.createElement('div');
     el.className = 'class-selector-card';
-    el.style.position = 'absolute';
-    el.style.top = '72px';
-    el.style.left = '16px';
     el.style.pointerEvents = 'auto';
     el.style.display = 'flex';
     el.style.gap = '6px';
     el.style.background = 'rgba(15, 23, 42, 0.85)';
     el.style.backdropFilter = 'blur(8px)';
-    el.style.padding = '6px';
+    el.style.padding = '4px 6px';
     el.style.borderRadius = '10px';
-    el.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+    el.style.border = '1px solid rgba(255, 255, 255, 0.12)';
+    el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
 
     const classes: { type: PlayerClass; label: string }[] = [
       { type: 'WARRIOR', label: '🛡️ Guerrero' },
@@ -67,7 +75,7 @@ export class CombatHUD {
       const btn = document.createElement('button');
       btn.textContent = c.label;
       btn.dataset.class = c.type;
-      btn.style.background = c.type === this.currentClass ? '#3b82f6' : 'rgba(30, 41, 59, 0.7)';
+      btn.style.background = c.type === this.currentClass ? '#2563eb' : 'transparent';
       btn.style.color = '#fff';
       btn.style.border = 'none';
       btn.style.padding = '6px 12px';
@@ -75,6 +83,7 @@ export class CombatHUD {
       btn.style.fontSize = '12px';
       btn.style.fontWeight = '600';
       btn.style.cursor = 'pointer';
+      btn.style.transition = 'background 0.15s';
       btn.onclick = () => {
         this.setClass(c.type);
         this.onSelectClass?.(c.type);
@@ -89,7 +98,7 @@ export class CombatHUD {
     this.currentClass = newClass;
     const buttons = this.classSelectorEl.querySelectorAll('button');
     buttons.forEach(btn => {
-      btn.style.background = btn.dataset.class === newClass ? '#3b82f6' : 'rgba(30, 41, 59, 0.7)';
+      btn.style.background = btn.dataset.class === newClass ? '#2563eb' : 'transparent';
     });
     this.refreshActionBar();
   }
@@ -97,14 +106,14 @@ export class CombatHUD {
   private createPlayerVitals(): HTMLElement {
     const el = document.createElement('div');
     el.style.position = 'absolute';
-    el.style.bottom = '96px';
+    el.style.bottom = '88px';
     el.style.left = '50%';
     el.style.transform = 'translateX(-50%)';
-    el.style.width = '300px';
+    el.style.width = '280px';
     el.style.pointerEvents = 'auto';
     el.style.background = 'rgba(15, 23, 42, 0.88)';
     el.style.backdropFilter = 'blur(8px)';
-    el.style.padding = '8px 14px';
+    el.style.padding = '8px 12px';
     el.style.borderRadius = '10px';
     el.style.border = '1px solid rgba(255, 255, 255, 0.15)';
     el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5)';
@@ -120,7 +129,7 @@ export class CombatHUD {
         <span style="color: #94a3b8;">Salud</span>
         <span id="player-vital-value" style="font-weight: bold;">100 / 100</span>
       </div>
-      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 12px; overflow: hidden; margin-bottom: 6px;">
+      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 10px; overflow: hidden; margin-bottom: 6px;">
         <div id="player-vital-fill" style="width: 100%; height: 100%; background: #22c55e; transition: width 0.2s;"></div>
       </div>
 
@@ -129,7 +138,7 @@ export class CombatHUD {
         <span>Experiencia (XP)</span>
         <span id="player-xp-value">0 / 100</span>
       </div>
-      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 6px; overflow: hidden;">
+      <div style="background: rgba(0,0,0,0.5); border-radius: 4px; height: 5px; overflow: hidden;">
         <div id="player-xp-fill" style="width: 0%; height: 100%; background: #a855f7; transition: width 0.3s;"></div>
       </div>
     `;
@@ -172,7 +181,7 @@ export class CombatHUD {
   private createTargetFrame(): HTMLElement {
     const el = document.createElement('div');
     el.style.position = 'absolute';
-    el.style.top = '16px';
+    el.style.top = '20px';
     el.style.left = '50%';
     el.style.transform = 'translateX(-50%)';
     el.style.width = '240px';
@@ -183,6 +192,7 @@ export class CombatHUD {
     el.style.borderRadius = '10px';
     el.style.border = '1px solid rgba(245, 158, 11, 0.4)';
     el.style.display = 'none';
+    el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5)';
 
     el.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -220,7 +230,7 @@ export class CombatHUD {
     const el = document.createElement('div');
     el.className = 'action-bar';
     el.style.position = 'absolute';
-    el.style.bottom = '20px';
+    el.style.bottom = '16px';
     el.style.left = '50%';
     el.style.transform = 'translateX(-50%)';
     el.style.display = 'flex';
@@ -237,8 +247,8 @@ export class CombatHUD {
     classSpells.forEach((spell, idx) => {
       const btn = document.createElement('div');
       btn.className = `skill-slot skill-slot-${idx + 1}`;
-      btn.style.width = '60px';
-      btn.style.height = '60px';
+      btn.style.width = '58px';
+      btn.style.height = '58px';
       btn.style.background = 'rgba(30, 41, 59, 0.9)';
       btn.style.backdropFilter = 'blur(6px)';
       btn.style.border = '2px solid rgba(255, 255, 255, 0.2)';
@@ -255,7 +265,7 @@ export class CombatHUD {
 
       btn.innerHTML = `
         <span style="font-size: 24px;">${spell.icon}</span>
-        <span style="position: absolute; top: 4px; left: 6px; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 1px 4px; border-radius: 4px;">${idx + 1}</span>
+        <span style="position: absolute; top: 3px; left: 6px; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 1px 4px; border-radius: 4px;">${idx + 1}</span>
         <div id="cd-overlay-${spell.id}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); border-radius: 10px; display: none; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #fff;"></div>
       `;
 
@@ -322,7 +332,7 @@ export class CombatHUD {
   private createLevelUpBanner(): HTMLElement {
     const el = document.createElement('div');
     el.style.position = 'absolute';
-    el.style.top = '140px';
+    el.style.top = '100px';
     el.style.left = '50%';
     el.style.transform = 'translateX(-50%) scale(0.8)';
     el.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95))';
