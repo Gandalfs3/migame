@@ -8,6 +8,7 @@ import {
   WelcomeMessage,
   PlayerJoinedMessage,
   PlayerLeftMessage,
+  CombatFeedbackMessage,
   MAP_BOUND,
   TICK_RATE
 } from '@migame/common';
@@ -64,7 +65,8 @@ export class NetworkServer {
         port: this.port,
         playersOnline: this.gameWorld.getPlayerCount(),
         tickRate: TICK_RATE,
-        obstaclesCount: this.gameWorld.getObstacles().length
+        obstaclesCount: this.gameWorld.getObstacles().length,
+        monstersCount: this.gameWorld.monsters.size
       });
     });
   }
@@ -74,7 +76,6 @@ export class NetworkServer {
       const player = this.gameWorld.createPlayer(ws);
       console.log(`[NetworkServer] Conexión de ${player.id} (${req.socket.remoteAddress}). Online: ${this.gameWorld.getPlayerCount()}`);
 
-      // Enviar bienvenida con la lista de obstáculos autoritativos
       const welcome: WelcomeMessage = {
         type: MessageType.WELCOME,
         playerId: player.id,
@@ -86,7 +87,6 @@ export class NetworkServer {
       };
       ws.send(JSON.stringify(welcome));
 
-      // Notificar a todos sobre la nueva incorporación
       const joined: PlayerJoinedMessage = {
         type: MessageType.PLAYER_JOINED,
         player: player.toDTO()
@@ -104,11 +104,27 @@ export class NetworkServer {
               right: Boolean(msg.right)
             };
             player.lastInputTime = Date.now();
+          } else if (msg.type === MessageType.SELECT_CLASS) {
+            if (msg.classType === 'WARRIOR' || msg.classType === 'CLERIC' || msg.classType === 'MAGE') {
+              player.setClass(msg.classType);
+              console.log(`[NetworkServer] ${player.id} cambió su clase a ${msg.classType}`);
+            }
+          } else if (msg.type === MessageType.SELECT_TARGET) {
+            player.targetId = msg.targetId || null;
+          } else if (msg.type === MessageType.CAST_SPELL) {
+            const feedbacks = this.gameWorld.castSpell(player.id, msg.spellId, msg.targetId || player.targetId);
+            if (feedbacks.length > 0) {
+              const feedbackMsg: CombatFeedbackMessage = {
+                type: MessageType.COMBAT_FEEDBACK,
+                feedbacks
+              };
+              this.broadcast(feedbackMsg);
+            }
           } else if (msg.type === MessageType.PING) {
             ws.send(JSON.stringify({ type: MessageType.PONG, clientTime: msg.clientTime }));
           }
         } catch (err) {
-          // Ignorar paquetes inválidos
+          // Ignorar paquetes corruptos
         }
       });
 
@@ -141,7 +157,7 @@ export class NetworkServer {
     return new Promise((resolve) => {
       this.httpServer.listen(this.port, '0.0.0.0', () => {
         console.log('================================================================');
-        console.log(' RPG COOPERATIVO WLAN - SERVIDOR CON COLISIONES (FASE 2)       ');
+        console.log(' RPG COOPERATIVO WLAN - SERVIDOR CON COMBATE PVE (FASE 3)      ');
         console.log('================================================================');
         console.log(` Servidor local escuchando en: http://localhost:${this.port}`);
         console.log(` Para jugar con tu familia en la misma red Wi-Fi:`);

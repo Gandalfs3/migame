@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-01T17:35:58.511Z",
-  "totalFiles": 57,
+  "generatedAt": "2026-11-01T17:43:18.127Z",
+  "totalFiles": 62,
   "tree": [
     {
       "type": "directory",
@@ -313,6 +313,14 @@
                   "children": [
                     {
                       "type": "file",
+                      "name": "MonsterEntity.ts",
+                      "path": "packages/client/src/entities/MonsterEntity.ts",
+                      "size": 8090,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
                       "name": "ObstacleRenderer.ts",
                       "path": "packages/client/src/entities/ObstacleRenderer.ts",
                       "size": 4358,
@@ -323,7 +331,7 @@
                       "type": "file",
                       "name": "PlayerEntity.ts",
                       "path": "packages/client/src/entities/PlayerEntity.ts",
-                      "size": 2265,
+                      "size": 5713,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -348,7 +356,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 2492,
+                  "size": 6927,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -361,7 +369,7 @@
                       "type": "file",
                       "name": "NetworkClient.ts",
                       "path": "packages/client/src/network/NetworkClient.ts",
-                      "size": 3022,
+                      "size": 4132,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -372,6 +380,22 @@
                   "name": "ui",
                   "path": "packages/client/src/ui",
                   "children": [
+                    {
+                      "type": "file",
+                      "name": "CombatHUD.ts",
+                      "path": "packages/client/src/ui/CombatHUD.ts",
+                      "size": 10501,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "FloatingText.ts",
+                      "path": "packages/client/src/ui/FloatingText.ts",
+                      "size": 2960,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
                     {
                       "type": "file",
                       "name": "HUD.ts",
@@ -396,7 +420,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 83554,
+              "size": 84291,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -437,7 +461,7 @@
                       "type": "file",
                       "name": "index.ts",
                       "path": "packages/common/src/constants/index.ts",
-                      "size": 614,
+                      "size": 3152,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -460,7 +484,7 @@
                       "type": "file",
                       "name": "index.ts",
                       "path": "packages/common/src/network/index.ts",
-                      "size": 1195,
+                      "size": 1939,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -475,7 +499,7 @@
                       "type": "file",
                       "name": "index.ts",
                       "path": "packages/common/src/types/index.ts",
-                      "size": 737,
+                      "size": 1543,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -495,7 +519,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/common/tsconfig.tsbuildinfo",
-              "size": 34519,
+              "size": 34518,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             }
@@ -526,9 +550,17 @@
                   "children": [
                     {
                       "type": "file",
+                      "name": "CombatSystem.ts",
+                      "path": "packages/server/src/game/CombatSystem.ts",
+                      "size": 4239,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
                       "name": "GameWorld.ts",
                       "path": "packages/server/src/game/GameWorld.ts",
-                      "size": 2958,
+                      "size": 5186,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -542,9 +574,17 @@
                     },
                     {
                       "type": "file",
+                      "name": "Monster.ts",
+                      "path": "packages/server/src/game/Monster.ts",
+                      "size": 6306,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
                       "name": "Player.ts",
                       "path": "packages/server/src/game/Player.ts",
-                      "size": 1742,
+                      "size": 3657,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -567,7 +607,7 @@
                       "type": "file",
                       "name": "NetworkServer.ts",
                       "path": "packages/server/src/network/NetworkServer.ts",
-                      "size": 5183,
+                      "size": 5994,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -587,7 +627,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/server/tsconfig.tsbuildinfo",
-              "size": 35689,
+              "size": 36182,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             }
@@ -870,6 +910,14 @@
     },
     {
       "type": "file",
+      "name": "MonsterEntity.ts",
+      "path": "packages/client/src/entities/MonsterEntity.ts",
+      "size": 8090,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "ObstacleRenderer.ts",
       "path": "packages/client/src/entities/ObstacleRenderer.ts",
       "size": 4358,
@@ -880,7 +928,7 @@
       "type": "file",
       "name": "PlayerEntity.ts",
       "path": "packages/client/src/entities/PlayerEntity.ts",
-      "size": 2265,
+      "size": 5713,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -896,7 +944,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 2492,
+      "size": 6927,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -904,7 +952,23 @@
       "type": "file",
       "name": "NetworkClient.ts",
       "path": "packages/client/src/network/NetworkClient.ts",
-      "size": 3022,
+      "size": 4132,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "CombatHUD.ts",
+      "path": "packages/client/src/ui/CombatHUD.ts",
+      "size": 10501,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "FloatingText.ts",
+      "path": "packages/client/src/ui/FloatingText.ts",
+      "size": 2960,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -928,7 +992,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 83554,
+      "size": 84291,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -952,7 +1016,7 @@
       "type": "file",
       "name": "index.ts",
       "path": "packages/common/src/constants/index.ts",
-      "size": 614,
+      "size": 3152,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -968,7 +1032,7 @@
       "type": "file",
       "name": "index.ts",
       "path": "packages/common/src/network/index.ts",
-      "size": 1195,
+      "size": 1939,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -976,7 +1040,7 @@
       "type": "file",
       "name": "index.ts",
       "path": "packages/common/src/types/index.ts",
-      "size": 737,
+      "size": 1543,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -992,7 +1056,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/common/tsconfig.tsbuildinfo",
-      "size": 34519,
+      "size": 34518,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -1006,9 +1070,17 @@
     },
     {
       "type": "file",
+      "name": "CombatSystem.ts",
+      "path": "packages/server/src/game/CombatSystem.ts",
+      "size": 4239,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "GameWorld.ts",
       "path": "packages/server/src/game/GameWorld.ts",
-      "size": 2958,
+      "size": 5186,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1022,9 +1094,17 @@
     },
     {
       "type": "file",
+      "name": "Monster.ts",
+      "path": "packages/server/src/game/Monster.ts",
+      "size": 6306,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "Player.ts",
       "path": "packages/server/src/game/Player.ts",
-      "size": 1742,
+      "size": 3657,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1040,7 +1120,7 @@
       "type": "file",
       "name": "NetworkServer.ts",
       "path": "packages/server/src/network/NetworkServer.ts",
-      "size": 5183,
+      "size": 5994,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1056,7 +1136,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/server/tsconfig.tsbuildinfo",
-      "size": 35689,
+      "size": 36182,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

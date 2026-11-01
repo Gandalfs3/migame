@@ -6,6 +6,11 @@ import {
   InputState,
   InputMessage,
   PingMessage,
+  PlayerClass,
+  SelectClassMessage,
+  SelectTargetMessage,
+  CastSpellMessage,
+  CombatFeedback,
   DEFAULT_SERVER_PORT
 } from '@migame/common';
 
@@ -17,6 +22,7 @@ export class NetworkClient {
 
   public onWelcome?: (msg: WelcomeMessage) => void;
   public onWorldState?: (msg: WorldStateMessage) => void;
+  public onCombatFeedback?: (feedbacks: CombatFeedback[]) => void;
   public onConnectionChange?: (connected: boolean) => void;
 
   constructor() {
@@ -48,7 +54,6 @@ export class NetworkClient {
       console.log('[NetworkClient] Conexión cerrada.');
       this.onConnectionChange?.(false);
       this.stopPingLoop();
-      // Reintento automático de conexión
       setTimeout(() => this.connect(), 2000);
     };
 
@@ -72,6 +77,8 @@ export class NetworkClient {
       this.onWelcome?.(msg);
     } else if (msg.type === MessageType.WORLD_STATE) {
       this.onWorldState?.(msg);
+    } else if (msg.type === MessageType.COMBAT_FEEDBACK) {
+      this.onCombatFeedback?.(msg.feedbacks);
     } else if (msg.type === MessageType.PONG) {
       this.lastPing = Math.round(performance.now() - msg.clientTime);
     }
@@ -82,6 +89,37 @@ export class NetworkClient {
       const msg: InputMessage = {
         type: MessageType.INPUT,
         ...state
+      };
+      this.socket.send(JSON.stringify(msg));
+    }
+  }
+
+  public selectClass(classType: PlayerClass): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      const msg: SelectClassMessage = {
+        type: MessageType.SELECT_CLASS,
+        classType
+      };
+      this.socket.send(JSON.stringify(msg));
+    }
+  }
+
+  public selectTarget(targetId: string | null): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      const msg: SelectTargetMessage = {
+        type: MessageType.SELECT_TARGET,
+        targetId
+      };
+      this.socket.send(JSON.stringify(msg));
+    }
+  }
+
+  public castSpell(spellId: string, targetId?: string | null): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      const msg: CastSpellMessage = {
+        type: MessageType.CAST_SPELL,
+        spellId,
+        targetId
       };
       this.socket.send(JSON.stringify(msg));
     }
