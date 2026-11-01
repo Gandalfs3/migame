@@ -1,0 +1,473 @@
+{
+  "generatedAt": "2026-11-01T16:59:23.011Z",
+  "totalFiles": 26,
+  "tree": [
+    {
+      "type": "directory",
+      "name": ".agents",
+      "path": ".agents",
+      "children": [
+        {
+          "type": "directory",
+          "name": "skills",
+          "path": ".agents/skills",
+          "children": [
+            {
+              "type": "directory",
+              "name": "game-netcode",
+              "path": ".agents/skills/game-netcode",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "SKILL.md",
+                  "path": ".agents/skills/game-netcode/SKILL.md",
+                  "size": 1881,
+                  "extension": ".md",
+                  "summary": "Game Netcode & Multiplayer 3D Web Guide"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "grafify",
+              "path": ".agents/skills/grafify",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "SKILL.md",
+                  "path": ".agents/skills/grafify/SKILL.md",
+                  "size": 1193,
+                  "extension": ".md",
+                  "summary": "Skill: Grafify (Navegación e Índice Rápido del Proyecto)"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "security-audit",
+              "path": ".agents/skills/security-audit",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "AI-AND-LLM.md",
+                  "path": ".agents/skills/security-audit/AI-AND-LLM.md",
+                  "size": 10700,
+                  "extension": ".md",
+                  "summary": "AI, LLM, and Agent Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "ATTACK-CLASSES.md",
+                  "path": ".agents/skills/security-audit/ATTACK-CLASSES.md",
+                  "size": 15825,
+                  "extension": ".md",
+                  "summary": "Attack Classes"
+                },
+                {
+                  "type": "file",
+                  "name": "CLIENT-SIDE.md",
+                  "path": ".agents/skills/security-audit/CLIENT-SIDE.md",
+                  "size": 8677,
+                  "extension": ".md",
+                  "summary": "Client-Side and Browser Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "CLOUD-AND-DEPLOYMENT.md",
+                  "path": ".agents/skills/security-audit/CLOUD-AND-DEPLOYMENT.md",
+                  "size": 8377,
+                  "extension": ".md",
+                  "summary": "Cloud and Deployment Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "DATA-ISOLATION-AND-LIFECYCLE.md",
+                  "path": ".agents/skills/security-audit/DATA-ISOLATION-AND-LIFECYCLE.md",
+                  "size": 7882,
+                  "extension": ".md",
+                  "summary": "Data Isolation and Lifecycle Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+                  "path": ".agents/skills/security-audit/DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+                  "size": 8828,
+                  "extension": ".md",
+                  "summary": "Desktop, Mobile, and Local IPC Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "HUNTING.md",
+                  "path": ".agents/skills/security-audit/HUNTING.md",
+                  "size": 22697,
+                  "extension": ".md",
+                  "summary": "Vulnerability Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "MEMORY-SAFETY-AND-BINARY.md",
+                  "path": ".agents/skills/security-audit/MEMORY-SAFETY-AND-BINARY.md",
+                  "size": 10614,
+                  "extension": ".md",
+                  "summary": "Memory Safety, Binary, and Kernel Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "PROTOCOLS-RPC-AND-MESSAGING.md",
+                  "path": ".agents/skills/security-audit/PROTOCOLS-RPC-AND-MESSAGING.md",
+                  "size": 7564,
+                  "extension": ".md",
+                  "summary": "Protocols, RPC, and Messaging Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "RECONNAISSANCE.md",
+                  "path": ".agents/skills/security-audit/RECONNAISSANCE.md",
+                  "size": 16058,
+                  "extension": ".md",
+                  "summary": "Reconnaissance"
+                },
+                {
+                  "type": "file",
+                  "name": "report-schema.json",
+                  "path": ".agents/skills/security-audit/report-schema.json",
+                  "size": 14955,
+                  "extension": ".json",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+                  "path": ".agents/skills/security-audit/RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+                  "size": 7554,
+                  "extension": ".md",
+                  "summary": "Resource Exhaustion and Availability Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "SKILL.md",
+                  "path": ".agents/skills/security-audit/SKILL.md",
+                  "size": 22218,
+                  "extension": ".md",
+                  "summary": "Security Audit"
+                },
+                {
+                  "type": "file",
+                  "name": "SUPPLY-CHAIN-AND-RELEASE.md",
+                  "path": ".agents/skills/security-audit/SUPPLY-CHAIN-AND-RELEASE.md",
+                  "size": 7331,
+                  "extension": ".md",
+                  "summary": "Supply Chain and Release Hunting"
+                },
+                {
+                  "type": "file",
+                  "name": "validate-coverage-ledger.cjs",
+                  "path": ".agents/skills/security-audit/validate-coverage-ledger.cjs",
+                  "size": 34394,
+                  "extension": ".cjs",
+                  "summary": "!/usr/bin/env node"
+                },
+                {
+                  "type": "file",
+                  "name": "validate-coverage-ledger.test.cjs",
+                  "path": ".agents/skills/security-audit/validate-coverage-ledger.test.cjs",
+                  "size": 29223,
+                  "extension": ".cjs",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "validate-findings.cjs",
+                  "path": ".agents/skills/security-audit/validate-findings.cjs",
+                  "size": 29579,
+                  "extension": ".cjs",
+                  "summary": "!/usr/bin/env node"
+                },
+                {
+                  "type": "file",
+                  "name": "validate-findings.test.cjs",
+                  "path": ".agents/skills/security-audit/validate-findings.test.cjs",
+                  "size": 27036,
+                  "extension": ".cjs",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "VALIDATION-AND-REPORTING.md",
+                  "path": ".agents/skills/security-audit/VALIDATION-AND-REPORTING.md",
+                  "size": 18029,
+                  "extension": ".md",
+                  "summary": "Validation, Structured Output, Verification, and Reporting"
+                },
+                {
+                  "type": "file",
+                  "name": "WEB-PROTOCOL-AND-AUTH.md",
+                  "path": ".agents/skills/security-audit/WEB-PROTOCOL-AND-AUTH.md",
+                  "size": 12405,
+                  "extension": ".md",
+                  "summary": "HTTP-Protocol and Authentication Hunting"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "directory",
+      "name": "documentacion",
+      "path": "documentacion",
+      "children": [
+        {
+          "type": "file",
+          "name": "plan_maestro_de_desarrollo_f1.md",
+          "path": "documentacion/plan_maestro_de_desarrollo_f1.md",
+          "size": 14879,
+          "extension": ".md",
+          "summary": "Master Game Document: RPG Cooperativo WLAN / Futuro MMORPG Cloud"
+        },
+        {
+          "type": "file",
+          "name": "plan_maestro_de_desarrollo_f2.md",
+          "path": "documentacion/plan_maestro_de_desarrollo_f2.md",
+          "size": 9039,
+          "extension": ".md",
+          "summary": "Master Game Document & Bootstrap: RPG Cooperativo WLAN / Futuro MMORPG Cloud"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "GEMINI.md",
+      "path": "GEMINI.md",
+      "size": 1863,
+      "extension": ".md",
+      "summary": "Reglas del Proyecto: RPG Cooperativo WLAN / MMORPG"
+    },
+    {
+      "type": "directory",
+      "name": "scripts",
+      "path": "scripts",
+      "children": [
+        {
+          "type": "file",
+          "name": "grafify.js",
+          "path": "scripts/grafify.js",
+          "size": 5341,
+          "extension": ".js",
+          "summary": "!/usr/bin/env node"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "type": "file",
+      "name": "SKILL.md",
+      "path": ".agents/skills/game-netcode/SKILL.md",
+      "size": 1881,
+      "extension": ".md",
+      "summary": "Game Netcode & Multiplayer 3D Web Guide"
+    },
+    {
+      "type": "file",
+      "name": "SKILL.md",
+      "path": ".agents/skills/grafify/SKILL.md",
+      "size": 1193,
+      "extension": ".md",
+      "summary": "Skill: Grafify (Navegación e Índice Rápido del Proyecto)"
+    },
+    {
+      "type": "file",
+      "name": "AI-AND-LLM.md",
+      "path": ".agents/skills/security-audit/AI-AND-LLM.md",
+      "size": 10700,
+      "extension": ".md",
+      "summary": "AI, LLM, and Agent Hunting"
+    },
+    {
+      "type": "file",
+      "name": "ATTACK-CLASSES.md",
+      "path": ".agents/skills/security-audit/ATTACK-CLASSES.md",
+      "size": 15825,
+      "extension": ".md",
+      "summary": "Attack Classes"
+    },
+    {
+      "type": "file",
+      "name": "CLIENT-SIDE.md",
+      "path": ".agents/skills/security-audit/CLIENT-SIDE.md",
+      "size": 8677,
+      "extension": ".md",
+      "summary": "Client-Side and Browser Hunting"
+    },
+    {
+      "type": "file",
+      "name": "CLOUD-AND-DEPLOYMENT.md",
+      "path": ".agents/skills/security-audit/CLOUD-AND-DEPLOYMENT.md",
+      "size": 8377,
+      "extension": ".md",
+      "summary": "Cloud and Deployment Hunting"
+    },
+    {
+      "type": "file",
+      "name": "DATA-ISOLATION-AND-LIFECYCLE.md",
+      "path": ".agents/skills/security-audit/DATA-ISOLATION-AND-LIFECYCLE.md",
+      "size": 7882,
+      "extension": ".md",
+      "summary": "Data Isolation and Lifecycle Hunting"
+    },
+    {
+      "type": "file",
+      "name": "DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+      "path": ".agents/skills/security-audit/DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+      "size": 8828,
+      "extension": ".md",
+      "summary": "Desktop, Mobile, and Local IPC Hunting"
+    },
+    {
+      "type": "file",
+      "name": "HUNTING.md",
+      "path": ".agents/skills/security-audit/HUNTING.md",
+      "size": 22697,
+      "extension": ".md",
+      "summary": "Vulnerability Hunting"
+    },
+    {
+      "type": "file",
+      "name": "MEMORY-SAFETY-AND-BINARY.md",
+      "path": ".agents/skills/security-audit/MEMORY-SAFETY-AND-BINARY.md",
+      "size": 10614,
+      "extension": ".md",
+      "summary": "Memory Safety, Binary, and Kernel Hunting"
+    },
+    {
+      "type": "file",
+      "name": "PROTOCOLS-RPC-AND-MESSAGING.md",
+      "path": ".agents/skills/security-audit/PROTOCOLS-RPC-AND-MESSAGING.md",
+      "size": 7564,
+      "extension": ".md",
+      "summary": "Protocols, RPC, and Messaging Hunting"
+    },
+    {
+      "type": "file",
+      "name": "RECONNAISSANCE.md",
+      "path": ".agents/skills/security-audit/RECONNAISSANCE.md",
+      "size": 16058,
+      "extension": ".md",
+      "summary": "Reconnaissance"
+    },
+    {
+      "type": "file",
+      "name": "report-schema.json",
+      "path": ".agents/skills/security-audit/report-schema.json",
+      "size": 14955,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+      "path": ".agents/skills/security-audit/RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+      "size": 7554,
+      "extension": ".md",
+      "summary": "Resource Exhaustion and Availability Hunting"
+    },
+    {
+      "type": "file",
+      "name": "SKILL.md",
+      "path": ".agents/skills/security-audit/SKILL.md",
+      "size": 22218,
+      "extension": ".md",
+      "summary": "Security Audit"
+    },
+    {
+      "type": "file",
+      "name": "SUPPLY-CHAIN-AND-RELEASE.md",
+      "path": ".agents/skills/security-audit/SUPPLY-CHAIN-AND-RELEASE.md",
+      "size": 7331,
+      "extension": ".md",
+      "summary": "Supply Chain and Release Hunting"
+    },
+    {
+      "type": "file",
+      "name": "validate-coverage-ledger.cjs",
+      "path": ".agents/skills/security-audit/validate-coverage-ledger.cjs",
+      "size": 34394,
+      "extension": ".cjs",
+      "summary": "!/usr/bin/env node"
+    },
+    {
+      "type": "file",
+      "name": "validate-coverage-ledger.test.cjs",
+      "path": ".agents/skills/security-audit/validate-coverage-ledger.test.cjs",
+      "size": 29223,
+      "extension": ".cjs",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "validate-findings.cjs",
+      "path": ".agents/skills/security-audit/validate-findings.cjs",
+      "size": 29579,
+      "extension": ".cjs",
+      "summary": "!/usr/bin/env node"
+    },
+    {
+      "type": "file",
+      "name": "validate-findings.test.cjs",
+      "path": ".agents/skills/security-audit/validate-findings.test.cjs",
+      "size": 27036,
+      "extension": ".cjs",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "VALIDATION-AND-REPORTING.md",
+      "path": ".agents/skills/security-audit/VALIDATION-AND-REPORTING.md",
+      "size": 18029,
+      "extension": ".md",
+      "summary": "Validation, Structured Output, Verification, and Reporting"
+    },
+    {
+      "type": "file",
+      "name": "WEB-PROTOCOL-AND-AUTH.md",
+      "path": ".agents/skills/security-audit/WEB-PROTOCOL-AND-AUTH.md",
+      "size": 12405,
+      "extension": ".md",
+      "summary": "HTTP-Protocol and Authentication Hunting"
+    },
+    {
+      "type": "file",
+      "name": "plan_maestro_de_desarrollo_f1.md",
+      "path": "documentacion/plan_maestro_de_desarrollo_f1.md",
+      "size": 14879,
+      "extension": ".md",
+      "summary": "Master Game Document: RPG Cooperativo WLAN / Futuro MMORPG Cloud"
+    },
+    {
+      "type": "file",
+      "name": "plan_maestro_de_desarrollo_f2.md",
+      "path": "documentacion/plan_maestro_de_desarrollo_f2.md",
+      "size": 9039,
+      "extension": ".md",
+      "summary": "Master Game Document & Bootstrap: RPG Cooperativo WLAN / Futuro MMORPG Cloud"
+    },
+    {
+      "type": "file",
+      "name": "GEMINI.md",
+      "path": "GEMINI.md",
+      "size": 1863,
+      "extension": ".md",
+      "summary": "Reglas del Proyecto: RPG Cooperativo WLAN / MMORPG"
+    },
+    {
+      "type": "file",
+      "name": "grafify.js",
+      "path": "scripts/grafify.js",
+      "size": 5341,
+      "extension": ".js",
+      "summary": "!/usr/bin/env node"
+    }
+  ]
+}
