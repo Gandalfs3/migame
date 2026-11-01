@@ -1,5 +1,6 @@
 import { WebSocket } from 'ws';
-import { PlayerDTO, InputState, PLAYER_SPEED, MAP_BOUND } from '@migame/common';
+import { PlayerDTO, InputState, PLAYER_SPEED, PLAYER_RADIUS } from '@migame/common';
+import { MapManager } from './MapManager.js';
 
 export class Player {
   public id: string;
@@ -22,7 +23,7 @@ export class Player {
     this.lastInputTime = Date.now();
   }
 
-  public update(dt: number): void {
+  public update(dt: number, mapManager: MapManager): void {
     let moveX = 0;
     let moveZ = 0;
 
@@ -36,12 +37,13 @@ export class Player {
       const normX = moveX / length;
       const normZ = moveZ / length;
 
-      let newX = this.x + normX * PLAYER_SPEED * dt;
-      let newZ = this.z + normZ * PLAYER_SPEED * dt;
+      const proposedX = this.x + normX * PLAYER_SPEED * dt;
+      const proposedZ = this.z + normZ * PLAYER_SPEED * dt;
 
-      // Colisión contra límites del mapa
-      this.x = Math.max(-MAP_BOUND, Math.min(MAP_BOUND, newX));
-      this.z = Math.max(-MAP_BOUND, Math.min(MAP_BOUND, newZ));
+      // Resolver colisiones con obstáculos y límites de mapa
+      const resolved = mapManager.resolveCollisions(proposedX, proposedZ, PLAYER_RADIUS);
+      this.x = resolved.x;
+      this.z = resolved.z;
       this.rotation = Math.atan2(normX, normZ);
     }
   }

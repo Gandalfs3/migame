@@ -3,11 +3,14 @@ import { HUD } from './ui/HUD.js';
 import { NetworkClient } from './network/NetworkClient.js';
 import { InputManager } from './input/InputManager.js';
 import { PlayerEntity } from './entities/PlayerEntity.js';
+import { ObstacleRenderer } from './entities/ObstacleRenderer.js';
 import { DEFAULT_CLIENT_PORT } from '@migame/common';
 
 const engine = new Engine('canvas-container');
 const hud = new HUD();
+const obstacleRenderer = new ObstacleRenderer(engine.scene);
 const network = new NetworkClient();
+
 const inputManager = new InputManager((state) => {
   network.sendInput(state);
 });
@@ -21,6 +24,12 @@ network.onConnectionChange = (connected) => {
 network.onWelcome = (msg) => {
   hud.setPlayerId(msg.playerId);
   hud.setLanUrl(msg.hostIp, DEFAULT_CLIENT_PORT);
+
+  // Renderizar obstáculos del mapa recibidos del servidor
+  if (msg.obstacles && Array.isArray(msg.obstacles)) {
+    obstacleRenderer.renderObstacles(msg.obstacles);
+    console.log(`[Cliente] ${msg.obstacles.length} obstáculos generados en la escena.`);
+  }
 };
 
 network.onWorldState = (msg) => {
@@ -64,7 +73,7 @@ function renderLoop(): void {
   // Cámara suave siguiendo al jugador local
   if (network.localPlayerId && playerEntities.has(network.localPlayerId)) {
     const localEntity = playerEntities.get(network.localPlayerId)!;
-    engine.followTarget(localEntity.group.position.x, localEntity.group.position.z, 0.1);
+    engine.followTarget(localEntity.group.position.x, localEntity.group.position.z, 0.08);
   }
 
   engine.render();

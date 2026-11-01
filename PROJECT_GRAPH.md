@@ -1,6 +1,6 @@
 # Project Knowledge Graph (Grafify)
 
-> **Generado automáticamente**: 2026-11-01T17:25:45.330Z
+> **Generado automáticamente**: 2026-11-01T17:35:58.513Z
 > **Propósito**: Mapa de alta velocidad para que agentes de IA y desarrolladores ubiquen componentes, flujos de red y responsabilidades sin tener que leer todo el proyecto.
 
 ## 1. Índice Rápido de Componentes y Archivos
@@ -37,6 +37,7 @@
 | [`packages/client/index.html`](file:///packages/client/index.html) | `.html` | Source / Asset file |
 | [`packages/client/package.json`](file:///packages/client/package.json) | `.json` | Source / Asset file |
 | [`packages/client/src/core/Engine.ts`](file:///packages/client/src/core/Engine.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/entities/ObstacleRenderer.ts`](file:///packages/client/src/entities/ObstacleRenderer.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/entities/PlayerEntity.ts`](file:///packages/client/src/entities/PlayerEntity.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/input/InputManager.ts`](file:///packages/client/src/input/InputManager.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/main.ts`](file:///packages/client/src/main.ts) | `.ts` | Source / Asset file |
@@ -54,6 +55,7 @@
 | [`packages/common/tsconfig.tsbuildinfo`](file:///packages/common/tsconfig.tsbuildinfo) | `.tsbuildinfo` | Source / Asset file |
 | [`packages/server/package.json`](file:///packages/server/package.json) | `.json` | Source / Asset file |
 | [`packages/server/src/game/GameWorld.ts`](file:///packages/server/src/game/GameWorld.ts) | `.ts` | Source / Asset file |
+| [`packages/server/src/game/MapManager.ts`](file:///packages/server/src/game/MapManager.ts) | `.ts` | Source / Asset file |
 | [`packages/server/src/game/Player.ts`](file:///packages/server/src/game/Player.ts) | `.ts` | Source / Asset file |
 | [`packages/server/src/index.ts`](file:///packages/server/src/index.ts) | `.ts` | Source / Asset file |
 | [`packages/server/src/network/NetworkServer.ts`](file:///packages/server/src/network/NetworkServer.ts) | `.ts` | Source / Asset file |

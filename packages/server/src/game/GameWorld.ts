@@ -1,11 +1,14 @@
 import { WebSocket } from 'ws';
 import { Player } from './Player.js';
+import { MapManager } from './MapManager.js';
 import {
   TICK_RATE,
   TICK_INTERVAL_MS,
   PLAYER_COLORS,
+  PLAYER_RADIUS,
   MessageType,
-  WorldStateMessage
+  WorldStateMessage,
+  ObstacleDTO
 } from '@migame/common';
 
 export class GameWorld {
@@ -15,13 +18,19 @@ export class GameWorld {
   private intervalId: NodeJS.Timeout | null = null;
   private lastTickTime: number = performance.now();
   private onBroadcast?: (message: unknown) => void;
+  public mapManager: MapManager;
 
   constructor(broadcastCallback?: (message: unknown) => void) {
     this.onBroadcast = broadcastCallback;
+    this.mapManager = new MapManager();
   }
 
   public setBroadcastCallback(cb: (message: unknown) => void): void {
     this.onBroadcast = cb;
+  }
+
+  public getObstacles(): ObstacleDTO[] {
+    return this.mapManager.obstacles;
   }
 
   public createPlayer(ws: WebSocket): Player {
@@ -30,11 +39,14 @@ export class GameWorld {
     const color = PLAYER_COLORS[colorIndex];
 
     const spawnAngle = Math.random() * Math.PI * 2;
-    const spawnDist = 2 + Math.random() * 4;
-    const x = Math.cos(spawnAngle) * spawnDist;
-    const z = Math.sin(spawnAngle) * spawnDist;
+    const spawnDist = 1.5 + Math.random() * 3;
+    let spawnX = Math.cos(spawnAngle) * spawnDist;
+    let spawnZ = Math.sin(spawnAngle) * spawnDist;
 
-    const player = new Player(id, ws, color, x, z);
+    // Asegurar que no aparezca dentro de un obstáculo
+    const safePos = this.mapManager.resolveCollisions(spawnX, spawnZ, PLAYER_RADIUS * 1.5);
+
+    const player = new Player(id, ws, color, safePos.x, safePos.z);
     this.players.set(id, player);
     return player;
   }
@@ -59,7 +71,7 @@ export class GameWorld {
       this.tick();
     }, TICK_INTERVAL_MS);
 
-    console.log(`[GameWorld] Loop autoritativo iniciado a ${TICK_RATE} ticks/seg (${TICK_INTERVAL_MS.toFixed(2)}ms).`);
+    console.log(`[GameWorld] Loop autoritativo con colisiones iniciado a ${TICK_RATE} ticks/seg.`);
   }
 
   public stop(): void {
@@ -75,9 +87,9 @@ export class GameWorld {
     this.lastTickTime = now;
     this.tickCount++;
 
-    // Actualizar movimiento de jugadores
+    // Actualizar movimiento y resolver colisiones en el servidor
     for (const player of this.players.values()) {
-      player.update(dt);
+      player.update(dt, this.mapManager);
     }
 
     // Emitir WorldState consolidado

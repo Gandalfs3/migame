@@ -1,4 +1,4 @@
-import { PlayerDTO, InputState } from '../types/index.js';
+import { PlayerDTO, InputState, ObstacleDTO } from '../types/index.js';
 
 export enum MessageType {
   WELCOME = 'welcome',
@@ -17,6 +17,7 @@ export interface WelcomeMessage {
   port: number;
   color: string;
   mapBound: number;
+  obstacles: ObstacleDTO[];
 }
 
 export interface InputMessage extends InputState {

@@ -51,7 +51,6 @@ export class NetworkServer {
   }
 
   private setupRoutes(): void {
-    // CORS headers para permitir requests del cliente Vite
     this.app.use((req, res, next) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -64,7 +63,8 @@ export class NetworkServer {
         localIp: this.localIp,
         port: this.port,
         playersOnline: this.gameWorld.getPlayerCount(),
-        tickRate: TICK_RATE
+        tickRate: TICK_RATE,
+        obstaclesCount: this.gameWorld.getObstacles().length
       });
     });
   }
@@ -74,14 +74,15 @@ export class NetworkServer {
       const player = this.gameWorld.createPlayer(ws);
       console.log(`[NetworkServer] Conexión de ${player.id} (${req.socket.remoteAddress}). Online: ${this.gameWorld.getPlayerCount()}`);
 
-      // Enviar bienvenida
+      // Enviar bienvenida con la lista de obstáculos autoritativos
       const welcome: WelcomeMessage = {
         type: MessageType.WELCOME,
         playerId: player.id,
         hostIp: this.localIp,
         port: this.port,
         color: player.color,
-        mapBound: MAP_BOUND
+        mapBound: MAP_BOUND,
+        obstacles: this.gameWorld.getObstacles()
       };
       ws.send(JSON.stringify(welcome));
 
@@ -140,7 +141,7 @@ export class NetworkServer {
     return new Promise((resolve) => {
       this.httpServer.listen(this.port, '0.0.0.0', () => {
         console.log('================================================================');
-        console.log(' RPG COOPERATIVO WLAN - SERVIDOR TYPESCRIPT AUTORITATIVO (FASE 1)');
+        console.log(' RPG COOPERATIVO WLAN - SERVIDOR CON COLISIONES (FASE 2)       ');
         console.log('================================================================');
         console.log(` Servidor local escuchando en: http://localhost:${this.port}`);
         console.log(` Para jugar con tu familia en la misma red Wi-Fi:`);
