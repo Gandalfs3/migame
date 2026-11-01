@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-01T16:59:23.011Z",
-  "totalFiles": 26,
+  "generatedAt": "2026-11-01T17:09:23.709Z",
+  "totalFiles": 30,
   "tree": [
     {
       "type": "directory",
@@ -214,6 +214,14 @@
       ]
     },
     {
+      "type": "file",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "size": 341,
+      "extension": "",
+      "summary": "Dependencias"
+    },
+    {
       "type": "directory",
       "name": "documentacion",
       "path": "documentacion",
@@ -245,6 +253,29 @@
       "summary": "Reglas del Proyecto: RPG Cooperativo WLAN / MMORPG"
     },
     {
+      "type": "file",
+      "name": "package.json",
+      "path": "package.json",
+      "size": 329,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "directory",
+      "name": "public",
+      "path": "public",
+      "children": [
+        {
+          "type": "file",
+          "name": "index.html",
+          "path": "public/index.html",
+          "size": 17118,
+          "extension": ".html",
+          "summary": "Source / Asset file"
+        }
+      ]
+    },
+    {
       "type": "directory",
       "name": "scripts",
       "path": "scripts",
@@ -258,6 +289,14 @@
           "summary": "!/usr/bin/env node"
         }
       ]
+    },
+    {
+      "type": "file",
+      "name": "server.js",
+      "path": "server.js",
+      "size": 6386,
+      "extension": ".js",
+      "summary": "Source / Asset file"
     }
   ],
   "files": [
@@ -439,6 +478,14 @@
     },
     {
       "type": "file",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "size": 341,
+      "extension": "",
+      "summary": "Dependencias"
+    },
+    {
+      "type": "file",
       "name": "plan_maestro_de_desarrollo_f1.md",
       "path": "documentacion/plan_maestro_de_desarrollo_f1.md",
       "size": 14879,
@@ -463,11 +510,35 @@
     },
     {
       "type": "file",
+      "name": "package.json",
+      "path": "package.json",
+      "size": 329,
+      "extension": ".json",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "index.html",
+      "path": "public/index.html",
+      "size": 17118,
+      "extension": ".html",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "grafify.js",
       "path": "scripts/grafify.js",
       "size": 5341,
       "extension": ".js",
       "summary": "!/usr/bin/env node"
+    },
+    {
+      "type": "file",
+      "name": "server.js",
+      "path": "server.js",
+      "size": 6386,
+      "extension": ".js",
+      "summary": "Source / Asset file"
     }
   ]
 }

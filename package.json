@@ -1,0 +1,15 @@
+{
+  "name": "migame-bootstrap",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Demo multijugador autoritativa WLAN - Fase Cero",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "grafify": "node scripts/grafify.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.1"
+  }
+}
