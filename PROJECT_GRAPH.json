@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-01T17:59:58.839Z",
-  "totalFiles": 66,
+  "generatedAt": "2026-11-01T18:11:54.084Z",
+  "totalFiles": 67,
   "tree": [
     {
       "type": "directory",
@@ -342,6 +342,14 @@
                       "size": 6058,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "RangeIndicator.ts",
+                      "path": "packages/client/src/entities/RangeIndicator.ts",
+                      "size": 2107,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
                     }
                   ]
                 },
@@ -364,7 +372,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 6891,
+                  "size": 7492,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -392,7 +400,7 @@
                       "type": "file",
                       "name": "CharacterLoginModal.ts",
                       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-                      "size": 5749,
+                      "size": 3530,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -436,7 +444,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86093,
+              "size": 86311,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -591,7 +599,7 @@
                       "type": "file",
                       "name": "CombatSystem.ts",
                       "path": "packages/server/src/game/CombatSystem.ts",
-                      "size": 4321,
+                      "size": 6544,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -981,6 +989,14 @@
     },
     {
       "type": "file",
+      "name": "RangeIndicator.ts",
+      "path": "packages/client/src/entities/RangeIndicator.ts",
+      "size": 2107,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "InputManager.ts",
       "path": "packages/client/src/input/InputManager.ts",
       "size": 2930,
@@ -991,7 +1007,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 6891,
+      "size": 7492,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1007,7 +1023,7 @@
       "type": "file",
       "name": "CharacterLoginModal.ts",
       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-      "size": 5749,
+      "size": 3530,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1047,7 +1063,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86093,
+      "size": 86311,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -1143,7 +1159,7 @@
       "type": "file",
       "name": "CombatSystem.ts",
       "path": "packages/server/src/game/CombatSystem.ts",
-      "size": 4321,
+      "size": 6544,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },

@@ -4,19 +4,21 @@ import { HUD } from './ui/HUD.js';
 import { CombatHUD } from './ui/CombatHUD.js';
 import { FloatingTextManager } from './ui/FloatingText.js';
 import { CharacterLoginModal } from './ui/CharacterLoginModal.js';
+import { RangeIndicator } from './entities/RangeIndicator.js';
 import { AssetManager } from './core/AssetManager.js';
 import { NetworkClient } from './network/NetworkClient.js';
 import { InputManager } from './input/InputManager.js';
 import { PlayerEntity } from './entities/PlayerEntity.js';
 import { MonsterEntity } from './entities/MonsterEntity.js';
 import { ObstacleRenderer } from './entities/ObstacleRenderer.js';
-import { DEFAULT_CLIENT_PORT } from '@migame/common';
+import { DEFAULT_CLIENT_PORT, PlayerClass } from '@migame/common';
 
 const engine = new Engine('canvas-container');
 const hud = new HUD();
 const combatHud = new CombatHUD();
 const floatingText = new FloatingTextManager();
 const obstacleRenderer = new ObstacleRenderer(engine.scene);
+const rangeIndicator = new RangeIndicator(engine.scene);
 const assetManager = new AssetManager();
 const network = new NetworkClient();
 
@@ -27,11 +29,11 @@ const inputManager = new InputManager((state) => {
 const playerEntities = new Map<string, PlayerEntity>();
 const monsterEntities = new Map<string, MonsterEntity>();
 let selectedTargetId: string | null = null;
+let currentLocalClass: PlayerClass = 'WARRIOR';
 
-// Modal de Creación / Login de Personaje
-new CharacterLoginModal((name, chosenClass) => {
-  network.sendLogin(name, chosenClass);
-  combatHud.setClass(chosenClass);
+// Modal de Inicio Simplificado (solo pide nombre para entrar directo)
+new CharacterLoginModal((name) => {
+  network.sendLogin(name, currentLocalClass);
 });
 
 // Conexión y Bienvenida
@@ -53,9 +55,11 @@ network.onLevelUp = (msg) => {
   combatHud.showLevelUp(msg.playerName, msg.newLevel);
 };
 
-// Cambio de Clase y Habilidades
+// Cambio de Clase dinámico durante la partida
 combatHud.onSelectClass = (classType) => {
+  currentLocalClass = classType;
   network.selectClass(classType);
+  rangeIndicator.setClass(classType);
 };
 
 combatHud.onCastSpell = (spellId) => {
@@ -93,6 +97,11 @@ network.onWorldState = (msg) => {
 
     if (p.id === network.localPlayerId) {
       combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold);
+      if (currentLocalClass !== p.classType) {
+        currentLocalClass = p.classType;
+        combatHud.setClass(p.classType);
+        rangeIndicator.setClass(p.classType);
+      }
     }
   }
 
@@ -165,7 +174,7 @@ function handlePointerSelection(event: MouseEvent | TouchEvent) {
 
   for (const [id, player] of playerEntities.entries()) {
     if (id !== network.localPlayerId && player.health > 0) {
-      candidates.push({ id, name: player.id, obj: player.group, isMonster: false });
+      candidates.push({ id, name: player.name || player.id, obj: player.group, isMonster: false });
     }
   }
 
@@ -230,6 +239,9 @@ function renderLoop(): void {
   if (network.localPlayerId && playerEntities.has(network.localPlayerId)) {
     const localEntity = playerEntities.get(network.localPlayerId)!;
     engine.followTarget(localEntity.group.position.x, localEntity.group.position.z, 0.08);
+
+    // Actualizar posición del círculo indicador de alcance
+    rangeIndicator.update(localEntity.group.position.x, localEntity.group.position.z);
   }
 
   floatingText.update(engine.camera);

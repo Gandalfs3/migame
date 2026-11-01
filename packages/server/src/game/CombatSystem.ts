@@ -23,6 +23,40 @@ export class CombatSystem {
 
     const feedbacks: CombatFeedback[] = [];
 
+    // Helper: encontrar el monstruo vivo más cercano dentro de un rango
+    const findClosestMonster = (maxRange: number): Monster | null => {
+      let closest: Monster | null = null;
+      let closestDist = maxRange;
+      for (const m of monsters.values()) {
+        if (m.state === 'DEAD') continue;
+        const d = Math.hypot(m.x - caster.x, m.z - caster.z);
+        if (d <= closestDist) {
+          closestDist = d;
+          closest = m;
+        }
+      }
+      return closest;
+    };
+
+    // Helper: encontrar el aliado (o uno mismo) con menor porcentaje de vida dentro del rango
+    const findMostInjuredAlly = (maxRange: number): Player => {
+      let bestTarget: Player = caster;
+      let lowestPct = caster.health / caster.maxHealth;
+
+      for (const p of players.values()) {
+        if (p.health <= 0) continue;
+        const d = Math.hypot(p.x - caster.x, p.z - caster.z);
+        if (d <= maxRange) {
+          const pct = p.health / p.maxHealth;
+          if (pct < lowestPct) {
+            lowestPct = pct;
+            bestTarget = p;
+          }
+        }
+      }
+      return bestTarget;
+    };
+
     // 1. Hechizos de Área (AOE)
     if (spell.isAoe) {
       const radius = spell.aoeRadius || 6.0;
@@ -32,7 +66,7 @@ export class CombatSystem {
           if (monster.state === 'DEAD') continue;
           const d = Math.hypot(monster.x - caster.x, monster.z - caster.z);
           if (d <= radius) {
-            monster.addThreat(caster.id, 100);
+            monster.addThreat(caster.id, 120);
             feedbacks.push({
               targetId: monster.id,
               amount: 0,
@@ -43,6 +77,7 @@ export class CombatSystem {
           }
         }
       } else if (spell.heal) {
+        // Santuario: Cura a todos los aliados cercanos
         for (const ally of players.values()) {
           if (ally.health <= 0) continue;
           const d = Math.hypot(ally.x - caster.x, ally.z - caster.z);
@@ -58,10 +93,18 @@ export class CombatSystem {
           }
         }
       } else if (spell.damage) {
+        // Meteoro de Mago: apunta al objetivo seleccionado o al monstruo más cercano
         let centerPoint = { x: caster.x, z: caster.z };
+        let aimTarget: Monster | null = null;
+
         if (targetId && monsters.has(targetId)) {
-          const targetMon = monsters.get(targetId)!;
-          centerPoint = { x: targetMon.x, z: targetMon.z };
+          aimTarget = monsters.get(targetId)!;
+        } else {
+          aimTarget = findClosestMonster(spell.range);
+        }
+
+        if (aimTarget && aimTarget.state !== 'DEAD') {
+          centerPoint = { x: aimTarget.x, z: aimTarget.z };
         }
 
         for (const monster of monsters.values()) {
@@ -88,15 +131,22 @@ export class CombatSystem {
       return feedbacks;
     }
 
-    // 2. Hechizos de Curación Directa
+    // 2. Hechizos de Curación Directa (Luz Sanadora de Clérigo)
     if (spell.heal) {
-      let healTarget = caster;
+      let healTarget: Player | null = null;
+
+      // Si el jugador seleccionó manualmente a un aliado en rango:
       if (targetId && players.has(targetId)) {
-        const potentialTarget = players.get(targetId)!;
-        const dist = Math.hypot(potentialTarget.x - caster.x, potentialTarget.z - caster.z);
-        if (dist <= spell.range && potentialTarget.health > 0) {
-          healTarget = potentialTarget;
+        const potential = players.get(targetId)!;
+        const dist = Math.hypot(potential.x - caster.x, potential.z - caster.z);
+        if (dist <= spell.range && potential.health > 0) {
+          healTarget = potential;
         }
+      }
+
+      // Si no seleccionó aliado, o está fuera de rango: Sanar al familiar más herido en rango
+      if (!healTarget) {
+        healTarget = findMostInjuredAlly(spell.range);
       }
 
       const healedAmount = healTarget.heal(spell.heal);
@@ -111,31 +161,44 @@ export class CombatSystem {
       return feedbacks;
     }
 
-    // 3. Hechizos de Daño a Objetivo Único
+    // 3. Hechizos de Daño a Objetivo Único (Guerrero Melee / Clérigo Smite / Mago Proyectil)
     if (spell.damage) {
-      if (!targetId || !monsters.has(targetId)) {
-        return [];
+      let finalTarget: Monster | null = null;
+
+      // Si hay un monstruo seleccionado válido y en rango:
+      if (targetId && monsters.has(targetId)) {
+        const candidate = monsters.get(targetId)!;
+        if (candidate.state !== 'DEAD') {
+          const dist = Math.hypot(candidate.x - caster.x, candidate.z - caster.z);
+          if (dist <= spell.range) {
+            finalTarget = candidate;
+          }
+        }
       }
 
-      const targetMonster = monsters.get(targetId)!;
-      if (targetMonster.state === 'DEAD') return [];
+      // Para el Guerrero (o si no hay objetivo seleccionado en rango):
+      // Atacar automáticamente al monstruo más cercano dentro del rango de alcance
+      if (!finalTarget) {
+        finalTarget = findClosestMonster(spell.range);
+      }
 
-      const dist = Math.hypot(targetMonster.x - caster.x, targetMonster.z - caster.z);
-      if (dist > spell.range) return [];
+      if (!finalTarget) {
+        return []; // No hay ningún monstruo en rango de ataque
+      }
 
-      const result = targetMonster.takeDamage(spell.damage, caster.id);
+      const result = finalTarget.takeDamage(spell.damage, caster.id);
       caster.setSpellCooldown(spell.id, spell.cooldownMs);
 
       feedbacks.push({
-        targetId: targetMonster.id,
+        targetId: finalTarget.id,
         amount: spell.damage,
         isHeal: false,
-        x: targetMonster.x,
-        z: targetMonster.z
+        x: finalTarget.x,
+        z: finalTarget.z
       });
 
       if (result.died) {
-        onMonsterKilled?.(targetMonster, result.xp, result.gold, caster);
+        onMonsterKilled?.(finalTarget, result.xp, result.gold, caster);
       }
     }
 
