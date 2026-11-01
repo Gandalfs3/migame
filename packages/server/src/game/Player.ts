@@ -30,6 +30,7 @@ export class Player {
   public targetId: string | null = null;
   public cooldowns: Map<string, number> = new Map();
   public respawnTimer: number = 0;
+  public lastClassSwitchTime: number = 0;
 
   constructor(
     id: string,
@@ -74,11 +75,22 @@ export class Player {
     this.health = Math.min(this.maxHealth, health > 0 ? health : this.maxHealth);
   }
 
-  public setClass(newClass: PlayerClass): void {
+  public canSwitchClass(): boolean {
+    if (this.lastClassSwitchTime === 0) return true;
+    return Date.now() - this.lastClassSwitchTime >= 6000;
+  }
+
+  public setClass(newClass: PlayerClass, bypassCooldown: boolean = false): boolean {
+    if (!bypassCooldown && !this.canSwitchClass()) {
+      return false;
+    }
+
     this.classType = newClass;
+    this.lastClassSwitchTime = Date.now();
     const baseClassHealth = CLASS_STATS[newClass].maxHealth;
     this.maxHealth = baseClassHealth + (this.level - 1) * 15;
     this.health = Math.min(this.maxHealth, this.health);
+    return true;
   }
 
   public addExperience(amount: number): boolean {

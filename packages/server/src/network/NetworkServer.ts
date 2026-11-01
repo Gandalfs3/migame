@@ -111,9 +111,11 @@ export class NetworkServer {
             player.lastInputTime = Date.now();
           } else if (msg.type === MessageType.SELECT_CLASS) {
             if (msg.classType === 'WARRIOR' || msg.classType === 'CLERIC' || msg.classType === 'MAGE') {
-              player.setClass(msg.classType);
-              this.gameWorld.savePlayer(player);
-              console.log(`[NetworkServer] ${player.name} cambió su clase a ${msg.classType}`);
+              const changed = player.setClass(msg.classType);
+              if (changed) {
+                this.gameWorld.savePlayer(player);
+                console.log(`[NetworkServer] ${player.name} cambió su clase a ${msg.classType}`);
+              }
             }
           } else if (msg.type === MessageType.SELECT_TARGET) {
             player.targetId = msg.targetId || null;

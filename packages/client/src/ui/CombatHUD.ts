@@ -1,4 +1,4 @@
-import { PlayerClass, Spell, SPELLS, getXpForNextLevel } from '@migame/common';
+import { PlayerClass, Spell, SPELLS, getXpForNextLevel, CLASS_SWITCH_COOLDOWN_MS } from '@migame/common';
 
 export class CombatHUD {
   private container: HTMLElement;
@@ -10,6 +10,7 @@ export class CombatHUD {
 
   private currentClass: PlayerClass = 'WARRIOR';
   private cooldowns: Map<string, { duration: number; endsAt: number }> = new Map();
+  private classSwitchEndsAt: number = 0;
 
   public onSelectClass?: (classType: PlayerClass) => void;
   public onCastSpell?: (spellId: string) => void;
@@ -32,7 +33,6 @@ export class CombatHUD {
     this.playerVitalsEl = this.createPlayerVitals();
     this.levelUpBannerEl = this.createLevelUpBanner();
 
-    // Insertar el selector de clases en su slot dedicado en el header si existe
     const classSlot = document.getElementById('class-selector-slot');
     if (classSlot) {
       classSlot.appendChild(this.classSelectorEl);
@@ -52,6 +52,14 @@ export class CombatHUD {
     this.startCooldownTick();
   }
 
+  private getClassLabel(type: PlayerClass): string {
+    switch (type) {
+      case 'WARRIOR': return '🛡️ Guerrero';
+      case 'CLERIC': return '💚 Clérigo';
+      case 'MAGE': return '🔥 Mago';
+    }
+  }
+
   private createClassSelector(): HTMLElement {
     const el = document.createElement('div');
     el.className = 'class-selector-card';
@@ -65,17 +73,13 @@ export class CombatHUD {
     el.style.border = '1px solid rgba(255, 255, 255, 0.12)';
     el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
 
-    const classes: { type: PlayerClass; label: string }[] = [
-      { type: 'WARRIOR', label: '🛡️ Guerrero' },
-      { type: 'CLERIC', label: '💚 Clérigo' },
-      { type: 'MAGE', label: '🔥 Mago' }
-    ];
+    const classes: PlayerClass[] = ['WARRIOR', 'CLERIC', 'MAGE'];
 
-    for (const c of classes) {
+    for (const type of classes) {
       const btn = document.createElement('button');
-      btn.textContent = c.label;
-      btn.dataset.class = c.type;
-      btn.style.background = c.type === this.currentClass ? '#2563eb' : 'transparent';
+      btn.textContent = this.getClassLabel(type);
+      btn.dataset.class = type;
+      btn.style.background = type === this.currentClass ? '#2563eb' : 'transparent';
       btn.style.color = '#fff';
       btn.style.border = 'none';
       btn.style.padding = '6px 12px';
@@ -83,10 +87,19 @@ export class CombatHUD {
       btn.style.fontSize = '12px';
       btn.style.fontWeight = '600';
       btn.style.cursor = 'pointer';
-      btn.style.transition = 'background 0.15s';
+      btn.style.transition = 'background 0.15s, opacity 0.2s';
       btn.onclick = () => {
-        this.setClass(c.type);
-        this.onSelectClass?.(c.type);
+        if (type === this.currentClass) return;
+
+        // Comprobar enfriamiento de cambio de rol
+        const now = Date.now();
+        if (now < this.classSwitchEndsAt) {
+          return;
+        }
+
+        this.classSwitchEndsAt = now + (CLASS_SWITCH_COOLDOWN_MS || 6000);
+        this.setClass(type);
+        this.onSelectClass?.(type);
       };
       el.appendChild(btn);
     }
@@ -106,7 +119,7 @@ export class CombatHUD {
   private createPlayerVitals(): HTMLElement {
     const el = document.createElement('div');
     el.style.position = 'absolute';
-    el.style.bottom = '88px';
+    el.style.bottom = '96px';
     el.style.left = '50%';
     el.style.transform = 'translateX(-50%)';
     el.style.width = '280px';
@@ -124,7 +137,6 @@ export class CombatHUD {
         <span id="player-vital-gold" style="color: #fbbf24;">🪙 10 Oro</span>
       </div>
 
-      <!-- Barra de Salud -->
       <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
         <span style="color: #94a3b8;">Salud</span>
         <span id="player-vital-value" style="font-weight: bold;">100 / 100</span>
@@ -133,7 +145,6 @@ export class CombatHUD {
         <div id="player-vital-fill" style="width: 100%; height: 100%; background: #22c55e; transition: width 0.2s;"></div>
       </div>
 
-      <!-- Barra de Experiencia -->
       <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; color: #a855f7;">
         <span>Experiencia (XP)</span>
         <span id="player-xp-value">0 / 100</span>
@@ -247,8 +258,8 @@ export class CombatHUD {
     classSpells.forEach((spell, idx) => {
       const btn = document.createElement('div');
       btn.className = `skill-slot skill-slot-${idx + 1}`;
-      btn.style.width = '58px';
-      btn.style.height = '58px';
+      btn.style.width = '64px';
+      btn.style.height = '64px';
       btn.style.background = 'rgba(30, 41, 59, 0.9)';
       btn.style.backdropFilter = 'blur(6px)';
       btn.style.border = '2px solid rgba(255, 255, 255, 0.2)';
@@ -261,12 +272,26 @@ export class CombatHUD {
       btn.style.cursor = 'pointer';
       btn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
       btn.style.transition = 'transform 0.1s, border-color 0.1s';
-      btn.title = `${spell.name} (${spell.description})`;
+
+      // Tooltip informativo detallado
+      const effectDesc = spell.damage ? `⚔️ ${spell.damage} de Daño` : (spell.heal ? `💚 +${spell.heal} de Curación` : spell.description);
+      btn.title = `${spell.name}\n${effectDesc}\nAlcance: ${spell.range}m | Enfriamiento: ${(spell.cooldownMs / 1000).toFixed(1)}s`;
+
+      // Badge visible con el número de Daño o Cura
+      let statBadge = '';
+      if (spell.damage) {
+        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #f87171; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">💥 ${spell.damage}</span>`;
+      } else if (spell.heal) {
+        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #4ade80; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">💚 +${spell.heal}</span>`;
+      } else if (spell.id === 'taunt') {
+        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #facc15; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">📢 Aggro</span>`;
+      }
 
       btn.innerHTML = `
-        <span style="font-size: 24px;">${spell.icon}</span>
-        <span style="position: absolute; top: 3px; left: 6px; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 1px 4px; border-radius: 4px;">${idx + 1}</span>
-        <div id="cd-overlay-${spell.id}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); border-radius: 10px; display: none; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #fff;"></div>
+        <span style="font-size: 24px; margin-bottom: 8px;">${spell.icon}</span>
+        <span style="position: absolute; top: 3px; left: 5px; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.55); padding: 1px 4px; border-radius: 4px; color: #cbd5e1;">${idx + 1}</span>
+        ${statBadge}
+        <div id="cd-overlay-${spell.id}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); border-radius: 10px; display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: #fff;"></div>
       `;
 
       btn.onmousedown = () => {
@@ -313,6 +338,8 @@ export class CombatHUD {
   private startCooldownTick(): void {
     setInterval(() => {
       const now = Date.now();
+
+      // 1. Cooldowns de Habilidades
       for (const [spellId, cd] of this.cooldowns.entries()) {
         const overlay = document.getElementById(`cd-overlay-${spellId}`);
         if (!overlay) continue;
@@ -326,6 +353,24 @@ export class CombatHUD {
           this.cooldowns.delete(spellId);
         }
       }
+
+      // 2. Cooldown de Cambio de Rol
+      const classRemaining = this.classSwitchEndsAt - now;
+      const classButtons = this.classSelectorEl.querySelectorAll('button');
+      classButtons.forEach(btn => {
+        const type = btn.dataset.class as PlayerClass;
+        const isCurrent = type === this.currentClass;
+
+        if (classRemaining > 0 && !isCurrent) {
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
+          btn.textContent = `${this.getClassLabel(type)} (${(classRemaining / 1000).toFixed(1)}s)`;
+        } else {
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+          btn.textContent = this.getClassLabel(type);
+        }
+      });
     }, 50);
   }
 

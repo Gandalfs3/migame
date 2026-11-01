@@ -7,6 +7,7 @@ export const PLAYER_RADIUS = 0.5; // radio de colisión del jugador
 export const MAP_BOUND = 24; // límites del área jugable (-24 a 24)
 export const DEFAULT_SERVER_PORT = 3001;
 export const DEFAULT_CLIENT_PORT = 3000;
+export const CLASS_SWITCH_COOLDOWN_MS = 6000; // 6 segundos de enfriamiento al cambiar de rol
 
 export const PLAYER_COLORS = [
   '#3b82f6', // Azul (Jugador 1)
