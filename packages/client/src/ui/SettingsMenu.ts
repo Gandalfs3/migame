@@ -96,29 +96,35 @@ export class SettingsMenu {
     el.style.background = 'rgba(0, 0, 0, 0.7)';
     el.style.backdropFilter = 'blur(6px)';
     el.style.display = 'none';
-    el.style.alignItems = 'center';
+    el.style.alignItems = 'flex-start';
     el.style.justifyContent = 'center';
     el.style.zIndex = '150';
-    el.style.padding = '12px';
+    el.style.padding = '8px';
     el.style.overflowY = 'auto';
+    el.style.boxSizing = 'border-box';
 
     el.onclick = (e) => {
       if (e.target === el) this.toggleModal(false);
     };
 
     el.innerHTML = `
-      <div id="settings-card" style="background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 16px 20px; width: 95%; max-width: 460px; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box;">
+      <div id="settings-card" style="background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 14px 18px; width: 95%; max-width: 480px; max-height: 94vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box; margin: auto;">
         
-        <!-- Cabecera Fija -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-shrink: 0;">
-          <h3 style="margin: 0; font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-            ⚙️ Personalizar Interfaz (UX)
+        <!-- Cabecera Fija con Botón de Guardar Inmediato -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; flex-shrink: 0;">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+            ⚙️ Ajustes (UX)
           </h3>
-          <button id="btn-close-settings" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Cerrar">✕</button>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="btn-save-settings-top" style="background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(37,99,235,0.4);">
+              ✓ Guardar
+            </button>
+            <button id="btn-close-settings" style="background: rgba(255,255,255,0.12); border: none; color: #cbd5e1; font-size: 16px; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Cerrar">✕</button>
+          </div>
         </div>
 
         <!-- Lista de Opciones con Scroll Táctil Suave -->
-        <div id="settings-scroll-body" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 6px; flex: 1 1 auto; min-height: 120px;">
+        <div id="settings-scroll-body" style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 4px; flex: 1 1 auto; min-height: 0;">
           <!-- Guía de Controles WASD -->
           <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
@@ -185,11 +191,9 @@ export class SettingsMenu {
               <option value="center" ${this.settings.actionBarPosition === 'center' ? 'selected' : ''}>🎯 Centro (Estilo PC)</option>
             </select>
           </div>
-        </div>
 
-        <!-- Pie Fijo con Botón Guardar Siempre Visible -->
-        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
-          <button id="btn-save-settings" style="width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
+          <!-- Botón de Guardar también al final del scroll -->
+          <button id="btn-save-settings" style="margin-top: 6px; width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
             ✓ Listo y Guardar Preferencias
           </button>
         </div>
@@ -203,9 +207,11 @@ export class SettingsMenu {
   private bindEvents(modal: HTMLElement): void {
     const closeBtn = modal.querySelector('#btn-close-settings') as HTMLButtonElement;
     const saveBtn = modal.querySelector('#btn-save-settings') as HTMLButtonElement;
+    const saveTopBtn = modal.querySelector('#btn-save-settings-top') as HTMLButtonElement;
 
-    closeBtn.onclick = () => this.toggleModal(false);
-    saveBtn.onclick = () => this.toggleModal(false);
+    if (closeBtn) closeBtn.onclick = () => this.toggleModal(false);
+    if (saveBtn) saveBtn.onclick = () => this.toggleModal(false);
+    if (saveTopBtn) saveTopBtn.onclick = () => this.toggleModal(false);
 
     const checkControls = modal.querySelector('#toggle-controls-guide') as HTMLInputElement;
     const checkLan = modal.querySelector('#toggle-lan-banner') as HTMLInputElement;

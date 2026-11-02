@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T01:09:59.508Z",
+  "generatedAt": "2026-11-02T01:12:44.464Z",
   "totalFiles": 68,
   "tree": [
     {
@@ -432,7 +432,7 @@
                       "type": "file",
                       "name": "SettingsMenu.ts",
                       "path": "packages/client/src/ui/SettingsMenu.ts",
-                      "size": 13523,
+                      "size": 14091,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -1063,7 +1063,7 @@
       "type": "file",
       "name": "SettingsMenu.ts",
       "path": "packages/client/src/ui/SettingsMenu.ts",
-      "size": 13523,
+      "size": 14091,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
