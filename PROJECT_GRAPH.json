@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T01:48:35.552Z",
+  "generatedAt": "2026-11-02T01:57:24.142Z",
   "totalFiles": 68,
   "tree": [
     {
@@ -372,7 +372,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 8194,
+                  "size": 8209,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -408,7 +408,7 @@
                       "type": "file",
                       "name": "CombatHUD.ts",
                       "path": "packages/client/src/ui/CombatHUD.ts",
-                      "size": 14895,
+                      "size": 14924,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -452,7 +452,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86430,
+              "size": 86521,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -1015,7 +1015,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 8194,
+      "size": 8209,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1039,7 +1039,7 @@
       "type": "file",
       "name": "CombatHUD.ts",
       "path": "packages/client/src/ui/CombatHUD.ts",
-      "size": 14895,
+      "size": 14924,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1079,7 +1079,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86430,
+      "size": 86521,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

@@ -49,6 +49,7 @@ export class CombatHUD {
     this.container.appendChild(this.levelUpBannerEl);
 
     this.setupKeybindings();
+    this.refreshActionBar();
     this.startCooldownTick();
   }
 

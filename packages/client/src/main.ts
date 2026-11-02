@@ -45,11 +45,11 @@ const inputManager = new InputManager((state) => {
 const playerEntities = new Map<string, PlayerEntity>();
 const monsterEntities = new Map<string, MonsterEntity>();
 let selectedTargetId: string | null = null;
-let currentLocalClass: PlayerClass = 'WARRIOR';
+let currentLocalClass: PlayerClass | null = null;
 
 // Modal de Inicio Simplificado
 new CharacterLoginModal((name) => {
-  network.sendLogin(name, currentLocalClass);
+  network.sendLogin(name, currentLocalClass || 'WARRIOR');
 });
 
 // Conexión y Bienvenida
