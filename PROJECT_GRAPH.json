@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-02T02:49:35.123Z",
-  "totalFiles": 69,
+  "generatedAt": "2026-11-02T03:49:09.998Z",
+  "totalFiles": 70,
   "tree": [
     {
       "type": "directory",
@@ -308,7 +308,7 @@
                       "type": "file",
                       "name": "Engine.ts",
                       "path": "packages/client/src/core/Engine.ts",
-                      "size": 4488,
+                      "size": 4870,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -323,7 +323,7 @@
                       "type": "file",
                       "name": "MonsterEntity.ts",
                       "path": "packages/client/src/entities/MonsterEntity.ts",
-                      "size": 21639,
+                      "size": 22015,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -331,7 +331,7 @@
                       "type": "file",
                       "name": "ObstacleRenderer.ts",
                       "path": "packages/client/src/entities/ObstacleRenderer.ts",
-                      "size": 4358,
+                      "size": 4401,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -339,7 +339,7 @@
                       "type": "file",
                       "name": "PlayerEntity.ts",
                       "path": "packages/client/src/entities/PlayerEntity.ts",
-                      "size": 7701,
+                      "size": 8219,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -394,6 +394,21 @@
                       "name": "NetworkClient.ts",
                       "path": "packages/client/src/network/NetworkClient.ts",
                       "size": 4923,
+                      "extension": ".ts",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                },
+                {
+                  "type": "directory",
+                  "name": "textures",
+                  "path": "packages/client/src/textures",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "ProceduralTextureFactory.ts",
+                      "path": "packages/client/src/textures/ProceduralTextureFactory.ts",
+                      "size": 20934,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -460,7 +475,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86460,
+              "size": 86807,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -975,7 +990,7 @@
       "type": "file",
       "name": "Engine.ts",
       "path": "packages/client/src/core/Engine.ts",
-      "size": 4488,
+      "size": 4870,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -983,7 +998,7 @@
       "type": "file",
       "name": "MonsterEntity.ts",
       "path": "packages/client/src/entities/MonsterEntity.ts",
-      "size": 21639,
+      "size": 22015,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -991,7 +1006,7 @@
       "type": "file",
       "name": "ObstacleRenderer.ts",
       "path": "packages/client/src/entities/ObstacleRenderer.ts",
-      "size": 4358,
+      "size": 4401,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -999,7 +1014,7 @@
       "type": "file",
       "name": "PlayerEntity.ts",
       "path": "packages/client/src/entities/PlayerEntity.ts",
-      "size": 7701,
+      "size": 8219,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1040,6 +1055,14 @@
       "name": "NetworkClient.ts",
       "path": "packages/client/src/network/NetworkClient.ts",
       "size": 4923,
+      "extension": ".ts",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "ProceduralTextureFactory.ts",
+      "path": "packages/client/src/textures/ProceduralTextureFactory.ts",
+      "size": 20934,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1095,7 +1118,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86460,
+      "size": 86807,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

@@ -204,7 +204,7 @@ export class MonsterEntity {
       // ------------------------------------
       const demonGroup = new THREE.Group();
       const bodyGeo = new THREE.CapsuleGeometry(0.5, 0.8, 8, 16);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.5 });
+      const bodyMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const body = new THREE.Mesh(bodyGeo, bodyMat);
       body.position.y = 0.9;
       body.castShadow = true;
@@ -226,13 +226,13 @@ export class MonsterEntity {
       // ------------------------------------
       const gargGroup = new THREE.Group();
       const bodyGeo = new THREE.DodecahedronGeometry(0.55, 1);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x44403c, roughness: 0.8, flatShading: true });
+      const bodyMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const body = new THREE.Mesh(bodyGeo, bodyMat);
       body.position.y = 1.0;
       body.castShadow = true;
       gargGroup.add(body);
 
-      // Alas de piedra
+      // Alas de piedra volcánica
       const wingGeo = new THREE.BoxGeometry(1.6, 0.4, 0.08);
       const wing = new THREE.Mesh(wingGeo, bodyMat);
       wing.position.set(0, 1.2, -0.3);
@@ -246,7 +246,7 @@ export class MonsterEntity {
       // ------------------------------------
       const voidGroup = new THREE.Group();
       const sphereGeo = new THREE.SphereGeometry(0.65, 16, 16);
-      const sphereMat = new THREE.MeshStandardMaterial({ color: 0x1e1b4b, roughness: 0.3 });
+      const sphereMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
       sphere.position.y = 0.9;
       sphere.castShadow = true;
@@ -266,7 +266,7 @@ export class MonsterEntity {
       // ------------------------------------
       const chaosGroup = new THREE.Group();
       const robeGeo = new THREE.ConeGeometry(0.7, 1.8, 7);
-      const robeMat = new THREE.MeshStandardMaterial({ color: 0x4c1d95, roughness: 0.6 });
+      const robeMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const robe = new THREE.Mesh(robeGeo, robeMat);
       robe.position.y = 0.9;
       robe.castShadow = true;
@@ -280,7 +280,7 @@ export class MonsterEntity {
       // ------------------------------------
       const skelGroup = new THREE.Group();
       const torsoGeo = new THREE.BoxGeometry(0.55, 0.75, 0.35);
-      const boneMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
+      const boneMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const torso = new THREE.Mesh(torsoGeo, boneMat);
       torso.position.y = 0.85;
       torso.castShadow = true;
@@ -314,7 +314,7 @@ export class MonsterEntity {
       archerGroup.add(cowl);
 
       const skullGeo = new THREE.DodecahedronGeometry(0.3, 1);
-      const boneMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
+      const boneMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const skull = new THREE.Mesh(skullGeo, boneMat);
       skull.position.set(0, 1.35, 0.05);
       archerGroup.add(skull);

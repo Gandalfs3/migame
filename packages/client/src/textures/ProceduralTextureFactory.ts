@@ -2,10 +2,26 @@ import * as THREE from 'three';
 import { MonsterType, PlayerClass } from '@migame/common';
 
 export interface TextureRecipeConfig {
-  basePattern: 'scales' | 'skin' | 'fur' | 'plate_armor' | 'stone' | 'bark' | 'runic' | 'lava_cracks' | 'cobblestone' | 'chitin';
+  basePattern:
+    | 'scales'
+    | 'skin'
+    | 'fur'
+    | 'plate_armor'
+    | 'stone'
+    | 'bark'
+    | 'runic'
+    | 'lava_cracks'
+    | 'cobblestone'
+    | 'chitin'
+    | 'bone'
+    | 'ground_forest'
+    | 'ground_crypt'
+    | 'ground_volcano'
+    | 'ground_void';
   secondaryPattern?: 'none' | 'scales' | 'plate_armor' | 'runic' | 'veins' | 'stripes';
   patternBlend?: number;
   patternScale?: number;
+  repeat?: number;
   palette: {
     primary: string;
     secondary: string;
@@ -94,23 +110,82 @@ export class ProceduralTextureFactory {
           const cy = (v * cells) % 1;
           const dist = Math.sqrt((cx - 0.5) * (cx - 0.5) + (cy - 0.5) * (cy - 0.5));
           h = Math.sin(Math.min(1, dist * 2) * Math.PI * 0.5);
-          m = dist < 0.2 ? 1 : 0;
+          m = dist < 0.25 ? 1 : 0;
         } else if (config.basePattern === 'plate_armor') {
           const cells = Math.max(2, Math.round(scale * 0.5));
           const px = (u * cells) % 1;
           const py = (v * cells) % 1;
           const edge = Math.min(Math.min(px, 1 - px), Math.min(py, 1 - py));
           h = Math.min(1, edge * 6);
-          m = edge < 0.15 ? 1 : 0;
-        } else if (config.basePattern === 'lava_cracks' || config.basePattern === 'stone') {
+          const isCorner = (px < 0.18 || px > 0.82) && (py < 0.18 || py > 0.82);
+          m = isCorner ? 1 : (edge < 0.08 ? 0.8 : 0);
+        } else if (config.basePattern === 'lava_cracks') {
           const n1 = Math.sin(u * scale * 3.14 + Math.cos(v * scale * 2.5));
           const n2 = Math.cos(v * scale * 3.14 + Math.sin(u * scale * 2.5));
-          h = (n1 + n2) * 0.25 + 0.5;
-          m = h < 0.3 ? (0.3 - h) * 3 : 0;
-        } else if (config.basePattern === 'fur') {
-          const strands = Math.sin(u * scale * 1.5 + v * scale * 12);
-          h = strands * 0.5 + 0.5;
-          m = strands > 0.6 ? 1 : 0;
+          const crack = Math.abs(n1 + n2);
+          h = Math.min(1, crack * 1.4);
+          m = crack < 0.4 ? (0.4 - crack) * 2.5 : 0;
+        } else if (config.basePattern === 'stone') {
+          const n1 = Math.sin(u * scale * 2.5 + Math.sin(v * scale * 3.0));
+          const n2 = Math.cos(v * scale * 2.5 + Math.cos(u * scale * 3.0));
+          const micro = Math.sin(u * scale * 8) * Math.cos(v * scale * 8) * 0.15;
+          h = (n1 + n2) * 0.25 + 0.5 + micro;
+          m = h < 0.3 ? 0.8 : 0;
+        } else if (config.basePattern === 'bark') {
+          const wave = Math.sin(v * scale * 0.8 + Math.cos(u * scale * 2)) * 0.2;
+          const streak = Math.sin((u + wave) * scale * 5.0);
+          h = streak * 0.4 + 0.5;
+          m = Math.abs(streak) < 0.25 ? 1 : 0;
+        } else if (config.basePattern === 'cobblestone') {
+          const cellsX = Math.max(3, Math.round(scale));
+          const cellsY = Math.max(3, Math.round(scale * 0.8));
+          const row = Math.floor(v * cellsY);
+          const uShift = row % 2 === 0 ? 0 : 0.5;
+          const px = ((u + uShift) * cellsX) % 1;
+          const py = (v * cellsY) % 1;
+          const edge = Math.min(Math.min(px, 1 - px), Math.min(py, 1 - py));
+          h = Math.min(1, Math.sin(edge * Math.PI) * 1.3);
+          m = edge < 0.12 ? 1 : 0;
+        } else if (config.basePattern === 'runic') {
+          const gridU = (u * scale) % 1;
+          const gridV = (v * scale) % 1;
+          const lineX = Math.abs(gridU - 0.5) < 0.09;
+          const lineY = Math.abs(gridV - 0.5) < 0.09;
+          const diag = Math.abs(gridU - gridV) < 0.09;
+          const circle = Math.abs(Math.hypot(gridU - 0.5, gridV - 0.5) - 0.3) < 0.09;
+          const isRune = lineX || lineY || diag || circle;
+          h = isRune ? 0.9 : 0.35;
+          m = isRune ? 1.0 : 0;
+        } else if (config.basePattern === 'skin') {
+          const cell = Math.sin(u * scale * 3.5) * Math.sin(v * scale * 3.5);
+          const pore = Math.sin(u * scale * 10) * Math.cos(v * scale * 10) * 0.12;
+          h = cell * 0.35 + 0.5 + pore;
+          m = cell > 0.35 ? 0.9 : 0;
+        } else if (config.basePattern === 'bone' || config.basePattern === 'chitin') {
+          const f1 = Math.sin(u * scale * 2.0 + v * scale * 1.5);
+          const f2 = Math.cos(u * scale * 1.5 - v * scale * 2.0);
+          h = (f1 + f2) * 0.25 + 0.6;
+          const crack = Math.abs(Math.sin(u * scale * 4 + Math.cos(v * scale * 4)));
+          m = crack < 0.15 ? 1 : 0;
+        } else if (config.basePattern === 'ground_forest') {
+          const patch = Math.sin(u * scale * 2) * Math.cos(v * scale * 2);
+          const blades = Math.sin(u * scale * 12 + v * scale * 8) * 0.2;
+          h = patch * 0.35 + 0.5 + blades;
+          m = patch > 0.1 ? 0.9 : 0;
+        } else if (config.basePattern === 'ground_crypt') {
+          const px = (u * scale) % 1;
+          const py = (v * scale) % 1;
+          const edge = Math.min(Math.min(px, 1 - px), Math.min(py, 1 - py));
+          h = Math.min(1, edge * 8);
+          m = edge < 0.1 ? 1 : 0;
+        } else if (config.basePattern === 'ground_volcano') {
+          const lava = Math.sin(u * scale * 2 + Math.cos(v * scale * 1.5));
+          h = Math.abs(lava);
+          m = h < 0.35 ? (0.35 - h) * 3 : 0;
+        } else if (config.basePattern === 'ground_void') {
+          const vortex = Math.sin(Math.hypot(u - 0.5, v - 0.5) * scale * 4);
+          h = vortex * 0.4 + 0.5;
+          m = Math.abs(vortex) > 0.5 ? 1 : 0;
         } else {
           h = Math.sin(u * scale * 2) * Math.cos(v * scale * 2) * 0.3 + 0.5;
         }
@@ -139,7 +214,11 @@ export class ProceduralTextureFactory {
         }
 
         if (m > 0.1) {
-          const isLavaOrRune = config.basePattern === 'lava_cracks' || config.basePattern === 'runic';
+          const isLavaOrRune =
+            config.basePattern === 'lava_cracks' ||
+            config.basePattern === 'runic' ||
+            config.basePattern === 'ground_volcano' ||
+            config.basePattern === 'ground_void';
           baseCol = this.lerpColor(baseCol, isLavaOrRune ? colEmissive : colAccent, Math.min(1, m * 1.5));
         }
 
@@ -185,10 +264,18 @@ export class ProceduralTextureFactory {
     const albedoTex = new THREE.CanvasTexture(albedoCanvas);
     albedoTex.wrapS = THREE.RepeatWrapping;
     albedoTex.wrapT = THREE.RepeatWrapping;
+    albedoTex.colorSpace = THREE.SRGBColorSpace;
+    albedoTex.needsUpdate = true;
 
     const normalTex = new THREE.CanvasTexture(normalCanvas);
     normalTex.wrapS = THREE.RepeatWrapping;
     normalTex.wrapT = THREE.RepeatWrapping;
+    normalTex.needsUpdate = true;
+
+    if (config.repeat) {
+      albedoTex.repeat.set(config.repeat, config.repeat);
+      normalTex.repeat.set(config.repeat, config.repeat);
+    }
 
     const mat = new THREE.MeshStandardMaterial({
       map: albedoTex,
@@ -357,18 +444,17 @@ export class ProceduralTextureFactory {
     } else {
       // MAGE
       return this.createMaterial(key, {
-        basePattern: 'skin',
-        secondaryPattern: 'runic',
-        patternScale: 8,
+        basePattern: 'runic',
+        patternScale: 6,
         palette: {
           primary: customHex || '#8b5cf6',
-          secondary: '#6d28d9',
+          secondary: '#4c1d95',
           accent: '#38bdf8',
           shadow: '#2e1065',
           highlight: '#c4b5fd',
           emissive: '#06b6d4',
         },
-        pbr: { roughness: 0.55, metalness: 0.15, normalStrength: 1.1, emissionIntensity: 1.3 },
+        pbr: { roughness: 0.45, metalness: 0.25, normalStrength: 1.5, emissionIntensity: 1.5 },
       });
     }
   }
@@ -419,6 +505,77 @@ export class ProceduralTextureFactory {
         highlight: '#94a3b8',
       },
       pbr: { roughness: 0.75, metalness: 0.05, normalStrength: 1.5 },
+    });
+  }
+
+  // Texturas de Suelo procedimentales por Zona
+  public static getMaterialForGround(zoneId: string): THREE.MeshStandardMaterial {
+    const key = `ground_${zoneId}`;
+
+    if (zoneId === 'zone_crypt') {
+      return this.createMaterial(key, {
+        basePattern: 'ground_crypt',
+        patternScale: 6,
+        repeat: 10,
+        palette: {
+          primary: '#231b27',
+          secondary: '#17111a',
+          accent: '#b91c1c',
+          shadow: '#0d0810',
+          highlight: '#4b3f52',
+          emissive: '#7f1d1d'
+        },
+        pbr: { roughness: 0.8, metalness: 0.1, normalStrength: 1.7, emissionIntensity: 0.5 }
+      });
+    }
+
+    if (zoneId === 'zone_volcano') {
+      return this.createMaterial(key, {
+        basePattern: 'ground_volcano',
+        patternScale: 7,
+        repeat: 10,
+        palette: {
+          primary: '#1c1917',
+          secondary: '#431407',
+          accent: '#ea580c',
+          shadow: '#0c0a09',
+          highlight: '#78716c',
+          emissive: '#f97316'
+        },
+        pbr: { roughness: 0.7, metalness: 0.15, normalStrength: 2.0, emissionIntensity: 1.4 }
+      });
+    }
+
+    if (zoneId === 'zone_void') {
+      return this.createMaterial(key, {
+        basePattern: 'ground_void',
+        patternScale: 6,
+        repeat: 8,
+        palette: {
+          primary: '#140c24',
+          secondary: '#07030d',
+          accent: '#c084fc',
+          shadow: '#020005',
+          highlight: '#7c3aed',
+          emissive: '#a855f7'
+        },
+        pbr: { roughness: 0.5, metalness: 0.35, normalStrength: 1.6, emissionIntensity: 1.3 }
+      });
+    }
+
+    // Por defecto: Bosque (zone_forest)
+    return this.createMaterial(key, {
+      basePattern: 'ground_forest',
+      patternScale: 8,
+      repeat: 12,
+      palette: {
+        primary: '#1b3b22',
+        secondary: '#142e1b',
+        accent: '#65a30d',
+        shadow: '#0e1d11',
+        highlight: '#22c55e'
+      },
+      pbr: { roughness: 0.9, metalness: 0.0, normalStrength: 1.5 }
     });
   }
 }

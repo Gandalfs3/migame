@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { ZoneThemeDTO } from '@migame/common';
+import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory.js';
 
 export class Engine {
   public scene: THREE.Scene;
@@ -52,11 +53,7 @@ export class Engine {
 
   private setupEnvironment(): void {
     const groundGeo = new THREE.PlaneGeometry(60, 60);
-    this.groundMat = new THREE.MeshStandardMaterial({
-      color: 0x17251d,
-      roughness: 0.85,
-      metalness: 0.1
-    });
+    this.groundMat = ProceduralTextureFactory.getMaterialForGround('zone_forest');
     this.groundMesh = new THREE.Mesh(groundGeo, this.groundMat);
     this.groundMesh.rotation.x = -Math.PI / 2;
     this.groundMesh.receiveShadow = true;
@@ -64,6 +61,8 @@ export class Engine {
 
     this.gridHelper = new THREE.GridHelper(50, 50, 0x22c55e, 0x14532d);
     this.gridHelper.position.y = 0.01;
+    (this.gridHelper.material as THREE.Material).transparent = true;
+    (this.gridHelper.material as THREE.Material).opacity = 0.25;
     this.scene.add(this.gridHelper);
 
     // Límite circular del mapa
@@ -79,7 +78,8 @@ export class Engine {
     this.scene.background = new THREE.Color(theme.fogColor);
     this.scene.fog = new THREE.FogExp2(theme.fogColor, theme.fogDensity);
 
-    this.groundMat.color.set(theme.groundColor);
+    this.groundMat = ProceduralTextureFactory.getMaterialForGround(theme.id);
+    this.groundMesh.material = this.groundMat;
 
     if (this.gridHelper) {
       this.scene.remove(this.gridHelper);
@@ -92,6 +92,8 @@ export class Engine {
       new THREE.Color(theme.gridColor2)
     );
     this.gridHelper.position.y = 0.01;
+    (this.gridHelper.material as THREE.Material).transparent = true;
+    (this.gridHelper.material as THREE.Material).opacity = 0.25;
     this.scene.add(this.gridHelper);
 
     this.ambientLight.color.set(theme.ambientLightColor);

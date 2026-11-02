@@ -1,6 +1,6 @@
 # Project Knowledge Graph (Grafify)
 
-> **Generado automáticamente**: 2026-11-02T02:49:35.125Z
+> **Generado automáticamente**: 2026-11-02T03:49:10.000Z
 > **Propósito**: Mapa de alta velocidad para que agentes de IA y desarrolladores ubiquen componentes, flujos de red y responsabilidades sin tener que leer todo el proyecto.
 
 ## 1. Índice Rápido de Componentes y Archivos
@@ -46,6 +46,7 @@
 | [`packages/client/src/input/InputManager.ts`](file:///packages/client/src/input/InputManager.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/main.ts`](file:///packages/client/src/main.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/network/NetworkClient.ts`](file:///packages/client/src/network/NetworkClient.ts) | `.ts` | Source / Asset file |
+| [`packages/client/src/textures/ProceduralTextureFactory.ts`](file:///packages/client/src/textures/ProceduralTextureFactory.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/ui/CharacterLoginModal.ts`](file:///packages/client/src/ui/CharacterLoginModal.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/ui/CombatHUD.ts`](file:///packages/client/src/ui/CombatHUD.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/ui/FloatingText.ts`](file:///packages/client/src/ui/FloatingText.ts) | `.ts` | Source / Asset file |

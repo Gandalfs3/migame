@@ -22,11 +22,13 @@ export class PlayerEntity {
   private healthTexture: THREE.CanvasTexture;
   private selectionRing: THREE.Mesh;
   private bodyMesh: THREE.Mesh;
+  private colorHex: string;
 
   constructor(scene: THREE.Scene, id: string, colorHex: string, isLocal: boolean, name: string = 'Aventurero') {
     this.id = id;
     this.name = name;
     this.isLocal = isLocal;
+    this.colorHex = colorHex;
     this.group = new THREE.Group();
 
     // Sombra en el suelo
@@ -102,7 +104,8 @@ export class PlayerEntity {
     let changed = false;
     if (this.health !== health || this.maxHealth !== maxHealth || this.classType !== classType) {
       if (this.classType !== classType) {
-        this.bodyMesh.material = ProceduralTextureFactory.getMaterialForPlayer(classType);
+        this.classType = classType;
+        this.bodyMesh.material = ProceduralTextureFactory.getMaterialForPlayer(classType, this.colorHex);
       }
       this.health = health;
       this.maxHealth = maxHealth;
