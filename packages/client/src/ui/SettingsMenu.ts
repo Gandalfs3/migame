@@ -93,29 +93,34 @@ export class SettingsMenu {
     el.style.left = '0';
     el.style.width = '100vw';
     el.style.height = '100vh';
-    el.style.background = 'rgba(0, 0, 0, 0.65)';
+    el.style.background = 'rgba(0, 0, 0, 0.7)';
     el.style.backdropFilter = 'blur(6px)';
     el.style.display = 'none';
     el.style.alignItems = 'center';
     el.style.justifyContent = 'center';
     el.style.zIndex = '150';
+    el.style.padding = '12px';
+    el.style.overflowY = 'auto';
 
     el.onclick = (e) => {
       if (e.target === el) this.toggleModal(false);
     };
 
     el.innerHTML = `
-      <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 24px; width: 90%; max-width: 440px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); color: #fff;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
-          <h3 style="margin: 0; font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+      <div id="settings-card" style="background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 16px 20px; width: 95%; max-width: 460px; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box;">
+        
+        <!-- Cabecera Fija -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-shrink: 0;">
+          <h3 style="margin: 0; font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
             ⚙️ Personalizar Interfaz (UX)
           </h3>
-          <button id="btn-close-settings" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">✕</button>
+          <button id="btn-close-settings" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Cerrar">✕</button>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px;">
+        <!-- Lista de Opciones con Scroll Táctil Suave -->
+        <div id="settings-scroll-body" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 6px; flex: 1 1 auto; min-height: 120px;">
           <!-- Guía de Controles WASD -->
-          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">🎮 Guía de Controles (WASD)</div>
               <div style="font-size: 11px; color: #94a3b8;">Muestra las teclas de movimiento en pantalla</div>
@@ -124,7 +129,7 @@ export class SettingsMenu {
           </label>
 
           <!-- Banner Wi-Fi / IP -->
-          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">🌐 Banner de Conexión Wi-Fi</div>
               <div style="font-size: 11px; color: #94a3b8;">Muestra la IP y botón de enlace para la familia</div>
@@ -133,7 +138,7 @@ export class SettingsMenu {
           </label>
 
           <!-- Detalles de Ping y Conexión -->
-          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">📊 Latencia y Estadísticas de Red</div>
               <div style="font-size: 11px; color: #94a3b8;">Muestra ms de ping y estado del servidor</div>
@@ -142,7 +147,7 @@ export class SettingsMenu {
           </label>
 
           <!-- Círculo de Rango de Alcance -->
-          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">⭕ Círculo de Alcance en el Suelo</div>
               <div style="font-size: 11px; color: #94a3b8;">Área gris que marca hasta dónde llegan tus ataques</div>
@@ -151,7 +156,7 @@ export class SettingsMenu {
           </label>
 
           <!-- Cruceta Táctil -->
-          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">📱 Cruceta Táctil en Pantalla</div>
               <div style="font-size: 11px; color: #94a3b8;">D-Pad virtual para jugar desde tablets o móviles</div>
@@ -160,7 +165,7 @@ export class SettingsMenu {
           </label>
 
           <!-- Números de Daño Flotantes -->
-          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">💬 Números Flotantes de Combate</div>
               <div style="font-size: 11px; color: #94a3b8;">Muestra el daño y curación en números 3D</div>
@@ -169,7 +174,7 @@ export class SettingsMenu {
           </label>
 
           <!-- Ubicación de Barra de Poderes -->
-          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
               <div style="font-weight: 600;">✨ Ubicación de Poderes</div>
               <div style="font-size: 11px; color: #94a3b8;">A la derecha para pulgar móvil o al centro para PC</div>
@@ -182,9 +187,12 @@ export class SettingsMenu {
           </div>
         </div>
 
-        <button id="btn-save-settings" style="margin-top: 20px; width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-          Listo y Guardar Preferencias
-        </button>
+        <!-- Pie Fijo con Botón Guardar Siempre Visible -->
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
+          <button id="btn-save-settings" style="width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
+            ✓ Listo y Guardar Preferencias
+          </button>
+        </div>
       </div>
     `;
 

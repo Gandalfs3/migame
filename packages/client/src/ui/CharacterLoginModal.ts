@@ -19,6 +19,8 @@ export class CharacterLoginModal {
     this.overlay.style.zIndex = '100';
     this.overlay.style.backdropFilter = 'blur(10px)';
     this.overlay.style.transition = 'opacity 0.3s ease';
+    this.overlay.style.padding = '12px';
+    this.overlay.style.overflowY = 'auto';
 
     const savedName = localStorage.getItem('migame_player_name') || '';
 
@@ -28,7 +30,7 @@ export class CharacterLoginModal {
 
   private render(defaultName: string): void {
     this.overlay.innerHTML = `
-      <div style="background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 16px; padding: 28px 32px; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); text-align: center; color: #fff;">
+      <div style="background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 16px; padding: 20px 24px; width: 95%; max-width: 420px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.7); text-align: center; color: #fff; box-sizing: border-box;">
         <h2 style="font-size: 22px; margin-bottom: 6px; font-weight: 800; letter-spacing: 0.5px; background: linear-gradient(135deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">RPG Cooperativo Familiar</h2>
         <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">Tu progreso se guardará automáticamente en el servidor local.</p>
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T01:04:39.492Z",
+  "generatedAt": "2026-11-02T01:09:59.508Z",
   "totalFiles": 68,
   "tree": [
     {
@@ -400,7 +400,7 @@
                       "type": "file",
                       "name": "CharacterLoginModal.ts",
                       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-                      "size": 3530,
+                      "size": 3674,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -432,7 +432,7 @@
                       "type": "file",
                       "name": "SettingsMenu.ts",
                       "path": "packages/client/src/ui/SettingsMenu.ts",
-                      "size": 12253,
+                      "size": 13523,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -1031,7 +1031,7 @@
       "type": "file",
       "name": "CharacterLoginModal.ts",
       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-      "size": 3530,
+      "size": 3674,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1063,7 +1063,7 @@
       "type": "file",
       "name": "SettingsMenu.ts",
       "path": "packages/client/src/ui/SettingsMenu.ts",
-      "size": 12253,
+      "size": 13523,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
