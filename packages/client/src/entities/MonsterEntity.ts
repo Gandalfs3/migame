@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { MonsterDTO, MonsterState } from '@migame/common';
+import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory';
+
 
 export class MonsterEntity {
   public id: string;
@@ -51,12 +53,7 @@ export class MonsterEntity {
       const golemGroup = new THREE.Group();
 
       const torsoGeo = new THREE.DodecahedronGeometry(1.4, 1);
-      const torsoMat = new THREE.MeshStandardMaterial({
-        color: 0x334155,
-        roughness: 0.7,
-        metalness: 0.3,
-        flatShading: true
-      });
+      const torsoMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const torso = new THREE.Mesh(torsoGeo, torsoMat);
       torso.position.y = 1.8;
       torso.scale.set(1.1, 1.2, 0.9);
@@ -103,11 +100,7 @@ export class MonsterEntity {
       const necroGroup = new THREE.Group();
 
       const robeGeo = new THREE.ConeGeometry(1.0, 2.3, 8);
-      const robeMat = new THREE.MeshStandardMaterial({
-        color: 0x2e1065,
-        roughness: 0.6,
-        flatShading: true
-      });
+      const robeMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const robe = new THREE.Mesh(robeGeo, robeMat);
       robe.position.y = 1.3;
       robe.castShadow = true;
@@ -156,12 +149,7 @@ export class MonsterEntity {
       const magmaGroup = new THREE.Group();
 
       const torsoGeo = new THREE.DodecahedronGeometry(1.6, 1);
-      const torsoMat = new THREE.MeshStandardMaterial({
-        color: 0x7f1d1d,
-        roughness: 0.6,
-        metalness: 0.4,
-        flatShading: true
-      });
+      const torsoMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const torso = new THREE.Mesh(torsoGeo, torsoMat);
       torso.position.y = 2.0;
       torso.castShadow = true;
@@ -194,12 +182,7 @@ export class MonsterEntity {
       const titanGroup = new THREE.Group();
 
       const titanGeo = new THREE.OctahedronGeometry(1.8, 1);
-      const titanMat = new THREE.MeshStandardMaterial({
-        color: 0x312e81,
-        metalness: 0.8,
-        roughness: 0.2,
-        flatShading: true
-      });
+      const titanMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const titanBody = new THREE.Mesh(titanGeo, titanMat);
       titanBody.position.y = 2.4;
       titanBody.castShadow = true;
@@ -344,7 +327,7 @@ export class MonsterEntity {
       // ------------------------------------
       const goblinGroup = new THREE.Group();
       const bodyGeo = new THREE.CapsuleGeometry(0.4, 0.6, 8, 16);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x4d7c0f, roughness: 0.5 });
+      const bodyMat = ProceduralTextureFactory.getMaterialForMonster(dto.type, this.isBoss);
       const body = new THREE.Mesh(bodyGeo, bodyMat);
       body.position.y = 0.7;
       body.castShadow = true;

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { PlayerClass } from '@migame/common';
+import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory';
+
 
 export class PlayerEntity {
   public id: string;
@@ -54,11 +56,7 @@ export class PlayerEntity {
 
     // Cuerpo
     const bodyGeo = new THREE.CapsuleGeometry(0.5, 0.8, 8, 16);
-    const bodyMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(colorHex),
-      roughness: 0.3,
-      metalness: 0.2
-    });
+    const bodyMat = ProceduralTextureFactory.getMaterialForPlayer(this.classType, colorHex);
     this.bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
     this.bodyMesh.position.y = 0.9;
     this.bodyMesh.castShadow = true;
@@ -103,6 +101,9 @@ export class PlayerEntity {
   ): void {
     let changed = false;
     if (this.health !== health || this.maxHealth !== maxHealth || this.classType !== classType) {
+      if (this.classType !== classType) {
+        this.bodyMesh.material = ProceduralTextureFactory.getMaterialForPlayer(classType);
+      }
       this.health = health;
       this.maxHealth = maxHealth;
       this.classType = classType;

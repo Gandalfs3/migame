@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { ObstacleDTO } from '@migame/common';
+import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory';
+
 
 export class ObstacleRenderer {
   private scene: THREE.Scene;
@@ -27,7 +29,7 @@ export class ObstacleRenderer {
         if (obs.kind === 'pillar') {
           // Base del pilar
           const baseGeo = new THREE.BoxGeometry(obs.width * 1.15, 0.4, obs.depth * 1.15);
-          const baseMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
+          const baseMat = ProceduralTextureFactory.getMaterialForObstacle("pillar");
           const base = new THREE.Mesh(baseGeo, baseMat);
           base.position.y = 0.2;
           base.castShadow = true;
@@ -36,7 +38,7 @@ export class ObstacleRenderer {
 
           // Fuste / Cuerpo del pilar
           const bodyGeo = new THREE.BoxGeometry(obs.width, obs.height - 0.8, obs.depth);
-          const bodyMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.7 });
+          const bodyMat = ProceduralTextureFactory.getMaterialForObstacle("pillar");
           const body = new THREE.Mesh(bodyGeo, bodyMat);
           body.position.y = obs.height / 2;
           body.castShadow = true;
@@ -52,7 +54,7 @@ export class ObstacleRenderer {
         } else {
           // Muro de piedra
           const wallGeo = new THREE.BoxGeometry(obs.width, obs.height, obs.depth);
-          const wallMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 });
+          const wallMat = ProceduralTextureFactory.getMaterialForObstacle("wall");
           const wall = new THREE.Mesh(wallGeo, wallMat);
           wall.position.y = obs.height / 2;
           wall.castShadow = true;
