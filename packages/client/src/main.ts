@@ -80,10 +80,19 @@ function showZoneAlert(message: string, isWarning: boolean = true): void {
   }, 3000);
 }
 
-// Modal de Inicio Simplificado
-new CharacterLoginModal((name) => {
-  network.sendLogin(name, currentLocalClass || 'WARRIOR');
+// Modal de Gestión de Perfiles e Inicio (Cargar / Crear / Cambiar Personaje)
+const charModal = new CharacterLoginModal((name, classType) => {
+  currentLocalClass = classType;
+  combatHud.onSelectClass?.(classType);
+  rangeIndicator.setClass(classType);
+  selectTarget(null);
+  network.sendLogin(name, classType);
 });
+
+// Conectar apertura del gestor de personajes desde el menú de ajustes o botón superior 🧙
+settingsMenu.onSwitchCharacter = () => {
+  charModal.open();
+};
 
 // Conexión y Bienvenida
 network.onConnectionChange = (connected) => {

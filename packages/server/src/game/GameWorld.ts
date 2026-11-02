@@ -148,6 +148,10 @@ export class GameWorld {
   }
 
   public loginPlayer(player: Player, name: string, classType: PlayerClass): void {
+    if (player.name) {
+      this.savePlayer(player);
+    }
+
     const profile = this.db.loadOrCreateProfile(name, classType);
     player.loadFromProfile(
       profile.name,
@@ -160,22 +164,24 @@ export class GameWorld {
       profile.current_zone || 'zone_forest'
     );
 
-    // Si el jugador guardó su partida en una zona avanzada, sincronizarla
-    if (player.currentZone && player.currentZone !== 'zone_forest') {
-      const zone = this.mapManager.getZone(player.currentZone);
-      if (player.ws.readyState === WebSocket.OPEN) {
-        const zoneMsg: ZoneChangeMessage = {
-          type: MessageType.ZONE_CHANGE,
-          zoneId: zone.id,
-          zoneName: zone.name,
-          theme: zone.theme,
-          obstacles: zone.obstacles,
-          portals: zone.portals,
-          spawnX: player.x,
-          spawnZ: player.z
-        };
-        player.ws.send(JSON.stringify(zoneMsg));
-      }
+    const zone = this.mapManager.getZone(player.currentZone || 'zone_forest');
+    if (zone && zone.spawnPoint) {
+      player.x = zone.spawnPoint.x;
+      player.z = zone.spawnPoint.z;
+    }
+
+    if (player.ws.readyState === WebSocket.OPEN) {
+      const zoneMsg: ZoneChangeMessage = {
+        type: MessageType.ZONE_CHANGE,
+        zoneId: zone.id,
+        zoneName: zone.name,
+        theme: zone.theme,
+        obstacles: zone.obstacles,
+        portals: zone.portals,
+        spawnX: player.x,
+        spawnZ: player.z
+      };
+      player.ws.send(JSON.stringify(zoneMsg));
     }
   }
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T03:54:51.450Z",
+  "generatedAt": "2026-11-02T04:12:18.603Z",
   "totalFiles": 70,
   "tree": [
     {
@@ -380,7 +380,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 10200,
+                  "size": 10548,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -423,7 +423,7 @@
                       "type": "file",
                       "name": "CharacterLoginModal.ts",
                       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-                      "size": 3674,
+                      "size": 19453,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -455,7 +455,7 @@
                       "type": "file",
                       "name": "SettingsMenu.ts",
                       "path": "packages/client/src/ui/SettingsMenu.ts",
-                      "size": 17324,
+                      "size": 18955,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -475,7 +475,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86807,
+              "size": 86900,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -615,7 +615,7 @@
                       "type": "file",
                       "name": "DatabaseManager.ts",
                       "path": "packages/server/src/db/DatabaseManager.ts",
-                      "size": 4381,
+                      "size": 5264,
                       "extension": ".ts",
                       "summary": "@ts-ignore"
                     }
@@ -638,7 +638,7 @@
                       "type": "file",
                       "name": "GameWorld.ts",
                       "path": "packages/server/src/game/GameWorld.ts",
-                      "size": 14824,
+                      "size": 14836,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -685,7 +685,7 @@
                       "type": "file",
                       "name": "NetworkServer.ts",
                       "path": "packages/server/src/network/NetworkServer.ts",
-                      "size": 6604,
+                      "size": 7454,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -705,7 +705,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/server/tsconfig.tsbuildinfo",
-              "size": 36431,
+              "size": 36437,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             }
@@ -1046,7 +1046,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 10200,
+      "size": 10548,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1070,7 +1070,7 @@
       "type": "file",
       "name": "CharacterLoginModal.ts",
       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-      "size": 3674,
+      "size": 19453,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1102,7 +1102,7 @@
       "type": "file",
       "name": "SettingsMenu.ts",
       "path": "packages/client/src/ui/SettingsMenu.ts",
-      "size": 17324,
+      "size": 18955,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1118,7 +1118,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86807,
+      "size": 86900,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -1206,7 +1206,7 @@
       "type": "file",
       "name": "DatabaseManager.ts",
       "path": "packages/server/src/db/DatabaseManager.ts",
-      "size": 4381,
+      "size": 5264,
       "extension": ".ts",
       "summary": "@ts-ignore"
     },
@@ -1222,7 +1222,7 @@
       "type": "file",
       "name": "GameWorld.ts",
       "path": "packages/server/src/game/GameWorld.ts",
-      "size": 14824,
+      "size": 14836,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1262,7 +1262,7 @@
       "type": "file",
       "name": "NetworkServer.ts",
       "path": "packages/server/src/network/NetworkServer.ts",
-      "size": 6604,
+      "size": 7454,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1278,7 +1278,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/server/tsconfig.tsbuildinfo",
-      "size": 36431,
+      "size": 36437,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

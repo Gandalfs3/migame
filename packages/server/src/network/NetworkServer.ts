@@ -54,8 +54,12 @@ export class NetworkServer {
   private setupRoutes(): void {
     this.app.use((req, res, next) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+        return;
+      }
       next();
     });
 
@@ -69,6 +73,27 @@ export class NetworkServer {
         monstersCount: this.gameWorld.monsters.size,
         persistence: 'SQLite (dev.db)'
       });
+    });
+
+    // Endpoint para listar todos los perfiles de personajes guardados
+    this.app.get('/api/profiles', (req, res) => {
+      try {
+        const profiles = this.gameWorld.db.getAllProfiles();
+        res.json({ profiles });
+      } catch (err: any) {
+        res.status(500).json({ error: err.message, profiles: [] });
+      }
+    });
+
+    // Endpoint para eliminar un perfil
+    this.app.delete('/api/profiles/:name', (req, res) => {
+      try {
+        const targetName = decodeURIComponent(req.params.name);
+        const success = this.gameWorld.db.deleteProfile(targetName);
+        res.json({ success, name: targetName });
+      } catch (err: any) {
+        res.status(500).json({ success: false, error: err.message });
+      }
     });
   }
 

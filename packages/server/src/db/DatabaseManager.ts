@@ -147,6 +147,32 @@ export class DatabaseManager {
     );
   }
 
+  public getAllProfiles(): SavedPlayerProfile[] {
+    try {
+      const selectAll = this.db.prepare('SELECT * FROM player_profiles ORDER BY updated_at DESC');
+      const rows = selectAll.all() as SavedPlayerProfile[];
+      return rows.map(r => ({
+        ...r,
+        current_zone: r.current_zone || 'zone_forest'
+      }));
+    } catch (err) {
+      console.error('[DatabaseManager] Error obteniendo perfiles:', err);
+      return [];
+    }
+  }
+
+  public deleteProfile(name: string): boolean {
+    try {
+      const deleteStmt = this.db.prepare('DELETE FROM player_profiles WHERE name = ?');
+      const result = deleteStmt.run(name);
+      console.log(`[DatabaseManager] Perfil '${name}' eliminado de SQLite.`);
+      return result.changes > 0;
+    } catch (err) {
+      console.error(`[DatabaseManager] Error eliminando perfil '${name}':`, err);
+      return false;
+    }
+  }
+
   public close(): void {
     if (this.db) {
       this.db.close();

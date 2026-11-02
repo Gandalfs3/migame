@@ -25,6 +25,7 @@ export class SettingsMenu {
   private modalEl: HTMLElement;
   private topRightControls: HTMLElement;
   private onSettingsChanged?: (settings: UXSettings) => void;
+  public onSwitchCharacter?: () => void;
 
   constructor(onChange?: (settings: UXSettings) => void) {
     this.onSettingsChanged = onChange;
@@ -115,7 +116,18 @@ export class SettingsMenu {
     container.style.zIndex = '30';
     container.style.pointerEvents = 'auto';
 
-    // 1. Botón de Pantalla Completa
+    // 1. Botón de Cambiar Personaje / Perfiles
+    const profileBtn = document.createElement('button');
+    profileBtn.id = 'btn-switch-profile';
+    profileBtn.innerHTML = '🧙';
+    profileBtn.title = 'Mis Héroes y Perfiles (Cambiar de personaje)';
+    profileBtn.className = 'top-icon-btn';
+    profileBtn.onclick = () => {
+      this.toggleModal(false);
+      this.onSwitchCharacter?.();
+    };
+
+    // 2. Botón de Pantalla Completa
     const fsBtn = document.createElement('button');
     fsBtn.id = 'btn-toggle-fullscreen';
     fsBtn.innerHTML = '⛶';
@@ -123,7 +135,7 @@ export class SettingsMenu {
     fsBtn.className = 'top-icon-btn';
     fsBtn.onclick = () => this.toggleFullscreen();
 
-    // 2. Botón de Ajustes (Engranaje)
+    // 3. Botón de Ajustes (Engranaje)
     const gearBtn = document.createElement('button');
     gearBtn.id = 'btn-settings-gear';
     gearBtn.innerHTML = '⚙️';
@@ -131,6 +143,7 @@ export class SettingsMenu {
     gearBtn.className = 'top-icon-btn';
     gearBtn.onclick = () => this.toggleModal();
 
+    container.appendChild(profileBtn);
     container.appendChild(fsBtn);
     container.appendChild(gearBtn);
 
@@ -269,6 +282,17 @@ export class SettingsMenu {
             </select>
           </div>
 
+          <!-- Gestión de Héroes / Cambiar Personaje -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); padding: 10px 12px; border-radius: 8px; margin-top: 4px;">
+            <div>
+              <div style="font-weight: 700; color: #c084fc;">🧙 Gestión de Héroes</div>
+              <div style="font-size: 11px; color: #cbd5e1;">Cambiar de personaje, ver perfiles o crear uno nuevo</div>
+            </div>
+            <button id="btn-switch-hero-modal" type="button" style="background: #9333ea; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);">
+              🧙 Gestionar
+            </button>
+          </div>
+
           <!-- Botón de Guardar también al final del scroll -->
           <button id="btn-save-settings" style="margin-top: 6px; width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
             ✓ Listo y Guardar Preferencias
@@ -286,11 +310,18 @@ export class SettingsMenu {
     const saveBtn = modal.querySelector('#btn-save-settings') as HTMLButtonElement;
     const saveTopBtn = modal.querySelector('#btn-save-settings-top') as HTMLButtonElement;
     const modalFsBtn = modal.querySelector('#btn-toggle-fullscreen-modal') as HTMLButtonElement;
+    const modalHeroBtn = modal.querySelector('#btn-switch-hero-modal') as HTMLButtonElement;
 
     if (closeBtn) closeBtn.onclick = () => this.toggleModal(false);
     if (saveBtn) saveBtn.onclick = () => this.toggleModal(false);
     if (saveTopBtn) saveTopBtn.onclick = () => this.toggleModal(false);
     if (modalFsBtn) modalFsBtn.onclick = () => this.toggleFullscreen();
+    if (modalHeroBtn) {
+      modalHeroBtn.onclick = () => {
+        this.toggleModal(false);
+        this.onSwitchCharacter?.();
+      };
+    }
 
     const checkControls = modal.querySelector('#toggle-controls-guide') as HTMLInputElement;
     const checkLan = modal.querySelector('#toggle-lan-banner') as HTMLInputElement;
