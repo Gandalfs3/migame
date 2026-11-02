@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T03:49:09.998Z",
+  "generatedAt": "2026-11-02T03:54:51.450Z",
   "totalFiles": 70,
   "tree": [
     {
@@ -339,7 +339,7 @@
                       "type": "file",
                       "name": "PlayerEntity.ts",
                       "path": "packages/client/src/entities/PlayerEntity.ts",
-                      "size": 8219,
+                      "size": 16640,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -1014,7 +1014,7 @@
       "type": "file",
       "name": "PlayerEntity.ts",
       "path": "packages/client/src/entities/PlayerEntity.ts",
-      "size": 8219,
+      "size": 16640,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
