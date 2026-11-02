@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T18:23:27.017Z",
+  "generatedAt": "2026-11-02T00:55:49.794Z",
   "totalFiles": 68,
   "tree": [
     {
@@ -323,7 +323,7 @@
                       "type": "file",
                       "name": "MonsterEntity.ts",
                       "path": "packages/client/src/entities/MonsterEntity.ts",
-                      "size": 8090,
+                      "size": 9941,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -339,7 +339,7 @@
                       "type": "file",
                       "name": "PlayerEntity.ts",
                       "path": "packages/client/src/entities/PlayerEntity.ts",
-                      "size": 6058,
+                      "size": 7701,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -372,7 +372,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 8090,
+                  "size": 8194,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -452,7 +452,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86157,
+              "size": 86430,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -975,7 +975,7 @@
       "type": "file",
       "name": "MonsterEntity.ts",
       "path": "packages/client/src/entities/MonsterEntity.ts",
-      "size": 8090,
+      "size": 9941,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -991,7 +991,7 @@
       "type": "file",
       "name": "PlayerEntity.ts",
       "path": "packages/client/src/entities/PlayerEntity.ts",
-      "size": 6058,
+      "size": 7701,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1015,7 +1015,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 8090,
+      "size": 8194,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1079,7 +1079,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86157,
+      "size": 86430,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

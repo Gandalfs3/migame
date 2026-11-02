@@ -122,30 +122,80 @@ export class PlayerEntity {
     }
   }
 
+  private drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  radius: number
+): void {
+  ctx.beginPath();
+  if (typeof ctx.roundRect === 'function') {
+    ctx.roundRect(x, y, Math.max(0, w), Math.max(0, h), radius);
+  } else {
+    const r = Math.min(radius, w / 2, h / 2);
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+}
+
   private renderHealthBar(): void {
     const ctx = this.healthCtx;
     ctx.clearRect(0, 0, 256, 64);
 
-    // Fondo
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-    ctx.roundRect ? ctx.roundRect(10, 20, 236, 22, 6) : ctx.fillRect(10, 20, 236, 22);
+    // 1. Título superior: [Nv. X] Nombre
+    const classBadge = this.classType === 'WARRIOR' ? '🛡️' : (this.classType === 'CLERIC' ? '💚' : '🔥');
+    const titleText = `${classBadge} [Nv.${this.level}] ${this.isLocal ? (this.name || 'Tú') : this.name}`;
+    ctx.font = 'bold 14px "Segoe UI", system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+    ctx.strokeText(titleText, 128, 14);
+    ctx.fillStyle = this.isLocal ? '#38bdf8' : '#ffffff';
+    ctx.fillText(titleText, 128, 14);
+
+    // 2. Marco exterior oscuro con borde
+    this.drawRoundedRect(ctx, 10, 24, 236, 26, 7);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = this.isLocal ? 'rgba(56, 189, 248, 0.5)' : 'rgba(255, 255, 255, 0.25)';
+    ctx.stroke();
+
+    // 3. Pista de fondo de salud (lo que falta de vida en oscuro)
+    this.drawRoundedRect(ctx, 13, 27, 230, 20, 5);
+    ctx.fillStyle = 'rgba(15, 15, 20, 0.95)';
     ctx.fill();
 
-    // Relleno de vida
+    // 4. Relleno de vida activa
     const pct = Math.max(0, Math.min(1, this.health / this.maxHealth));
-    ctx.fillStyle = pct > 0.5 ? '#22c55e' : (pct > 0.25 ? '#eab308' : '#ef4444');
-    const barWidth = 232 * pct;
-    if (barWidth > 0) {
-      ctx.roundRect ? ctx.roundRect(12, 22, barWidth, 18, 4) : ctx.fillRect(12, 22, barWidth, 18);
+    const barWidth = 230 * pct;
+    if (barWidth > 1) {
+      this.drawRoundedRect(ctx, 13, 27, barWidth, 20, 5);
+      ctx.fillStyle = pct > 0.5 ? '#22c55e' : (pct > 0.25 ? '#eab308' : '#ef4444');
       ctx.fill();
     }
 
-    // Texto: [Nvl. X] Nombre
-    const classBadge = this.classType === 'WARRIOR' ? '🛡️' : (this.classType === 'CLERIC' ? '💚' : '🔥');
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px sans-serif';
+    // 5. Texto de Salud numérico en el centro de la barra
+    const hpText = `${Math.round(this.health)} / ${this.maxHealth}`;
+    ctx.font = 'bold 12px "Segoe UI", system-ui, -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${classBadge} [Nv.${this.level}] ${this.isLocal ? (this.name || 'Tú') : this.name}`, 128, 16);
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.95)';
+    ctx.strokeText(hpText, 128, 37);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(hpText, 128, 37);
 
     this.healthTexture.needsUpdate = true;
   }

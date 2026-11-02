@@ -111,6 +111,9 @@ network.onWorldState = (msg) => {
     entity.setTarget(p.x, p.z, p.rotation);
     entity.setStats(p.health, p.maxHealth, p.classType, p.name, p.level);
     entity.setSelected(p.id === selectedTargetId);
+    if (p.id === selectedTargetId) {
+      combatHud.updateTarget(p.name, p.health, p.maxHealth);
+    }
 
     if (p.id === network.localPlayerId) {
       combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold);

@@ -154,29 +154,79 @@ export class MonsterEntity {
     mat.opacity = selected ? 0.9 : 0;
   }
 
+  private drawRoundedRect(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    radius: number
+  ): void {
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(x, y, Math.max(0, w), Math.max(0, h), radius);
+    } else {
+      const r = Math.min(radius, w / 2, h / 2);
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.lineTo(x + r, y + h);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
+      ctx.closePath();
+    }
+  }
+
   private renderHealthBar(name: string, health: number, maxHealth: number, isBoss: boolean): void {
     const ctx = this.healthCtx;
     ctx.clearRect(0, 0, 256, 64);
 
-    // Fondo oscuro con borde
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-    ctx.roundRect ? ctx.roundRect(10, 20, 236, 24, 6) : ctx.fillRect(10, 20, 236, 24);
+    // 1. Título superior: [JEFE] Nombre o Calavera + Nombre
+    const titleText = isBoss ? `👑 [JEFE] ${name}` : `💀 ${name}`;
+    ctx.font = isBoss ? 'bold 15px "Segoe UI", system-ui, -apple-system, sans-serif' : 'bold 14px "Segoe UI", system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.95)';
+    ctx.strokeText(titleText, 128, 14);
+    ctx.fillStyle = isBoss ? '#f59e0b' : '#f87171';
+    ctx.fillText(titleText, 128, 14);
+
+    // 2. Marco exterior oscuro con borde dorado/blanco
+    this.drawRoundedRect(ctx, 10, 24, 236, 26, 7);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = isBoss ? 'rgba(245, 158, 11, 0.6)' : 'rgba(255, 255, 255, 0.25)';
+    ctx.stroke();
+
+    // 3. Pista de fondo de salud oscura (porción vacía de vida)
+    this.drawRoundedRect(ctx, 13, 27, 230, 20, 5);
+    ctx.fillStyle = 'rgba(30, 10, 10, 0.95)';
     ctx.fill();
 
-    // Relleno de vida (Rojo / Naranja si es jefe, Verde si es esbirro)
+    // 4. Relleno de vida activa (Rojo / Naranja si es jefe, Verde a Rojo si es goblin)
     const pct = Math.max(0, Math.min(1, health / maxHealth));
-    ctx.fillStyle = isBoss ? '#dc2626' : (pct < 0.3 ? '#ef4444' : '#22c55e');
-    const barWidth = 232 * pct;
-    if (barWidth > 0) {
-      ctx.roundRect ? ctx.roundRect(12, 22, barWidth, 20, 4) : ctx.fillRect(12, 22, barWidth, 20);
+    const barWidth = 230 * pct;
+    if (barWidth > 1) {
+      this.drawRoundedRect(ctx, 13, 27, barWidth, 20, 5);
+      ctx.fillStyle = isBoss ? '#dc2626' : (pct < 0.3 ? '#ef4444' : '#22c55e');
       ctx.fill();
     }
 
-    // Nombre y Texto de Vida
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 15px sans-serif';
+    // 5. Texto de salud numérico en el centro de la barra
+    const hpText = `${Math.round(health)} / ${maxHealth}`;
+    ctx.font = 'bold 12px "Segoe UI", system-ui, -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${name} (${health}/${maxHealth})`, 128, 16);
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.95)';
+    ctx.strokeText(hpText, 128, 37);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(hpText, 128, 37);
 
     this.healthTexture.needsUpdate = true;
   }
@@ -186,8 +236,9 @@ export class MonsterEntity {
     this.targetZ = dto.z;
     this.targetRot = dto.rotation;
 
-    if (this.health !== dto.health || this.state !== dto.state) {
+    if (this.health !== dto.health || this.maxHealth !== dto.maxHealth || this.state !== dto.state) {
       this.health = dto.health;
+      this.maxHealth = dto.maxHealth;
       this.state = dto.state;
       this.renderHealthBar(dto.name, dto.health, dto.maxHealth, dto.type === 'BOSS_GOLEM');
     }
