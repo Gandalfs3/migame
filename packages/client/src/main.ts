@@ -12,6 +12,7 @@ import { InputManager } from './input/InputManager.js';
 import { PlayerEntity } from './entities/PlayerEntity.js';
 import { MonsterEntity } from './entities/MonsterEntity.js';
 import { ObstacleRenderer } from './entities/ObstacleRenderer.js';
+import { PortalRenderer } from './entities/PortalRenderer.js';
 import { DEFAULT_CLIENT_PORT, PlayerClass } from '@migame/common';
 
 const engine = new Engine('canvas-container');
@@ -19,6 +20,7 @@ const hud = new HUD();
 const combatHud = new CombatHUD();
 const floatingText = new FloatingTextManager();
 const obstacleRenderer = new ObstacleRenderer(engine.scene);
+const portalRenderer = new PortalRenderer(engine.scene);
 const rangeIndicator = new RangeIndicator(engine.scene);
 const assetManager = new AssetManager();
 const network = new NetworkClient();
@@ -47,6 +49,37 @@ const monsterEntities = new Map<string, MonsterEntity>();
 let selectedTargetId: string | null = null;
 let currentLocalClass: PlayerClass | null = null;
 
+// Gestor de Banners y Alertas de Zona
+let zoneBannerTimeout: number | null = null;
+let zoneAlertTimeout: number | null = null;
+
+function showZoneBanner(zoneName: string): void {
+  const banner = document.getElementById('zone-banner');
+  const title = document.getElementById('zone-banner-title');
+  if (!banner || !title) return;
+
+  title.innerText = zoneName;
+  banner.classList.add('show');
+
+  if (zoneBannerTimeout) clearTimeout(zoneBannerTimeout);
+  zoneBannerTimeout = window.setTimeout(() => {
+    banner.classList.remove('show');
+  }, 4000);
+}
+
+function showZoneAlert(message: string, isWarning: boolean = true): void {
+  const toast = document.getElementById('zone-alert-toast');
+  if (!toast) return;
+
+  toast.innerText = message;
+  toast.className = `zone-alert-toast show ${isWarning ? '' : 'info'}`;
+
+  if (zoneAlertTimeout) clearTimeout(zoneAlertTimeout);
+  zoneAlertTimeout = window.setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
 // Modal de Inicio Simplificado
 new CharacterLoginModal((name) => {
   network.sendLogin(name, currentLocalClass || 'WARRIOR');
@@ -61,9 +94,30 @@ network.onWelcome = (msg) => {
   hud.setPlayerId(msg.playerId);
   hud.setLanUrl(msg.hostIp, DEFAULT_CLIENT_PORT);
 
+  if (msg.theme) {
+    engine.applyZoneTheme(msg.theme);
+    showZoneBanner(msg.theme.name);
+  }
   if (msg.obstacles && Array.isArray(msg.obstacles)) {
     obstacleRenderer.renderObstacles(msg.obstacles);
   }
+  if (msg.portals && Array.isArray(msg.portals)) {
+    portalRenderer.renderPortals(msg.portals);
+  }
+};
+
+// Cambio y Alertas de Zona
+network.onZoneChange = (msg) => {
+  console.log(`[Client] Transición de zona recibida: ${msg.zoneName}`);
+  engine.applyZoneTheme(msg.theme);
+  obstacleRenderer.renderObstacles(msg.obstacles);
+  portalRenderer.renderPortals(msg.portals);
+  showZoneBanner(msg.zoneName);
+  selectTarget(null);
+};
+
+network.onZoneAlert = (msg) => {
+  showZoneAlert(msg.message, msg.isWarning !== false);
 };
 
 // Subida de Nivel
@@ -245,8 +299,14 @@ window.addEventListener('mousedown', (e) => {
 });
 
 // Bucle de renderizado
+let lastFrameTime = performance.now();
+
 function renderLoop(): void {
   requestAnimationFrame(renderLoop);
+
+  const now = performance.now();
+  const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+  lastFrameTime = now;
 
   for (const entity of playerEntities.values()) {
     entity.update(0.25, 0.3);
@@ -255,6 +315,8 @@ function renderLoop(): void {
   for (const entity of monsterEntities.values()) {
     entity.update(0.25, 0.3);
   }
+
+  portalRenderer.update(dt);
 
   if (network.localPlayerId && playerEntities.has(network.localPlayerId)) {
     const localEntity = playerEntities.get(network.localPlayerId)!;

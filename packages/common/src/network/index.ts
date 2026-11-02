@@ -5,7 +5,9 @@ import {
   MonsterDTO,
   PlayerClass,
   CombatFeedback,
-  LevelUpFeedback
+  LevelUpFeedback,
+  PortalDTO,
+  ZoneThemeDTO
 } from '../types/index.js';
 
 export enum MessageType {
@@ -20,6 +22,8 @@ export enum MessageType {
   CAST_SPELL = 'cast_spell',
   COMBAT_FEEDBACK = 'combat_feedback',
   LEVEL_UP = 'level_up',
+  ZONE_CHANGE = 'zone_change',
+  ZONE_ALERT = 'zone_alert',
   PING = 'ping',
   PONG = 'pong'
 }
@@ -31,7 +35,27 @@ export interface WelcomeMessage {
   port: number;
   color: string;
   mapBound: number;
+  zoneId: string;
+  theme: ZoneThemeDTO;
   obstacles: ObstacleDTO[];
+  portals: PortalDTO[];
+}
+
+export interface ZoneChangeMessage {
+  type: MessageType.ZONE_CHANGE;
+  zoneId: string;
+  zoneName: string;
+  theme: ZoneThemeDTO;
+  obstacles: ObstacleDTO[];
+  portals: PortalDTO[];
+  spawnX: number;
+  spawnZ: number;
+}
+
+export interface ZoneAlertMessage {
+  type: MessageType.ZONE_ALERT;
+  message: string;
+  isWarning?: boolean;
 }
 
 export interface LoginMessage {
@@ -109,5 +133,7 @@ export type NetworkMessage =
   | WorldStateMessage
   | PlayerJoinedMessage
   | PlayerLeftMessage
+  | ZoneChangeMessage
+  | ZoneAlertMessage
   | PingMessage
   | PongMessage;

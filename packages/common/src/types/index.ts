@@ -6,6 +6,31 @@ export interface Vector3 {
 
 export type PlayerClass = 'WARRIOR' | 'CLERIC' | 'MAGE';
 
+export interface PortalDTO {
+  id: string;
+  name: string;
+  fromZone: string;
+  toZone: string;
+  x: number;
+  z: number;
+  radius: number;
+  minLevel: number;
+  targetSpawn: { x: number; z: number };
+  color: string;
+}
+
+export interface ZoneThemeDTO {
+  id: string;
+  name: string;
+  groundColor: string;
+  gridColor1: string;
+  gridColor2: string;
+  fogColor: string;
+  fogDensity: number;
+  ambientLightColor: string;
+  dirLightColor: string;
+}
+
 export interface PlayerDTO {
   id: string;
   name: string;
@@ -20,6 +45,7 @@ export interface PlayerDTO {
   health: number;
   maxHealth: number;
   targetId: string | null;
+  zoneId: string;
 }
 
 export interface InputState {
@@ -57,10 +83,17 @@ export type ObstacleDTO = CircleObstacleDTO | BoxObstacleDTO;
 
 export type MonsterState = 'IDLE' | 'CHASE' | 'ATTACK' | 'DEAD';
 
+export type MonsterType =
+  | 'GOBLIN'
+  | 'BOSS_GOLEM'
+  | 'SKELETON_WARRIOR'
+  | 'SKELETON_ARCHER'
+  | 'BOSS_NECROMANCER';
+
 export interface MonsterDTO {
   id: string;
   name: string;
-  type: 'GOBLIN' | 'BOSS_GOLEM';
+  type: MonsterType;
   x: number;
   z: number;
   rotation: number;
@@ -68,6 +101,7 @@ export interface MonsterDTO {
   maxHealth: number;
   state: MonsterState;
   targetId: string | null;
+  zoneId: string;
 }
 
 export interface Spell {

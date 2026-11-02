@@ -77,6 +77,7 @@ export class NetworkServer {
       const player = this.gameWorld.createPlayer(ws);
       console.log(`[NetworkServer] Conexión de ${player.id} (${req.socket.remoteAddress}). Online: ${this.gameWorld.getPlayerCount()}`);
 
+      const zone = this.gameWorld.mapManager.getZone(player.currentZone);
       const welcome: WelcomeMessage = {
         type: MessageType.WELCOME,
         playerId: player.id,
@@ -84,7 +85,10 @@ export class NetworkServer {
         port: this.port,
         color: player.color,
         mapBound: MAP_BOUND,
-        obstacles: this.gameWorld.getObstacles()
+        zoneId: zone.id,
+        theme: zone.theme,
+        obstacles: zone.obstacles,
+        portals: zone.portals
       };
       ws.send(JSON.stringify(welcome));
 

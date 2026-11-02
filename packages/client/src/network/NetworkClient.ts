@@ -13,6 +13,8 @@ import {
   SelectTargetMessage,
   CastSpellMessage,
   CombatFeedback,
+  ZoneChangeMessage,
+  ZoneAlertMessage,
   DEFAULT_SERVER_PORT
 } from '@migame/common';
 
@@ -26,6 +28,8 @@ export class NetworkClient {
   public onWorldState?: (msg: WorldStateMessage) => void;
   public onCombatFeedback?: (feedbacks: CombatFeedback[]) => void;
   public onLevelUp?: (msg: LevelUpMessage) => void;
+  public onZoneChange?: (msg: ZoneChangeMessage) => void;
+  public onZoneAlert?: (msg: ZoneAlertMessage) => void;
   public onConnectionChange?: (connected: boolean) => void;
 
   constructor() {
@@ -84,6 +88,10 @@ export class NetworkClient {
       this.onCombatFeedback?.(msg.feedbacks);
     } else if (msg.type === MessageType.LEVEL_UP) {
       this.onLevelUp?.(msg);
+    } else if (msg.type === MessageType.ZONE_CHANGE) {
+      this.onZoneChange?.(msg);
+    } else if (msg.type === MessageType.ZONE_ALERT) {
+      this.onZoneAlert?.(msg);
     } else if (msg.type === MessageType.PONG) {
       this.lastPing = Math.round(performance.now() - msg.clientTime);
     }

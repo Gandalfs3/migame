@@ -1,4 +1,4 @@
-import { Spell, PlayerClass } from '../types/index.js';
+import { Spell, PlayerClass, ZoneThemeDTO } from '../types/index.js';
 
 export const TICK_RATE = 30; // 30 ticks por segundo
 export const TICK_INTERVAL_MS = 1000 / TICK_RATE; // ~33.33ms
@@ -31,7 +31,35 @@ export function getXpForNextLevel(level: number): number {
 
 export const MONSTER_REWARDS = {
   GOBLIN: { xp: 35, gold: 8 },
-  BOSS_GOLEM: { xp: 200, gold: 60 }
+  BOSS_GOLEM: { xp: 200, gold: 60 },
+  SKELETON_WARRIOR: { xp: 60, gold: 16 },
+  SKELETON_ARCHER: { xp: 75, gold: 22 },
+  BOSS_NECROMANCER: { xp: 450, gold: 150 }
+};
+
+export const ZONE_THEMES: Record<string, ZoneThemeDTO> = {
+  zone_forest: {
+    id: 'zone_forest',
+    name: 'Bosque de los Goblins',
+    groundColor: '#17251d',
+    gridColor1: '#22c55e',
+    gridColor2: '#14532d',
+    fogColor: '#09140e',
+    fogDensity: 0.024,
+    ambientLightColor: '#ffffff',
+    dirLightColor: '#fffaed'
+  },
+  zone_crypt: {
+    id: 'zone_crypt',
+    name: 'Cripta Maldita',
+    groundColor: '#1a1016',
+    gridColor1: '#ef4444',
+    gridColor2: '#7f1d1d',
+    fogColor: '#16080b',
+    fogDensity: 0.032,
+    ambientLightColor: '#c4b5fd',
+    dirLightColor: '#ff6644'
+  }
 };
 
 export const SPELLS: Record<string, Spell> = {

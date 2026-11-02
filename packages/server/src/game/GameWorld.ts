@@ -14,7 +14,8 @@ import {
   ObstacleDTO,
   CombatFeedback,
   PlayerClass,
-  LevelUpMessage
+  LevelUpMessage,
+  ZoneChangeMessage
 } from '@migame/common';
 
 export class GameWorld {
@@ -41,8 +42,11 @@ export class GameWorld {
   }
 
   private spawnMonsters(): void {
-    const boss = new Monster('boss_1', 'Gólem Ancestral (Jefe)', 'BOSS_GOLEM', 0, 0);
-    this.monsters.set(boss.id, boss);
+    // ----------------------------------------------------
+    // MONSTRUOS - ZONA 1: BOSQUE DE LOS GOBLINS
+    // ----------------------------------------------------
+    const bossGolem = new Monster('boss_1', 'Gólem Ancestral (Jefe)', 'BOSS_GOLEM', 0, 0, 'zone_forest');
+    this.monsters.set(bossGolem.id, bossGolem);
 
     const goblins = [
       { id: 'goblin_1', name: 'Goblin Explorador', x: -11, z: -11 },
@@ -52,7 +56,27 @@ export class GameWorld {
     ];
 
     for (const g of goblins) {
-      const mon = new Monster(g.id, g.name, 'GOBLIN', g.x, g.z);
+      const mon = new Monster(g.id, g.name, 'GOBLIN', g.x, g.z, 'zone_forest');
+      this.monsters.set(mon.id, mon);
+    }
+
+    // ----------------------------------------------------
+    // MONSTRUOS - ZONA 2: CRIPTA MALDITA (Nivel 2+)
+    // ----------------------------------------------------
+    const bossNecro = new Monster('boss_necro', 'Nigromante de las Cenizas (Jefe)', 'BOSS_NECROMANCER', 0, 0, 'zone_crypt');
+    this.monsters.set(bossNecro.id, bossNecro);
+
+    const cryptMinions = [
+      { id: 'skel_w1', name: 'Guerrero Esqueleto', type: 'SKELETON_WARRIOR' as const, x: -8, z: -7 },
+      { id: 'skel_w2', name: 'Guerrero Esqueleto', type: 'SKELETON_WARRIOR' as const, x: 8, z: -7 },
+      { id: 'skel_w3', name: 'Guardia de la Cripta', type: 'SKELETON_WARRIOR' as const, x: -8, z: 7 },
+      { id: 'skel_w4', name: 'Guardia de la Cripta', type: 'SKELETON_WARRIOR' as const, x: 8, z: 7 },
+      { id: 'skel_a1', name: 'Arquero Maldito', type: 'SKELETON_ARCHER' as const, x: -12, z: 0 },
+      { id: 'skel_a2', name: 'Arquero Maldito', type: 'SKELETON_ARCHER' as const, x: 12, z: 0 }
+    ];
+
+    for (const m of cryptMinions) {
+      const mon = new Monster(m.id, m.name, m.type, m.x, m.z, 'zone_crypt');
       this.monsters.set(mon.id, mon);
     }
   }
@@ -78,7 +102,8 @@ export class GameWorld {
       player.experience,
       player.health,
       player.maxHealth,
-      player.gold
+      player.gold,
+      player.currentZone
     );
   }
 
@@ -91,16 +116,35 @@ export class GameWorld {
       profile.experience,
       profile.health,
       profile.max_health,
-      profile.gold
+      profile.gold,
+      profile.current_zone || 'zone_forest'
     );
+
+    // Si el jugador guardó su partida en la Cripta, posicionar y sincronizar zona
+    if (player.currentZone && player.currentZone !== 'zone_forest') {
+      const zone = this.mapManager.getZone(player.currentZone);
+      if (player.ws.readyState === WebSocket.OPEN) {
+        const zoneMsg: ZoneChangeMessage = {
+          type: MessageType.ZONE_CHANGE,
+          zoneId: zone.id,
+          zoneName: zone.name,
+          theme: zone.theme,
+          obstacles: zone.obstacles,
+          portals: zone.portals,
+          spawnX: player.x,
+          spawnZ: player.z
+        };
+        player.ws.send(JSON.stringify(zoneMsg));
+      }
+    }
   }
 
   public setBroadcastCallback(cb: (message: unknown) => void): void {
     this.onBroadcast = cb;
   }
 
-  public getObstacles(): ObstacleDTO[] {
-    return this.mapManager.obstacles;
+  public getObstacles(zoneId: string = 'zone_forest'): ObstacleDTO[] {
+    return this.mapManager.getObstacles(zoneId);
   }
 
   public createPlayer(ws: WebSocket): Player {
@@ -109,11 +153,11 @@ export class GameWorld {
     const color = PLAYER_COLORS[colorIndex];
 
     const spawnAngle = Math.random() * Math.PI * 2;
-    const spawnDist = 14 + Math.random() * 3;
+    const spawnDist = 13 + Math.random() * 2;
     let spawnX = Math.cos(spawnAngle) * spawnDist;
     let spawnZ = Math.sin(spawnAngle) * spawnDist;
 
-    const safePos = this.mapManager.resolveCollisions(spawnX, spawnZ, PLAYER_RADIUS * 1.5);
+    const safePos = this.mapManager.resolveCollisions('zone_forest', spawnX, spawnZ, PLAYER_RADIUS * 1.5);
 
     const player = new Player(id, ws, color, safePos.x, safePos.z);
     this.players.set(id, player);
@@ -155,11 +199,11 @@ export class GameWorld {
       this.players,
       this.monsters,
       (monster, xp, gold, killer) => {
-        // Otorgar experiencia y oro a todos los jugadores cercanos (cooperativo familiar)
+        // Otorgar experiencia y oro a todos los jugadores cercanos en la MISMA zona (cooperativo familiar)
         for (const p of this.players.values()) {
-          if (p.health <= 0) continue;
+          if (p.health <= 0 || p.currentZone !== monster.zoneId) continue;
           const d = Math.hypot(p.x - monster.x, p.z - monster.z);
-          if (d <= 25.0) { // Radio de experiencia compartida
+          if (d <= 30.0) { // Radio de experiencia compartida
             p.addGold(gold);
             const leveledUp = p.addExperience(xp);
 
@@ -189,7 +233,7 @@ export class GameWorld {
       this.tick();
     }, TICK_INTERVAL_MS);
 
-    console.log(`[GameWorld] Loop autoritativo con Persistencia SQLite iniciado a ${TICK_RATE} ticks/seg.`);
+    console.log(`[GameWorld] Loop autoritativo Multi-Zona iniciado a ${TICK_RATE} ticks/seg.`);
   }
 
   public stop(): void {
@@ -218,7 +262,65 @@ export class GameWorld {
       player.update(dt, this.mapManager);
     }
 
-    // 2. Actualizar monstruos
+    // 2. Comprobar colisiones con Portales de Nivel (Autoritativo en el servidor)
+    const currentTimeMs = Date.now();
+    for (const player of this.players.values()) {
+      if (player.health <= 0) continue;
+      const portals = this.mapManager.getPortals(player.currentZone);
+
+      for (const portal of portals) {
+        const dist = Math.hypot(player.x - portal.x, player.z - portal.z);
+        if (dist <= portal.radius) {
+          if (player.level < portal.minLevel) {
+            if (currentTimeMs - player.lastZoneAlertTime > 2500) {
+              player.lastZoneAlertTime = currentTimeMs;
+              if (player.ws.readyState === WebSocket.OPEN) {
+                player.ws.send(JSON.stringify({
+                  type: MessageType.ZONE_ALERT,
+                  message: `⛔ ¡Nivel ${portal.minLevel} requerido para entrar a ${portal.name}!`,
+                  isWarning: true
+                }));
+              }
+            }
+          } else {
+            // Teletransporte de zona
+            const previousZone = player.currentZone;
+            player.currentZone = portal.toZone;
+            player.x = portal.targetSpawn.x;
+            player.z = portal.targetSpawn.z;
+            const targetZone = this.mapManager.getZone(portal.toZone);
+            this.savePlayer(player);
+
+            console.log(`[GameWorld] ${player.name} (${player.id}) cruzó el portal hacia '${targetZone.name}'`);
+
+            if (player.ws.readyState === WebSocket.OPEN) {
+              const zoneChangeMsg: ZoneChangeMessage = {
+                type: MessageType.ZONE_CHANGE,
+                zoneId: targetZone.id,
+                zoneName: targetZone.name,
+                theme: targetZone.theme,
+                obstacles: targetZone.obstacles,
+                portals: targetZone.portals,
+                spawnX: player.x,
+                spawnZ: player.z
+              };
+              player.ws.send(JSON.stringify(zoneChangeMsg));
+            }
+
+            if (this.onBroadcast) {
+              this.onBroadcast({
+                type: MessageType.ZONE_ALERT,
+                message: `🌀 ${player.name} ha cruzado a: ${targetZone.name}`,
+                isWarning: false
+              });
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    // 3. Actualizar monstruos
     for (const monster of this.monsters.values()) {
       monster.update(dt, this.players, this.mapManager, (player, dmg) => {
         player.takeDamage(dmg);
@@ -232,7 +334,7 @@ export class GameWorld {
       });
     }
 
-    // 3. Emitir feedbacks
+    // 4. Emitir feedbacks de combate
     if (monsterAttackFeedbacks.length > 0 && this.onBroadcast) {
       this.onBroadcast({
         type: MessageType.COMBAT_FEEDBACK,
@@ -240,16 +342,27 @@ export class GameWorld {
       });
     }
 
-    // 4. Emitir WorldState
-    if (this.onBroadcast) {
-      const worldState: WorldStateMessage = {
-        type: MessageType.WORLD_STATE,
-        tick: this.tickCount,
-        timestamp: Date.now(),
-        players: Array.from(this.players.values()).map(p => p.toDTO()),
-        monsters: Array.from(this.monsters.values()).map(m => m.toDTO())
-      };
-      this.onBroadcast(worldState);
+    // 5. Emitir WorldState filtrado por zona a cada jugador (MMO Phase 5 Scalable)
+    for (const player of this.players.values()) {
+      if (player.ws.readyState === WebSocket.OPEN) {
+        const zonePlayers = Array.from(this.players.values())
+          .filter(p => p.currentZone === player.currentZone)
+          .map(p => p.toDTO());
+
+        const zoneMonsters = Array.from(this.monsters.values())
+          .filter(m => m.zoneId === player.currentZone)
+          .map(m => m.toDTO());
+
+        const worldState: WorldStateMessage = {
+          type: MessageType.WORLD_STATE,
+          tick: this.tickCount,
+          timestamp: currentTimeMs,
+          players: zonePlayers,
+          monsters: zoneMonsters
+        };
+
+        player.ws.send(JSON.stringify(worldState));
+      }
     }
   }
 }

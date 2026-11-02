@@ -11,6 +11,7 @@ export interface SavedPlayerProfile {
   health: number;
   max_health: number;
   gold: number;
+  current_zone?: string;
   created_at: string;
   updated_at: string;
 }
@@ -36,10 +37,18 @@ export class DatabaseManager {
         health INTEGER NOT NULL,
         max_health INTEGER NOT NULL,
         gold INTEGER NOT NULL DEFAULT 0,
+        current_zone TEXT NOT NULL DEFAULT 'zone_forest',
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       );
     `);
+
+    // Migración segura si la tabla ya existía sin la columna current_zone
+    try {
+      this.db.exec("ALTER TABLE player_profiles ADD COLUMN current_zone TEXT DEFAULT 'zone_forest'");
+    } catch {
+      // Columna ya existe
+    }
 
     // 2. Tabla de Inventario de Jugador
     this.db.exec(`
@@ -63,8 +72,11 @@ export class DatabaseManager {
     const existing = selectStmt.get(trimmedName) as SavedPlayerProfile | undefined;
 
     if (existing) {
-      console.log(`[DatabaseManager] Perfil existente cargado para '${trimmedName}': Nivel ${existing.level}, Clase ${existing.class_type}, Oro ${existing.gold}.`);
-      return existing;
+      console.log(`[DatabaseManager] Perfil existente cargado para '${trimmedName}': Nivel ${existing.level}, Clase ${existing.class_type}, Zona ${existing.current_zone || 'zone_forest'}, Oro ${existing.gold}.`);
+      return {
+        ...existing,
+        current_zone: existing.current_zone || 'zone_forest'
+      };
     }
 
     // Crear nuevo perfil
@@ -72,8 +84,8 @@ export class DatabaseManager {
     const baseHealth = CLASS_STATS[chosenClass].maxHealth;
 
     const insertStmt = this.db.prepare(`
-      INSERT INTO player_profiles (name, class_type, level, experience, health, max_health, gold, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO player_profiles (name, class_type, level, experience, health, max_health, gold, current_zone, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     insertStmt.run(
@@ -84,6 +96,7 @@ export class DatabaseManager {
       baseHealth,
       baseHealth,
       10, // 10 de oro inicial para la familia
+      'zone_forest',
       now,
       now
     );
@@ -98,6 +111,7 @@ export class DatabaseManager {
       health: baseHealth,
       max_health: baseHealth,
       gold: 10,
+      current_zone: 'zone_forest',
       created_at: now,
       updated_at: now
     };
@@ -110,12 +124,13 @@ export class DatabaseManager {
     experience: number,
     health: number,
     maxHealth: number,
-    gold: number
+    gold: number,
+    currentZone: string = 'zone_forest'
   ): void {
     const now = new Date().toISOString();
     const updateStmt = this.db.prepare(`
       UPDATE player_profiles
-      SET class_type = ?, level = ?, experience = ?, health = ?, max_health = ?, gold = ?, updated_at = ?
+      SET class_type = ?, level = ?, experience = ?, health = ?, max_health = ?, gold = ?, current_zone = ?, updated_at = ?
       WHERE name = ?
     `);
 
@@ -126,6 +141,7 @@ export class DatabaseManager {
       Math.max(1, Math.round(health)),
       maxHealth,
       gold,
+      currentZone,
       now,
       name
     );

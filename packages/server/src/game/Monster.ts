@@ -1,11 +1,12 @@
-import { MonsterDTO, MonsterState, MONSTER_REWARDS } from '@migame/common';
+import { MonsterDTO, MonsterState, MonsterType, MONSTER_REWARDS } from '@migame/common';
 import { MapManager } from './MapManager.js';
 import { Player } from './Player.js';
 
 export class Monster {
   public id: string;
   public name: string;
-  public type: 'GOBLIN' | 'BOSS_GOLEM';
+  public type: MonsterType;
+  public zoneId: string;
   public x: number;
   public z: number;
   public rotation: number = 0;
@@ -31,13 +32,15 @@ export class Monster {
   constructor(
     id: string,
     name: string,
-    type: 'GOBLIN' | 'BOSS_GOLEM',
+    type: MonsterType,
     spawnX: number,
-    spawnZ: number
+    spawnZ: number,
+    zoneId: string = 'zone_forest'
   ) {
     this.id = id;
     this.name = name;
     this.type = type;
+    this.zoneId = zoneId;
     this.spawnX = spawnX;
     this.spawnZ = spawnZ;
     this.x = spawnX;
@@ -51,7 +54,32 @@ export class Monster {
       this.attackRange = 2.4;
       this.attackCooldownMs = 2000;
       this.respawnDelaySeconds = 18;
+    } else if (type === 'BOSS_NECROMANCER') {
+      this.maxHealth = 600;
+      this.speed = 3.6;
+      this.damage = 38;
+      this.aggroRange = 14.0;
+      this.attackRange = 9.0;
+      this.attackCooldownMs = 2200;
+      this.respawnDelaySeconds = 25;
+    } else if (type === 'SKELETON_WARRIOR') {
+      this.maxHealth = 150;
+      this.speed = 4.8;
+      this.damage = 20;
+      this.aggroRange = 10.0;
+      this.attackRange = 2.0;
+      this.attackCooldownMs = 1400;
+      this.respawnDelaySeconds = 10;
+    } else if (type === 'SKELETON_ARCHER') {
+      this.maxHealth = 110;
+      this.speed = 4.0;
+      this.damage = 24;
+      this.aggroRange = 12.0;
+      this.attackRange = 8.5;
+      this.attackCooldownMs = 1800;
+      this.respawnDelaySeconds = 12;
     } else {
+      // GOBLIN
       this.maxHealth = 80;
       this.speed = 4.5;
       this.damage = 12;
@@ -113,13 +141,18 @@ export class Monster {
 
     let targetPlayer: Player | null = null;
     if (this.targetId && players.has(this.targetId)) {
-      targetPlayer = players.get(this.targetId)!;
-    } else {
+      const candidate = players.get(this.targetId)!;
+      if (candidate.health > 0 && candidate.currentZone === this.zoneId) {
+        targetPlayer = candidate;
+      }
+    }
+
+    if (!targetPlayer) {
       let closestDist = this.aggroRange;
       let closestPlayer: Player | null = null;
 
       for (const p of players.values()) {
-        if (p.health <= 0) continue;
+        if (p.health <= 0 || p.currentZone !== this.zoneId) continue;
         const d = Math.hypot(p.x - this.x, p.z - this.z);
         if (d < closestDist) {
           closestDist = d;
@@ -144,7 +177,7 @@ export class Monster {
         const dirZ = (this.spawnZ - this.z) / distToSpawn;
         const proposedX = this.x + dirX * (this.speed * 0.5) * dt;
         const proposedZ = this.z + dirZ * (this.speed * 0.5) * dt;
-        const resolved = mapManager.resolveCollisions(proposedX, proposedZ, 0.7);
+        const resolved = mapManager.resolveCollisions(this.zoneId, proposedX, proposedZ, 0.7);
         this.x = resolved.x;
         this.z = resolved.z;
         this.rotation = Math.atan2(dirX, dirZ);
@@ -152,7 +185,7 @@ export class Monster {
       return;
     }
 
-    if (targetPlayer && targetPlayer.health > 0) {
+    if (targetPlayer && targetPlayer.health > 0 && targetPlayer.currentZone === this.zoneId) {
       const dx = targetPlayer.x - this.x;
       const dz = targetPlayer.z - this.z;
       const dist = Math.hypot(dx, dz);
@@ -179,7 +212,7 @@ export class Monster {
         const dirZ = dz / dist;
         const proposedX = this.x + dirX * this.speed * dt;
         const proposedZ = this.z + dirZ * this.speed * dt;
-        const resolved = mapManager.resolveCollisions(proposedX, proposedZ, 0.7);
+        const resolved = mapManager.resolveCollisions(this.zoneId, proposedX, proposedZ, 0.7);
         this.x = resolved.x;
         this.z = resolved.z;
       }
@@ -200,7 +233,8 @@ export class Monster {
       health: this.health,
       maxHealth: this.maxHealth,
       state: this.state,
-      targetId: this.targetId
+      targetId: this.targetId,
+      zoneId: this.zoneId
     };
   }
 }

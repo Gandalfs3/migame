@@ -17,6 +17,8 @@ export class MonsterEntity {
   private healthTexture: THREE.CanvasTexture;
   private selectionRing: THREE.Mesh;
   private bodyMesh: THREE.Object3D;
+  private staffOrb?: THREE.Mesh;
+  private isBoss: boolean;
 
   constructor(scene: THREE.Scene, dto: MonsterDTO) {
     this.id = dto.id;
@@ -27,14 +29,15 @@ export class MonsterEntity {
     this.group = new THREE.Group();
     this.group.position.set(dto.x, 0, dto.z);
 
-    const isBoss = dto.type === 'BOSS_GOLEM';
+    this.isBoss = dto.type === 'BOSS_GOLEM' || dto.type === 'BOSS_NECROMANCER';
 
-    // 1. Malla 3D del monstruo
-    if (isBoss) {
-      // GÓLEM JEFE
+    // 1. Malla 3D según el tipo de monstruo
+    if (dto.type === 'BOSS_GOLEM') {
+      // ------------------------------------
+      // GÓLEM ANCESTRAL (JEFE DEL BOSQUE)
+      // ------------------------------------
       const golemGroup = new THREE.Group();
 
-      // Torso de piedra masivo
       const torsoGeo = new THREE.DodecahedronGeometry(1.4, 1);
       const torsoMat = new THREE.MeshStandardMaterial({
         color: 0x334155,
@@ -48,14 +51,12 @@ export class MonsterEntity {
       torso.castShadow = true;
       golemGroup.add(torso);
 
-      // Núcleo rúnico brillante en el pecho
       const coreGeo = new THREE.SphereGeometry(0.4, 16, 16);
       const coreMat = new THREE.MeshBasicMaterial({ color: 0xa855f7 });
       const core = new THREE.Mesh(coreGeo, coreMat);
       core.position.set(0, 1.8, 0.9);
       golemGroup.add(core);
 
-      // Cabeza de piedra con ojos ardientes
       const headGeo = new THREE.BoxGeometry(0.8, 0.7, 0.8);
       const headMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 });
       const head = new THREE.Mesh(headGeo, headMat);
@@ -71,7 +72,6 @@ export class MonsterEntity {
       eyeR.position.set(0.22, 2.9, 0.6);
       golemGroup.add(eyeL, eyeR);
 
-      // Hombreras de roca
       const shoulderGeo = new THREE.ConeGeometry(0.6, 0.9, 5);
       const shoulderMat = new THREE.MeshStandardMaterial({ color: 0x475569, flatShading: true });
       const shoulderL = new THREE.Mesh(shoulderGeo, shoulderMat);
@@ -84,11 +84,162 @@ export class MonsterEntity {
 
       this.bodyMesh = golemGroup;
       this.group.add(golemGroup);
+    } else if (dto.type === 'BOSS_NECROMANCER') {
+      // ------------------------------------
+      // NIGROMANTE DE LAS CENIZAS (JEFE CRIPTA)
+      // ------------------------------------
+      const necroGroup = new THREE.Group();
+
+      // Túnica ondeante y mística
+      const robeGeo = new THREE.ConeGeometry(1.0, 2.3, 8);
+      const robeMat = new THREE.MeshStandardMaterial({
+        color: 0x2e1065,
+        roughness: 0.6,
+        flatShading: true
+      });
+      const robe = new THREE.Mesh(robeGeo, robeMat);
+      robe.position.y = 1.3;
+      robe.castShadow = true;
+      necroGroup.add(robe);
+
+      // Corona / Máscara dorada ceremonial
+      const crownGeo = new THREE.CylinderGeometry(0.48, 0.42, 0.35, 6);
+      const crownMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.7, roughness: 0.3 });
+      const crown = new THREE.Mesh(crownGeo, crownMat);
+      crown.position.set(0, 2.7, 0);
+      necroGroup.add(crown);
+
+      // Calavera oscura encapuchada
+      const skullGeo = new THREE.DodecahedronGeometry(0.45, 1);
+      const skullMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
+      const skull = new THREE.Mesh(skullGeo, skullMat);
+      skull.position.set(0, 2.45, 0.1);
+      skull.castShadow = true;
+      necroGroup.add(skull);
+
+      // Ojos ardientes de llama púrpura
+      const eyeGeo = new THREE.SphereGeometry(0.1, 8, 8);
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0xd946ef });
+      const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeL.position.set(-0.16, 2.5, 0.48);
+      const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeR.position.set(0.16, 2.5, 0.48);
+      necroGroup.add(eyeL, eyeR);
+
+      // Báculo nigromántico con orbe brillante
+      const staffGeo = new THREE.CylinderGeometry(0.06, 0.08, 2.6, 6);
+      const staffMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.9 });
+      const staff = new THREE.Mesh(staffGeo, staffMat);
+      staff.position.set(0.95, 1.4, 0.3);
+      staff.rotation.z = -0.15;
+      necroGroup.add(staff);
+
+      const orbGeo = new THREE.SphereGeometry(0.28, 16, 16);
+      const orbMat = new THREE.MeshBasicMaterial({ color: 0xc084fc });
+      this.staffOrb = new THREE.Mesh(orbGeo, orbMat);
+      this.staffOrb.position.set(1.15, 2.8, 0.3);
+      necroGroup.add(this.staffOrb);
+
+      this.bodyMesh = necroGroup;
+      this.group.add(necroGroup);
+    } else if (dto.type === 'SKELETON_WARRIOR') {
+      // ------------------------------------
+      // GUERRERO ESQUELETO (CRIPTA)
+      // ------------------------------------
+      const skelGroup = new THREE.Group();
+
+      // Torso óseo
+      const torsoGeo = new THREE.BoxGeometry(0.55, 0.75, 0.35);
+      const boneMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
+      const torso = new THREE.Mesh(torsoGeo, boneMat);
+      torso.position.y = 0.85;
+      torso.castShadow = true;
+      skelGroup.add(torso);
+
+      // Calavera
+      const skullGeo = new THREE.DodecahedronGeometry(0.32, 1);
+      const skull = new THREE.Mesh(skullGeo, boneMat);
+      skull.position.set(0, 1.45, 0);
+      skull.castShadow = true;
+      skelGroup.add(skull);
+
+      // Ojos rojos siniestros
+      const eyeGeo = new THREE.SphereGeometry(0.06, 6, 6);
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+      const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeL.position.set(-0.11, 1.48, 0.28);
+      const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeR.position.set(0.11, 1.48, 0.28);
+      skelGroup.add(eyeL, eyeR);
+
+      // Espada de hierro
+      const bladeGeo = new THREE.BoxGeometry(0.1, 0.9, 0.04);
+      const metalMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8, roughness: 0.4 });
+      const blade = new THREE.Mesh(bladeGeo, metalMat);
+      blade.position.set(0.48, 0.9, 0.25);
+      blade.rotation.x = Math.PI / 4;
+      skelGroup.add(blade);
+
+      // Escudo de madera reforzada
+      const shieldGeo = new THREE.BoxGeometry(0.45, 0.6, 0.08);
+      const shieldMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 });
+      const shield = new THREE.Mesh(shieldGeo, shieldMat);
+      shield.position.set(-0.45, 0.85, 0.2);
+      skelGroup.add(shield);
+
+      this.bodyMesh = skelGroup;
+      this.group.add(skelGroup);
+    } else if (dto.type === 'SKELETON_ARCHER') {
+      // ------------------------------------
+      // ARQUERO MALDITO (CRIPTA)
+      // ------------------------------------
+      const archerGroup = new THREE.Group();
+
+      // Capucha verde oscura
+      const cowlGeo = new THREE.ConeGeometry(0.4, 0.6, 6);
+      const cowlMat = new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.7 });
+      const cowl = new THREE.Mesh(cowlGeo, cowlMat);
+      cowl.position.set(0, 1.55, 0);
+      archerGroup.add(cowl);
+
+      const skullGeo = new THREE.DodecahedronGeometry(0.3, 1);
+      const boneMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
+      const skull = new THREE.Mesh(skullGeo, boneMat);
+      skull.position.set(0, 1.35, 0.05);
+      archerGroup.add(skull);
+
+      // Ojos esmeralda sobrenaturales
+      const eyeGeo = new THREE.SphereGeometry(0.06, 6, 6);
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0x10b981 });
+      const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeL.position.set(-0.1, 1.38, 0.3);
+      const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeR.position.set(0.1, 1.38, 0.3);
+      archerGroup.add(eyeL, eyeR);
+
+      // Torso
+      const torsoGeo = new THREE.BoxGeometry(0.45, 0.7, 0.3);
+      const torso = new THREE.Mesh(torsoGeo, boneMat);
+      torso.position.y = 0.8;
+      torso.castShadow = true;
+      archerGroup.add(torso);
+
+      // Arco en la mano
+      const bowGeo = new THREE.TorusGeometry(0.4, 0.03, 6, 12, Math.PI);
+      const bowMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.7 });
+      const bow = new THREE.Mesh(bowGeo, bowMat);
+      bow.position.set(0.4, 0.8, 0.35);
+      bow.rotation.y = Math.PI / 2;
+      archerGroup.add(bow);
+
+      this.bodyMesh = archerGroup;
+      this.group.add(archerGroup);
     } else {
-      // GOBLIN
+      // ------------------------------------
+      // GOBLIN (BOSQUE)
+      // ------------------------------------
       const goblinGroup = new THREE.Group();
 
-      // Cuerpo verde
       const bodyGeo = new THREE.CapsuleGeometry(0.4, 0.6, 8, 16);
       const bodyMat = new THREE.MeshStandardMaterial({ color: 0x4d7c0f, roughness: 0.5 });
       const body = new THREE.Mesh(bodyGeo, bodyMat);
@@ -96,7 +247,6 @@ export class MonsterEntity {
       body.castShadow = true;
       goblinGroup.add(body);
 
-      // Ojos rojos amenazantes
       const eyeGeo = new THREE.SphereGeometry(0.08, 8, 8);
       const eyeMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
       const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
@@ -105,7 +255,6 @@ export class MonsterEntity {
       eyeR.position.set(0.16, 0.9, 0.35);
       goblinGroup.add(eyeL, eyeR);
 
-      // Garrote / Arma
       const clubGeo = new THREE.CylinderGeometry(0.08, 0.16, 0.8, 6);
       const clubMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 });
       const club = new THREE.Mesh(clubGeo, clubMat);
@@ -119,7 +268,8 @@ export class MonsterEntity {
     }
 
     // 2. Anillo de Selección en el suelo
-    const ringGeo = new THREE.RingGeometry(isBoss ? 1.8 : 0.9, isBoss ? 2.0 : 1.05, 32);
+    const ringRadius = this.isBoss ? 1.8 : 0.9;
+    const ringGeo = new THREE.RingGeometry(ringRadius, ringRadius + 0.18, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0xf59e0b,
       side: THREE.DoubleSide,
@@ -140,11 +290,11 @@ export class MonsterEntity {
     this.healthTexture = new THREE.CanvasTexture(this.healthCanvas);
     const spriteMat = new THREE.SpriteMaterial({ map: this.healthTexture, depthTest: false });
     this.healthBarMesh = new THREE.Sprite(spriteMat);
-    this.healthBarMesh.scale.set(isBoss ? 3.5 : 2.2, isBoss ? 0.85 : 0.55, 1);
-    this.healthBarMesh.position.y = isBoss ? 3.8 : 1.7;
+    this.healthBarMesh.scale.set(this.isBoss ? 3.5 : 2.2, this.isBoss ? 0.85 : 0.55, 1);
+    this.healthBarMesh.position.y = this.isBoss ? 3.8 : 1.7;
     this.group.add(this.healthBarMesh);
 
-    this.renderHealthBar(dto.name, dto.health, dto.maxHealth, isBoss);
+    this.renderHealthBar(dto.name, dto.health, dto.maxHealth, this.isBoss);
 
     scene.add(this.group);
   }
@@ -186,7 +336,7 @@ export class MonsterEntity {
 
     // 1. Título superior: [JEFE] Nombre o Calavera + Nombre
     const titleText = isBoss ? `👑 [JEFE] ${name}` : `💀 ${name}`;
-    ctx.font = isBoss ? 'bold 15px "Segoe UI", system-ui, -apple-system, sans-serif' : 'bold 14px "Segoe UI", system-ui, -apple-system, sans-serif';
+    ctx.font = isBoss ? 'bold 15px "Segoe UI", system-ui, sans-serif' : 'bold 14px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 3;
@@ -208,7 +358,7 @@ export class MonsterEntity {
     ctx.fillStyle = 'rgba(30, 10, 10, 0.95)';
     ctx.fill();
 
-    // 4. Relleno de vida activa (Rojo / Naranja si es jefe, Verde a Rojo si es goblin)
+    // 4. Relleno de vida activa
     const pct = Math.max(0, Math.min(1, health / maxHealth));
     const barWidth = 230 * pct;
     if (barWidth > 1) {
@@ -219,7 +369,7 @@ export class MonsterEntity {
 
     // 5. Texto de salud numérico en el centro de la barra
     const hpText = `${Math.round(health)} / ${maxHealth}`;
-    ctx.font = 'bold 12px "Segoe UI", system-ui, -apple-system, sans-serif';
+    ctx.font = 'bold 12px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 2.5;
@@ -240,7 +390,7 @@ export class MonsterEntity {
       this.health = dto.health;
       this.maxHealth = dto.maxHealth;
       this.state = dto.state;
-      this.renderHealthBar(dto.name, dto.health, dto.maxHealth, dto.type === 'BOSS_GOLEM');
+      this.renderHealthBar(dto.name, dto.health, dto.maxHealth, this.isBoss);
     }
   }
 
@@ -255,6 +405,12 @@ export class MonsterEntity {
     this.healthBarMesh.visible = true;
     this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, 0, 0.2);
     this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0, 0.2);
+
+    // Efecto de pulso en el orbe del báculo del nigromante
+    if (this.staffOrb) {
+      const pulse = 1 + Math.sin(Date.now() * 0.005) * 0.15;
+      this.staffOrb.scale.set(pulse, pulse, pulse);
+    }
 
     this.group.position.x += (this.targetX - this.group.position.x) * posLerp;
     this.group.position.z += (this.targetZ - this.group.position.z) * posLerp;

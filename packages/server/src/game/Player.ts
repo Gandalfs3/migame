@@ -31,6 +31,8 @@ export class Player {
   public cooldowns: Map<string, number> = new Map();
   public respawnTimer: number = 0;
   public lastClassSwitchTime: number = 0;
+  public currentZone: string = 'zone_forest';
+  public lastZoneAlertTime: number = 0;
 
   constructor(
     id: string,
@@ -61,13 +63,15 @@ export class Player {
     experience: number,
     health: number,
     maxHealth: number,
-    gold: number
+    gold: number,
+    currentZone: string = 'zone_forest'
   ): void {
     this.name = name;
     this.classType = classType;
     this.level = level;
     this.experience = experience;
     this.gold = gold;
+    this.currentZone = currentZone || 'zone_forest';
 
     // Calcular vida según nivel (+15 de vida por nivel)
     const baseClassHealth = CLASS_STATS[classType].maxHealth;
@@ -148,8 +152,9 @@ export class Player {
       this.respawnTimer -= dt;
       if (this.respawnTimer <= 0) {
         this.health = this.maxHealth;
-        this.x = 0;
-        this.z = 0;
+        const spawn = mapManager.getZone(this.currentZone).spawnPoint;
+        this.x = spawn.x;
+        this.z = spawn.z;
       }
       return;
     }
@@ -171,7 +176,7 @@ export class Player {
       const proposedX = this.x + normX * speed * dt;
       const proposedZ = this.z + normZ * speed * dt;
 
-      const resolved = mapManager.resolveCollisions(proposedX, proposedZ, PLAYER_RADIUS);
+      const resolved = mapManager.resolveCollisions(this.currentZone, proposedX, proposedZ, PLAYER_RADIUS);
       this.x = resolved.x;
       this.z = resolved.z;
       this.rotation = Math.atan2(normX, normZ);
@@ -192,7 +197,8 @@ export class Player {
       gold: this.gold,
       health: this.health,
       maxHealth: this.maxHealth,
-      targetId: this.targetId
+      targetId: this.targetId,
+      zoneId: this.currentZone
     };
   }
 }

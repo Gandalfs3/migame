@@ -510,12 +510,100 @@
       transform: translateX(-50%) !important;
       width: 280px !important;
     }
+
+    /* ====================================================
+       ANUNCIOS DE ZONA Y ALERTAS DE PORTALES DE NIVEL
+       ==================================================== */
+    .zone-announcement-overlay {
+      position: absolute;
+      top: 14%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+      z-index: 50;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .zone-banner {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+      border: 2px solid rgba(245, 158, 11, 0.6);
+      border-radius: 16px;
+      padding: 12px 28px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.2);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .zone-banner.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .zone-banner-subtitle {
+      font-size: 11px;
+      letter-spacing: 3px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .zone-banner-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #fbbf24;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+      letter-spacing: 1px;
+    }
+
+    .zone-alert-toast {
+      background: rgba(15, 23, 42, 0.94);
+      border: 1.5px solid #ef4444;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fca5a5;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      text-align: center;
+    }
+
+    .zone-alert-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .zone-alert-toast.info {
+      border-color: #38bdf8;
+      color: #bae6fd;
+    }
   </style>
 </head>
 <body>
   <div id="canvas-container"></div>
 
   <div class="hud-overlay">
+    <!-- Anuncios y Alertas de Zona -->
+    <div id="zone-announcement-overlay" class="zone-announcement-overlay">
+      <div id="zone-banner" class="zone-banner">
+        <div class="zone-banner-subtitle">HAS ENTRADO A</div>
+        <div class="zone-banner-title" id="zone-banner-title">Bosque de los Goblins</div>
+      </div>
+      <div id="zone-alert-toast" class="zone-alert-toast"></div>
+    </div>
+
     <!-- Top Bar -->
     <div class="hud-header">
       <div class="header-left">
