@@ -43,40 +43,80 @@ export class GameWorld {
 
   private spawnMonsters(): void {
     // ----------------------------------------------------
-    // MONSTRUOS - ZONA 1: BOSQUE DE LOS GOBLINS
+    // ZONA 1: BOSQUE DE LOS GOBLINS (Nivel 1 - 2)
     // ----------------------------------------------------
-    const bossGolem = new Monster('boss_1', 'Gólem Ancestral (Jefe)', 'BOSS_GOLEM', 0, 0, 'zone_forest');
+    const bossGolem = new Monster('boss_1', 'Gólem Ancestral (Jefe)', 'BOSS_GOLEM', 0, 0, 'zone_forest', 2);
     this.monsters.set(bossGolem.id, bossGolem);
 
-    const goblins = [
-      { id: 'goblin_1', name: 'Goblin Explorador', x: -11, z: -11 },
-      { id: 'goblin_2', name: 'Goblin Cazador', x: 11, z: -11 },
-      { id: 'goblin_3', name: 'Goblin Emboscador', x: -11, z: 11 },
-      { id: 'goblin_4', name: 'Goblin Chamán', x: 11, z: 11 }
+    const forestMinions = [
+      { id: 'goblin_1', name: 'Goblin Explorador', type: 'GOBLIN' as const, x: -11, z: -11, lvl: 1 },
+      { id: 'goblin_2', name: 'Goblin Cazador', type: 'GOBLIN' as const, x: 11, z: -11, lvl: 1 },
+      { id: 'goblin_3', name: 'Goblin Emboscador', type: 'GOBLIN' as const, x: -11, z: 11, lvl: 1 },
+      { id: 'goblin_4', name: 'Goblin Chamán', type: 'GOBLIN' as const, x: 11, z: 11, lvl: 2 }
     ];
 
-    for (const g of goblins) {
-      const mon = new Monster(g.id, g.name, 'GOBLIN', g.x, g.z, 'zone_forest');
+    for (const g of forestMinions) {
+      const mon = new Monster(g.id, g.name, g.type, g.x, g.z, 'zone_forest', g.lvl);
       this.monsters.set(mon.id, mon);
     }
 
     // ----------------------------------------------------
-    // MONSTRUOS - ZONA 2: CRIPTA MALDITA (Nivel 2+)
+    // ZONA 2: CRIPTA MALDITA (Nivel 3 - 5)
     // ----------------------------------------------------
-    const bossNecro = new Monster('boss_necro', 'Nigromante de las Cenizas (Jefe)', 'BOSS_NECROMANCER', 0, 0, 'zone_crypt');
+    const bossNecro = new Monster('boss_necro', 'Nigromante de las Cenizas (Jefe)', 'BOSS_NECROMANCER', 0, 0, 'zone_crypt', 5);
     this.monsters.set(bossNecro.id, bossNecro);
 
     const cryptMinions = [
-      { id: 'skel_w1', name: 'Guerrero Esqueleto', type: 'SKELETON_WARRIOR' as const, x: -8, z: -7 },
-      { id: 'skel_w2', name: 'Guerrero Esqueleto', type: 'SKELETON_WARRIOR' as const, x: 8, z: -7 },
-      { id: 'skel_w3', name: 'Guardia de la Cripta', type: 'SKELETON_WARRIOR' as const, x: -8, z: 7 },
-      { id: 'skel_w4', name: 'Guardia de la Cripta', type: 'SKELETON_WARRIOR' as const, x: 8, z: 7 },
-      { id: 'skel_a1', name: 'Arquero Maldito', type: 'SKELETON_ARCHER' as const, x: -12, z: 0 },
-      { id: 'skel_a2', name: 'Arquero Maldito', type: 'SKELETON_ARCHER' as const, x: 12, z: 0 }
+      { id: 'skel_w1', name: 'Guerrero Esqueleto', type: 'SKELETON_WARRIOR' as const, x: -8, z: -7, lvl: 3 },
+      { id: 'skel_w2', name: 'Guerrero Esqueleto', type: 'SKELETON_WARRIOR' as const, x: 8, z: -7, lvl: 3 },
+      { id: 'skel_w3', name: 'Guardia de la Cripta', type: 'SKELETON_WARRIOR' as const, x: -8, z: 7, lvl: 4 },
+      { id: 'skel_w4', name: 'Guardia de la Cripta', type: 'SKELETON_WARRIOR' as const, x: 8, z: 7, lvl: 4 },
+      { id: 'skel_a1', name: 'Arquero Maldito', type: 'SKELETON_ARCHER' as const, x: -12, z: 0, lvl: 4 },
+      { id: 'skel_a2', name: 'Arquero Maldito', type: 'SKELETON_ARCHER' as const, x: 12, z: 0, lvl: 4 }
     ];
 
     for (const m of cryptMinions) {
-      const mon = new Monster(m.id, m.name, m.type, m.x, m.z, 'zone_crypt');
+      const mon = new Monster(m.id, m.name, m.type, m.x, m.z, 'zone_crypt', m.lvl);
+      this.monsters.set(mon.id, mon);
+    }
+
+    // ----------------------------------------------------
+    // ZONA 3: BASTIÓN VOLCÁNICO (Nivel 6 - 8)
+    // ----------------------------------------------------
+    const bossMagma = new Monster('boss_magma', 'Señor del Magma (Jefe)', 'BOSS_MAGMA_LORD', 0, 0, 'zone_volcano', 8);
+    this.monsters.set(bossMagma.id, bossMagma);
+
+    const volcanoMinions = [
+      { id: 'demon_1', name: 'Demonio de Fuego', type: 'FIRE_DEMON' as const, x: -8, z: -8, lvl: 6 },
+      { id: 'demon_2', name: 'Demonio de Fuego', type: 'FIRE_DEMON' as const, x: 8, z: -8, lvl: 6 },
+      { id: 'demon_3', name: 'Guardia Ígneo', type: 'FIRE_DEMON' as const, x: -8, z: 8, lvl: 7 },
+      { id: 'demon_4', name: 'Guardia Ígneo', type: 'FIRE_DEMON' as const, x: 8, z: 8, lvl: 7 },
+      { id: 'garg_1', name: 'Gárgola de Ceniza', type: 'MAGMA_GARGOYLE' as const, x: -12, z: 0, lvl: 7 },
+      { id: 'garg_2', name: 'Gárgola de Ceniza', type: 'MAGMA_GARGOYLE' as const, x: 12, z: 0, lvl: 7 }
+    ];
+
+    for (const m of volcanoMinions) {
+      const mon = new Monster(m.id, m.name, m.type, m.x, m.z, 'zone_volcano', m.lvl);
+      this.monsters.set(mon.id, mon);
+    }
+
+    // ----------------------------------------------------
+    // ZONA 4: ABISMO DEL VACÍO (Nivel 9 - 12)
+    // ----------------------------------------------------
+    const bossTitan = new Monster('boss_astral', 'Titán Astral (Jefe Supremo)', 'BOSS_ASTRAL_TITAN', 0, 0, 'zone_void', 12);
+    this.monsters.set(bossTitan.id, bossTitan);
+
+    const voidMinions = [
+      { id: 'void_1', name: 'Engendro del Vacío', type: 'VOID_SPAWN' as const, x: -9, z: -8, lvl: 9 },
+      { id: 'void_2', name: 'Engendro del Vacío', type: 'VOID_SPAWN' as const, x: 9, z: -8, lvl: 9 },
+      { id: 'void_3', name: 'Terror Abisal', type: 'VOID_SPAWN' as const, x: -9, z: 8, lvl: 10 },
+      { id: 'void_4', name: 'Terror Abisal', type: 'VOID_SPAWN' as const, x: 9, z: 8, lvl: 10 },
+      { id: 'chaos_1', name: 'Hechicero del Caos', type: 'CHAOS_MAGE' as const, x: -12, z: 0, lvl: 10 },
+      { id: 'chaos_2', name: 'Hechicero del Caos', type: 'CHAOS_MAGE' as const, x: 12, z: 0, lvl: 11 }
+    ];
+
+    for (const m of voidMinions) {
+      const mon = new Monster(m.id, m.name, m.type, m.x, m.z, 'zone_void', m.lvl);
       this.monsters.set(mon.id, mon);
     }
   }
@@ -84,7 +124,7 @@ export class GameWorld {
   private startAutoSave(): void {
     this.autoSaveIntervalId = setInterval(() => {
       this.saveAllPlayers();
-    }, 30000); // Guardado automático cada 30 segundos
+    }, 30000);
   }
 
   public saveAllPlayers(): void {
@@ -120,7 +160,7 @@ export class GameWorld {
       profile.current_zone || 'zone_forest'
     );
 
-    // Si el jugador guardó su partida en la Cripta, posicionar y sincronizar zona
+    // Si el jugador guardó su partida en una zona avanzada, sincronizarla
     if (player.currentZone && player.currentZone !== 'zone_forest') {
       const zone = this.mapManager.getZone(player.currentZone);
       if (player.ws.readyState === WebSocket.OPEN) {
@@ -199,11 +239,11 @@ export class GameWorld {
       this.players,
       this.monsters,
       (monster, xp, gold, killer) => {
-        // Otorgar experiencia y oro a todos los jugadores cercanos en la MISMA zona (cooperativo familiar)
+        // Otorgar experiencia y oro compartidos a aliados en la MISMA zona
         for (const p of this.players.values()) {
           if (p.health <= 0 || p.currentZone !== monster.zoneId) continue;
           const d = Math.hypot(p.x - monster.x, p.z - monster.z);
-          if (d <= 30.0) { // Radio de experiencia compartida
+          if (d <= 30.0) {
             p.addGold(gold);
             const leveledUp = p.addExperience(xp);
 
@@ -266,6 +306,10 @@ export class GameWorld {
     const currentTimeMs = Date.now();
     for (const player of this.players.values()) {
       if (player.health <= 0) continue;
+
+      // Enfriamiento de 3.5 segundos tras usar un portal (evita spam y bucles accidentales)
+      if (currentTimeMs - player.lastPortalTime < 3500) continue;
+
       const portals = this.mapManager.getPortals(player.currentZone);
 
       for (const portal of portals) {
@@ -283,8 +327,9 @@ export class GameWorld {
               }
             }
           } else {
-            // Teletransporte de zona
+            // Teletransporte de zona seguro
             const previousZone = player.currentZone;
+            player.lastPortalTime = currentTimeMs;
             player.currentZone = portal.toZone;
             player.x = portal.targetSpawn.x;
             player.z = portal.targetSpawn.z;
@@ -323,14 +368,16 @@ export class GameWorld {
     // 3. Actualizar monstruos
     for (const monster of this.monsters.values()) {
       monster.update(dt, this.players, this.mapManager, (player, dmg) => {
-        player.takeDamage(dmg);
-        monsterAttackFeedbacks.push({
-          targetId: player.id,
-          amount: dmg,
-          isHeal: false,
-          x: player.x,
-          z: player.z
-        });
+        const actualDmg = player.takeDamage(dmg);
+        if (actualDmg > 0) {
+          monsterAttackFeedbacks.push({
+            targetId: player.id,
+            amount: actualDmg,
+            isHeal: false,
+            x: player.x,
+            z: player.z
+          });
+        }
       });
     }
 

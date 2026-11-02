@@ -44,6 +44,7 @@ export interface PlayerDTO {
   gold: number;
   health: number;
   maxHealth: number;
+  defense: number;
   targetId: string | null;
   zoneId: string;
 }
@@ -88,12 +89,20 @@ export type MonsterType =
   | 'BOSS_GOLEM'
   | 'SKELETON_WARRIOR'
   | 'SKELETON_ARCHER'
-  | 'BOSS_NECROMANCER';
+  | 'BOSS_NECROMANCER'
+  | 'FIRE_DEMON'
+  | 'MAGMA_GARGOYLE'
+  | 'BOSS_MAGMA_LORD'
+  | 'VOID_SPAWN'
+  | 'CHAOS_MAGE'
+  | 'BOSS_ASTRAL_TITAN';
 
 export interface MonsterDTO {
   id: string;
   name: string;
   type: MonsterType;
+  level: number;
+  defense: number;
   x: number;
   z: number;
   rotation: number;

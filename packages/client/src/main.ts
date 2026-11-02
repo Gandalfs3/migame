@@ -166,11 +166,11 @@ network.onWorldState = (msg) => {
     entity.setStats(p.health, p.maxHealth, p.classType, p.name, p.level);
     entity.setSelected(p.id === selectedTargetId);
     if (p.id === selectedTargetId) {
-      combatHud.updateTarget(p.name, p.health, p.maxHealth);
+      combatHud.updateTarget(p.name, p.health, p.maxHealth, p.level, p.defense);
     }
 
     if (p.id === network.localPlayerId) {
-      combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold);
+      combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold, p.defense);
       if (currentLocalClass !== p.classType) {
         currentLocalClass = p.classType;
         combatHud.setClass(p.classType);
@@ -203,7 +203,7 @@ network.onWorldState = (msg) => {
       mon.setSelected(m.id === selectedTargetId);
 
       if (m.id === selectedTargetId) {
-        combatHud.updateTarget(m.name, m.health, m.maxHealth);
+        combatHud.updateTarget(m.name, m.health, m.maxHealth, m.level, m.defense);
       }
     }
   }
@@ -277,14 +277,14 @@ function selectTarget(id: string | null) {
   for (const [pId, p] of playerEntities) {
     p.setSelected(pId === id);
     if (pId === id) {
-      combatHud.updateTarget(p.name, p.health, p.maxHealth);
+      combatHud.updateTarget(p.name, p.health, p.maxHealth, p.level, 0);
     }
   }
 
   for (const [mId, m] of monsterEntities) {
     m.setSelected(mId === id);
     if (mId === id) {
-      combatHud.updateTarget(m.id, m.health, m.maxHealth);
+      combatHud.updateTarget(m.name, m.health, m.maxHealth, m.level, m.defense);
     }
   }
 

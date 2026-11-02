@@ -126,7 +126,10 @@ export class CombatHUD {
     el.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 4px; font-weight: bold;">
         <span id="player-vital-name" style="color: #60a5fa;">[Nvl. 1] Aventurero</span>
-        <span id="player-vital-gold" style="color: #fbbf24;">🪙 10 Oro</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span id="player-vital-def" style="color: #93c5fd; font-size: 11px;">🛡️ 0 Def</span>
+          <span id="player-vital-gold" style="color: #fbbf24;">🪙 10 Oro</span>
+        </div>
       </div>
 
       <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
@@ -155,16 +158,19 @@ export class CombatHUD {
     currentHp: number,
     maxHp: number,
     experience: number,
-    gold: number
+    gold: number,
+    defense: number = 0
   ): void {
     const nameEl = document.getElementById('player-vital-name');
     const goldEl = document.getElementById('player-vital-gold');
+    const defEl = document.getElementById('player-vital-def');
     const hpValEl = document.getElementById('player-vital-value');
     const hpFillEl = document.getElementById('player-vital-fill');
     const xpValEl = document.getElementById('player-xp-value');
     const xpFillEl = document.getElementById('player-xp-fill');
 
     if (nameEl) nameEl.textContent = `[Nvl. ${level}] ${name}`;
+    if (defEl) defEl.textContent = `🛡️ ${defense} Def`;
     if (goldEl) goldEl.textContent = `🪙 ${gold} Oro`;
     if (hpValEl) hpValEl.textContent = `${Math.round(currentHp)} / ${maxHp}`;
     if (hpFillEl) {
@@ -200,7 +206,10 @@ export class CombatHUD {
     el.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
         <span id="target-name" style="font-weight: bold; font-size: 13px; color: #f59e0b;">Objetivo</span>
-        <span id="target-hp-text" style="font-size: 11px; color: #cbd5e1;">-- / --</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span id="target-def-badge" style="font-size: 10px; color: #93c5fd;">🛡️ 0 Def</span>
+          <span id="target-hp-text" style="font-size: 11px; color: #cbd5e1;">-- / --</span>
+        </div>
       </div>
       <div style="background: rgba(0,0,0,0.6); border-radius: 4px; height: 10px; overflow: hidden;">
         <div id="target-hp-fill" style="width: 100%; height: 100%; background: #ef4444; transition: width 0.2s;"></div>
@@ -210,7 +219,13 @@ export class CombatHUD {
     return el;
   }
 
-  public updateTarget(name: string | null, health: number = 0, maxHealth: number = 0): void {
+  public updateTarget(
+    name: string | null,
+    health: number = 0,
+    maxHealth: number = 0,
+    level: number = 1,
+    defense: number = 0
+  ): void {
     if (!name) {
       this.targetFrameEl.style.display = 'none';
       return;
@@ -218,10 +233,12 @@ export class CombatHUD {
 
     this.targetFrameEl.style.display = 'block';
     const nameEl = document.getElementById('target-name');
+    const defBadgeEl = document.getElementById('target-def-badge');
     const hpTextEl = document.getElementById('target-hp-text');
     const hpFillEl = document.getElementById('target-hp-fill');
 
-    if (nameEl) nameEl.textContent = name;
+    if (nameEl) nameEl.textContent = `[Nv. ${level}] ${name}`;
+    if (defBadgeEl) defBadgeEl.textContent = `🛡️ ${defense} Def`;
     if (hpTextEl) hpTextEl.textContent = `${Math.round(health)} / ${maxHealth}`;
     if (hpFillEl) {
       const pct = maxHealth > 0 ? Math.max(0, Math.min(100, (health / maxHealth) * 100)) : 0;

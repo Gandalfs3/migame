@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T02:18:33.234Z",
+  "generatedAt": "2026-11-02T02:35:01.673Z",
   "totalFiles": 69,
   "tree": [
     {
@@ -323,7 +323,7 @@
                       "type": "file",
                       "name": "MonsterEntity.ts",
                       "path": "packages/client/src/entities/MonsterEntity.ts",
-                      "size": 16372,
+                      "size": 20236,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -380,7 +380,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 10098,
+                  "size": 10183,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -416,7 +416,7 @@
                       "type": "file",
                       "name": "CombatHUD.ts",
                       "path": "packages/client/src/ui/CombatHUD.ts",
-                      "size": 14924,
+                      "size": 15666,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -460,7 +460,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86642,
+              "size": 86460,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -501,7 +501,7 @@
                       "type": "file",
                       "name": "index.ts",
                       "path": "packages/common/src/constants/index.ts",
-                      "size": 4174,
+                      "size": 5286,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -539,7 +539,7 @@
                       "type": "file",
                       "name": "index.ts",
                       "path": "packages/common/src/types/index.ts",
-                      "size": 2340,
+                      "size": 2513,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -559,7 +559,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/common/tsconfig.tsbuildinfo",
-              "size": 34518,
+              "size": 34520,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             }
@@ -615,7 +615,7 @@
                       "type": "file",
                       "name": "CombatSystem.ts",
                       "path": "packages/server/src/game/CombatSystem.ts",
-                      "size": 6518,
+                      "size": 6532,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -623,7 +623,7 @@
                       "type": "file",
                       "name": "GameWorld.ts",
                       "path": "packages/server/src/game/GameWorld.ts",
-                      "size": 12135,
+                      "size": 14824,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -631,7 +631,7 @@
                       "type": "file",
                       "name": "MapManager.ts",
                       "path": "packages/server/src/game/MapManager.ts",
-                      "size": 8696,
+                      "size": 13772,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -639,7 +639,7 @@
                       "type": "file",
                       "name": "Monster.ts",
                       "path": "packages/server/src/game/Monster.ts",
-                      "size": 7082,
+                      "size": 10122,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -647,7 +647,7 @@
                       "type": "file",
                       "name": "Player.ts",
                       "path": "packages/server/src/game/Player.ts",
-                      "size": 5590,
+                      "size": 6043,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -690,7 +690,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/server/tsconfig.tsbuildinfo",
-              "size": 36437,
+              "size": 36431,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             }
@@ -983,7 +983,7 @@
       "type": "file",
       "name": "MonsterEntity.ts",
       "path": "packages/client/src/entities/MonsterEntity.ts",
-      "size": 16372,
+      "size": 20236,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1031,7 +1031,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 10098,
+      "size": 10183,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1055,7 +1055,7 @@
       "type": "file",
       "name": "CombatHUD.ts",
       "path": "packages/client/src/ui/CombatHUD.ts",
-      "size": 14924,
+      "size": 15666,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1095,7 +1095,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86642,
+      "size": 86460,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -1119,7 +1119,7 @@
       "type": "file",
       "name": "index.ts",
       "path": "packages/common/src/constants/index.ts",
-      "size": 4174,
+      "size": 5286,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1143,7 +1143,7 @@
       "type": "file",
       "name": "index.ts",
       "path": "packages/common/src/types/index.ts",
-      "size": 2340,
+      "size": 2513,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1159,7 +1159,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/common/tsconfig.tsbuildinfo",
-      "size": 34518,
+      "size": 34520,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -1191,7 +1191,7 @@
       "type": "file",
       "name": "CombatSystem.ts",
       "path": "packages/server/src/game/CombatSystem.ts",
-      "size": 6518,
+      "size": 6532,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1199,7 +1199,7 @@
       "type": "file",
       "name": "GameWorld.ts",
       "path": "packages/server/src/game/GameWorld.ts",
-      "size": 12135,
+      "size": 14824,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1207,7 +1207,7 @@
       "type": "file",
       "name": "MapManager.ts",
       "path": "packages/server/src/game/MapManager.ts",
-      "size": 8696,
+      "size": 13772,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1215,7 +1215,7 @@
       "type": "file",
       "name": "Monster.ts",
       "path": "packages/server/src/game/Monster.ts",
-      "size": 7082,
+      "size": 10122,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1223,7 +1223,7 @@
       "type": "file",
       "name": "Player.ts",
       "path": "packages/server/src/game/Player.ts",
-      "size": 5590,
+      "size": 6043,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1255,7 +1255,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/server/tsconfig.tsbuildinfo",
-      "size": 36437,
+      "size": 36431,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },

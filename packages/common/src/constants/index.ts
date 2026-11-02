@@ -19,14 +19,20 @@ export const PLAYER_COLORS = [
   '#06b6d4'  // Cian
 ];
 
-export const CLASS_STATS: Record<PlayerClass, { maxHealth: number; speedBonus: number }> = {
-  WARRIOR: { maxHealth: 180, speedBonus: 0 },
-  CLERIC: { maxHealth: 120, speedBonus: 0 },
-  MAGE: { maxHealth: 90, speedBonus: 0.2 }
+export const CLASS_STATS: Record<PlayerClass, { maxHealth: number; speedBonus: number; baseDefense: number }> = {
+  WARRIOR: { maxHealth: 180, speedBonus: 0, baseDefense: 22 },
+  CLERIC: { maxHealth: 120, speedBonus: 0, baseDefense: 14 },
+  MAGE: { maxHealth: 90, speedBonus: 0.2, baseDefense: 6 }
 };
 
 export function getXpForNextLevel(level: number): number {
   return level * 100;
+}
+
+export function calculateEffectiveDamage(rawDamage: number, targetDefense: number): number {
+  const safeDef = Math.max(0, targetDefense);
+  const reductionMultiplier = 100 / (100 + safeDef);
+  return Math.max(1, Math.round(rawDamage * reductionMultiplier));
 }
 
 export const MONSTER_REWARDS = {
@@ -34,7 +40,13 @@ export const MONSTER_REWARDS = {
   BOSS_GOLEM: { xp: 200, gold: 60 },
   SKELETON_WARRIOR: { xp: 60, gold: 16 },
   SKELETON_ARCHER: { xp: 75, gold: 22 },
-  BOSS_NECROMANCER: { xp: 450, gold: 150 }
+  BOSS_NECROMANCER: { xp: 450, gold: 150 },
+  FIRE_DEMON: { xp: 120, gold: 35 },
+  MAGMA_GARGOYLE: { xp: 145, gold: 42 },
+  BOSS_MAGMA_LORD: { xp: 850, gold: 320 },
+  VOID_SPAWN: { xp: 220, gold: 65 },
+  CHAOS_MAGE: { xp: 260, gold: 80 },
+  BOSS_ASTRAL_TITAN: { xp: 1600, gold: 650 }
 };
 
 export const ZONE_THEMES: Record<string, ZoneThemeDTO> = {
@@ -59,6 +71,28 @@ export const ZONE_THEMES: Record<string, ZoneThemeDTO> = {
     fogDensity: 0.032,
     ambientLightColor: '#c4b5fd',
     dirLightColor: '#ff6644'
+  },
+  zone_volcano: {
+    id: 'zone_volcano',
+    name: 'Bastión Volcánico',
+    groundColor: '#220e06',
+    gridColor1: '#f97316',
+    gridColor2: '#7c2d12',
+    fogColor: '#1c0803',
+    fogDensity: 0.034,
+    ambientLightColor: '#fed7aa',
+    dirLightColor: '#ff4500'
+  },
+  zone_void: {
+    id: 'zone_void',
+    name: 'Abismo del Vacío',
+    groundColor: '#090514',
+    gridColor1: '#8b5cf6',
+    gridColor2: '#3b0764',
+    fogColor: '#06020f',
+    fogDensity: 0.036,
+    ambientLightColor: '#c4b5fd',
+    dirLightColor: '#a855f7'
   }
 };
 

@@ -117,7 +117,7 @@ export class CombatSystem {
             const result = monster.takeDamage(spell.damage, caster.id);
             feedbacks.push({
               targetId: monster.id,
-              amount: spell.damage,
+              amount: result.actualDamage,
               isHeal: false,
               x: monster.x,
               z: monster.z
@@ -191,7 +191,7 @@ export class CombatSystem {
 
       feedbacks.push({
         targetId: finalTarget.id,
-        amount: spell.damage,
+        amount: result.actualDamage,
         isHeal: false,
         x: finalTarget.x,
         z: finalTarget.z

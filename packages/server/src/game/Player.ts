@@ -6,7 +6,8 @@ import {
   PLAYER_SPEED,
   PLAYER_RADIUS,
   CLASS_STATS,
-  getXpForNextLevel
+  getXpForNextLevel,
+  calculateEffectiveDamage
 } from '@migame/common';
 import { MapManager } from './MapManager.js';
 
@@ -33,6 +34,8 @@ export class Player {
   public lastClassSwitchTime: number = 0;
   public currentZone: string = 'zone_forest';
   public lastZoneAlertTime: number = 0;
+  public lastPortalTime: number = 0;
+  public defense: number = 0;
 
   constructor(
     id: string,
@@ -54,6 +57,7 @@ export class Player {
 
     this.maxHealth = CLASS_STATS[this.classType].maxHealth;
     this.health = this.maxHealth;
+    this.defense = CLASS_STATS[this.classType].baseDefense;
   }
 
   public loadFromProfile(
@@ -73,10 +77,11 @@ export class Player {
     this.gold = gold;
     this.currentZone = currentZone || 'zone_forest';
 
-    // Calcular vida según nivel (+15 de vida por nivel)
+    // Calcular vida y defensa según nivel (+15 de vida, +2 de defensa por nivel)
     const baseClassHealth = CLASS_STATS[classType].maxHealth;
     this.maxHealth = baseClassHealth + (this.level - 1) * 15;
     this.health = Math.min(this.maxHealth, health > 0 ? health : this.maxHealth);
+    this.defense = CLASS_STATS[classType].baseDefense + (this.level - 1) * 2;
   }
 
   public canSwitchClass(): boolean {
@@ -94,6 +99,7 @@ export class Player {
     const baseClassHealth = CLASS_STATS[newClass].maxHealth;
     this.maxHealth = baseClassHealth + (this.level - 1) * 15;
     this.health = Math.min(this.maxHealth, this.health);
+    this.defense = CLASS_STATS[newClass].baseDefense + (this.level - 1) * 2;
     return true;
   }
 
@@ -107,6 +113,7 @@ export class Player {
         this.experience -= requiredXp;
         this.level++;
         this.maxHealth += 15;
+        this.defense += 2;
         this.health = this.maxHealth; // Curación completa por subir de nivel
         leveledUp = true;
       } else {
@@ -121,14 +128,14 @@ export class Player {
     this.gold += amount;
   }
 
-  public takeDamage(amount: number): boolean {
-    if (this.health <= 0) return false;
-    this.health = Math.max(0, this.health - amount);
+  public takeDamage(amount: number): number {
+    if (this.health <= 0) return 0;
+    const actualDamage = calculateEffectiveDamage(amount, this.defense);
+    this.health = Math.max(0, this.health - actualDamage);
     if (this.health === 0) {
       this.respawnTimer = 5;
-      return true;
     }
-    return false;
+    return actualDamage;
   }
 
   public heal(amount: number): number {
@@ -197,6 +204,7 @@ export class Player {
       gold: this.gold,
       health: this.health,
       maxHealth: this.maxHealth,
+      defense: this.defense,
       targetId: this.targetId,
       zoneId: this.currentZone
     };
