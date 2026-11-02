@@ -71,7 +71,7 @@ export class ObstacleRenderer {
         if (obs.kind === 'tree') {
           // Tronco de árbol estilizado
           const trunkGeo = new THREE.CylinderGeometry(obs.radius * 0.35, obs.radius * 0.45, obs.height * 0.4, 8);
-          const trunkMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 });
+          const trunkMat = ProceduralTextureFactory.getMaterialForObstacle("tree");
           const trunk = new THREE.Mesh(trunkGeo, trunkMat);
           trunk.position.y = (obs.height * 0.4) / 2;
           trunk.castShadow = true;
@@ -94,12 +94,7 @@ export class ObstacleRenderer {
         } else {
           // Roca estilizada
           const rockGeo = new THREE.DodecahedronGeometry(obs.radius, 1);
-          const rockMat = new THREE.MeshStandardMaterial({
-            color: 0x64748b,
-            roughness: 0.85,
-            metalness: 0.1,
-            flatShading: true
-          });
+          const rockMat = ProceduralTextureFactory.getMaterialForObstacle("rock");
           const rock = new THREE.Mesh(rockGeo, rockMat);
           rock.position.y = obs.radius * 0.85;
           rock.scale.set(1, 0.75, 1);
