@@ -1,7 +1,8 @@
 import {
   SPELLS,
   CombatFeedback,
-  Spell
+  Spell,
+  getScaledSpellStats
 } from '@migame/common';
 import { Player } from './Player.js';
 import { Monster } from './Monster.js';
@@ -20,6 +21,10 @@ export class CombatSystem {
 
     if (caster.classType !== spell.classType) return [];
     if (caster.isSpellOnCooldown(spell.id)) return [];
+
+    const scaled = getScaledSpellStats(spell, caster.level);
+    const effectiveDamage = scaled.damage;
+    const effectiveHeal = scaled.heal;
 
     const feedbacks: CombatFeedback[] = [];
 
@@ -76,13 +81,13 @@ export class CombatSystem {
             });
           }
         }
-      } else if (spell.heal) {
+      } else if (effectiveHeal) {
         // Santuario: Cura a todos los aliados cercanos en la misma zona
         for (const ally of players.values()) {
           if (ally.health <= 0 || ally.currentZone !== caster.currentZone) continue;
           const d = Math.hypot(ally.x - caster.x, ally.z - caster.z);
           if (d <= radius) {
-            const healed = ally.heal(spell.heal);
+            const healed = ally.heal(effectiveHeal);
             feedbacks.push({
               targetId: ally.id,
               amount: healed,
@@ -92,7 +97,7 @@ export class CombatSystem {
             });
           }
         }
-      } else if (spell.damage) {
+      } else if (effectiveDamage) {
         // Meteoro de Mago: apunta al objetivo seleccionado o al monstruo más cercano en la zona
         let centerPoint = { x: caster.x, z: caster.z };
         let aimTarget: Monster | null = null;
@@ -114,7 +119,7 @@ export class CombatSystem {
           if (monster.state === 'DEAD' || monster.zoneId !== caster.currentZone) continue;
           const d = Math.hypot(monster.x - centerPoint.x, monster.z - centerPoint.z);
           if (d <= radius) {
-            const result = monster.takeDamage(spell.damage, caster.id);
+            const result = monster.takeDamage(effectiveDamage, caster.id);
             feedbacks.push({
               targetId: monster.id,
               amount: result.actualDamage,
@@ -135,7 +140,7 @@ export class CombatSystem {
     }
 
     // 2. Hechizos de Curación Directa (Luz Sanadora de Clérigo)
-    if (spell.heal) {
+    if (effectiveHeal) {
       let healTarget: Player | null = null;
 
       if (targetId && players.has(targetId)) {
@@ -152,7 +157,7 @@ export class CombatSystem {
         healTarget = findMostInjuredAlly(spell.range);
       }
 
-      const healedAmount = healTarget.heal(spell.heal);
+      const healedAmount = healTarget.heal(effectiveHeal);
       caster.setSpellCooldown(spell.id, spell.cooldownMs);
       feedbacks.push({
         targetId: healTarget.id,
@@ -165,7 +170,7 @@ export class CombatSystem {
     }
 
     // 3. Hechizos de Daño a Objetivo Único
-    if (spell.damage) {
+    if (effectiveDamage) {
       let finalTarget: Monster | null = null;
 
       if (targetId && monsters.has(targetId)) {
@@ -186,7 +191,7 @@ export class CombatSystem {
         return [];
       }
 
-      const result = finalTarget.takeDamage(spell.damage, caster.id);
+      const result = finalTarget.takeDamage(effectiveDamage, caster.id);
       caster.setSpellCooldown(spell.id, spell.cooldownMs);
 
       feedbacks.push({

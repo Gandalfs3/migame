@@ -205,6 +205,7 @@ export class Player {
       health: this.health,
       maxHealth: this.maxHealth,
       defense: this.defense,
+      spellPowerPct: Math.round((this.level - 1) * 8),
       targetId: this.targetId,
       zoneId: this.currentZone
     };

@@ -170,7 +170,7 @@ network.onWorldState = (msg) => {
     }
 
     if (p.id === network.localPlayerId) {
-      combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold, p.defense);
+      combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold, p.defense, p.spellPowerPct);
       if (currentLocalClass !== p.classType) {
         currentLocalClass = p.classType;
         combatHud.setClass(p.classType);

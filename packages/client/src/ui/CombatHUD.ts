@@ -1,4 +1,4 @@
-import { PlayerClass, Spell, SPELLS, getXpForNextLevel, CLASS_SWITCH_COOLDOWN_MS } from '@migame/common';
+import { PlayerClass, Spell, SPELLS, getXpForNextLevel, CLASS_SWITCH_COOLDOWN_MS, getScaledSpellStats } from '@migame/common';
 
 export class CombatHUD {
   private container: HTMLElement;
@@ -9,6 +9,7 @@ export class CombatHUD {
   private levelUpBannerEl: HTMLElement;
 
   private currentClass: PlayerClass = 'WARRIOR';
+  private lastPlayerLevel: number = 1;
   private cooldowns: Map<string, { duration: number; endsAt: number }> = new Map();
   private classSwitchEndsAt: number = 0;
 
@@ -128,6 +129,7 @@ export class CombatHUD {
         <span id="player-vital-name" style="color: #60a5fa;">[Nvl. 1] Aventurero</span>
         <div style="display: flex; align-items: center; gap: 6px;">
           <span id="player-vital-def" style="color: #93c5fd; font-size: 11px;">🛡️ 0 Def</span>
+          <span id="player-vital-power" style="color: #f43f5e; font-size: 11px;">⚔️ +0% Pod</span>
           <span id="player-vital-gold" style="color: #fbbf24;">🪙 10 Oro</span>
         </div>
       </div>
@@ -159,11 +161,18 @@ export class CombatHUD {
     maxHp: number,
     experience: number,
     gold: number,
-    defense: number = 0
+    defense: number = 0,
+    spellPowerPct: number = 0
   ): void {
+    if (this.lastPlayerLevel !== level) {
+      this.lastPlayerLevel = level;
+      this.refreshActionBar(level);
+    }
+
     const nameEl = document.getElementById('player-vital-name');
     const goldEl = document.getElementById('player-vital-gold');
     const defEl = document.getElementById('player-vital-def');
+    const powerEl = document.getElementById('player-vital-power');
     const hpValEl = document.getElementById('player-vital-value');
     const hpFillEl = document.getElementById('player-vital-fill');
     const xpValEl = document.getElementById('player-xp-value');
@@ -171,6 +180,7 @@ export class CombatHUD {
 
     if (nameEl) nameEl.textContent = `[Nvl. ${level}] ${name}`;
     if (defEl) defEl.textContent = `🛡️ ${defense} Def`;
+    if (powerEl) powerEl.textContent = `⚔️ +${spellPowerPct}% Pod`;
     if (goldEl) goldEl.textContent = `🪙 ${gold} Oro`;
     if (hpValEl) hpValEl.textContent = `${Math.round(currentHp)} / ${maxHp}`;
     if (hpFillEl) {
@@ -255,7 +265,7 @@ export class CombatHUD {
     return el;
   }
 
-  private refreshActionBar(): void {
+  public refreshActionBar(playerLevel: number = this.lastPlayerLevel): void {
     this.actionBarEl.innerHTML = '';
     const classSpells = Object.values(SPELLS).filter(s => s.classType === this.currentClass);
 
@@ -263,16 +273,20 @@ export class CombatHUD {
       const btn = document.createElement('div');
       btn.className = `skill-slot skill-slot-${idx + 1}`;
 
+      const scaled = getScaledSpellStats(spell, playerLevel);
+
       // Tooltip informativo detallado
-      const effectDesc = spell.damage ? `⚔️ ${spell.damage} de Daño` : (spell.heal ? `💚 +${spell.heal} de Curación` : spell.description);
+      const effectDesc = scaled.damage 
+        ? `⚔️ ${scaled.damage} de Daño (Base: ${spell.damage})` 
+        : (scaled.heal ? `💚 +${scaled.heal} de Curación (Base: ${spell.heal})` : spell.description);
       btn.title = `${spell.name}\n${effectDesc}\nAlcance: ${spell.range}m | Enfriamiento: ${(spell.cooldownMs / 1000).toFixed(1)}s`;
 
-      // Badge visible con el número de Daño o Cura
+      // Badge visible con el número de Daño o Cura escalado
       let statBadge = '';
-      if (spell.damage) {
-        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #f87171; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">💥 ${spell.damage}</span>`;
-      } else if (spell.heal) {
-        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #4ade80; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">💚 +${spell.heal}</span>`;
+      if (scaled.damage) {
+        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #f87171; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">💥 ${scaled.damage}</span>`;
+      } else if (scaled.heal) {
+        statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #4ade80; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">💚 +${scaled.heal}</span>`;
       } else if (spell.id === 'taunt') {
         statBadge = `<span style="position: absolute; bottom: 3px; font-size: 10px; font-weight: 800; color: #facc15; background: rgba(0,0,0,0.7); padding: 1px 5px; border-radius: 4px;">📢 Aggro</span>`;
       }

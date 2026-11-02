@@ -22,6 +22,7 @@ export class MonsterEntity {
   private bodyMesh: THREE.Object3D;
   private staffOrb?: THREE.Mesh;
   private astralRing?: THREE.Mesh;
+  private powerAuraRing?: THREE.Mesh;
   public isBoss: boolean;
 
   constructor(scene: THREE.Scene, dto: MonsterDTO) {
@@ -390,6 +391,27 @@ export class MonsterEntity {
 
     this.renderHealthBar(dto.name, dto.health, dto.maxHealth, this.level, this.defense, this.isBoss);
 
+    // 4. Escalado físico imponente según el nivel (+5% de tamaño por nivel)
+    const scaleFactor = 1 + (this.level - 1) * 0.05;
+    this.group.scale.setScalar(scaleFactor);
+
+    // 5. Aura de poder brillante para jefes o monstruos de alto nivel (>= 7)
+    if (this.isBoss || this.level >= 7) {
+      const auraRadius = this.isBoss ? 2.2 : 1.2;
+      const auraGeo = new THREE.RingGeometry(auraRadius * 0.75, auraRadius, 32);
+      const auraColor = this.isBoss ? 0xf59e0b : (this.level >= 10 ? 0xa855f7 : 0xef4444);
+      const auraMat = new THREE.MeshBasicMaterial({
+        color: auraColor,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.4
+      });
+      this.powerAuraRing = new THREE.Mesh(auraGeo, auraMat);
+      this.powerAuraRing.rotation.x = -Math.PI / 2;
+      this.powerAuraRing.position.y = 0.02;
+      this.group.add(this.powerAuraRing);
+    }
+
     scene.add(this.group);
   }
 
@@ -489,7 +511,10 @@ export class MonsterEntity {
     ) {
       this.health = dto.health;
       this.maxHealth = dto.maxHealth;
-      this.level = dto.level || this.level;
+      if (dto.level && this.level !== dto.level) {
+        this.level = dto.level;
+        this.group.scale.setScalar(1 + (this.level - 1) * 0.05);
+      }
       this.defense = dto.defense || this.defense;
       this.state = dto.state;
       this.renderHealthBar(dto.name, dto.health, dto.maxHealth, this.level, this.defense, this.isBoss);
@@ -501,10 +526,12 @@ export class MonsterEntity {
       this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, Math.PI / 2, 0.15);
       this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.1, 0.15);
       this.healthBarMesh.visible = false;
+      if (this.powerAuraRing) this.powerAuraRing.visible = false;
       return;
     }
 
     this.healthBarMesh.visible = true;
+    if (this.powerAuraRing) this.powerAuraRing.visible = true;
     this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, 0, 0.2);
     this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0, 0.2);
 
@@ -515,6 +542,12 @@ export class MonsterEntity {
 
     if (this.astralRing) {
       this.astralRing.rotation.z += 0.02;
+    }
+
+    if (this.powerAuraRing) {
+      this.powerAuraRing.rotation.z += 0.015;
+      const auraMat = this.powerAuraRing.material as THREE.MeshBasicMaterial;
+      auraMat.opacity = 0.35 + Math.sin(Date.now() * 0.005) * 0.15;
     }
 
     this.group.position.x += (this.targetX - this.group.position.x) * posLerp;

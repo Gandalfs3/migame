@@ -31,6 +31,35 @@ export interface ZoneThemeDTO {
   dirLightColor: string;
 }
 
+export interface CharacterVisualProfile {
+  classType: PlayerClass;
+  title: string;
+  role: string;
+  visualDescription: string;
+  texturePrompt: string;
+  colorPalette: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
+  armorStyle: string;
+  weaponStyle: string;
+}
+
+export interface MonsterVisualProfile {
+  type: MonsterType;
+  title: string;
+  tier: number;
+  visualDescription: string;
+  texturePrompt: string;
+  colorPalette: {
+    primary: string;
+    secondary: string;
+    glow: string;
+  };
+  imposingFeatures: string[];
+}
+
 export interface PlayerDTO {
   id: string;
   name: string;
@@ -45,6 +74,7 @@ export interface PlayerDTO {
   health: number;
   maxHealth: number;
   defense: number;
+  spellPowerPct: number;
   targetId: string | null;
   zoneId: string;
 }
