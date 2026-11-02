@@ -195,6 +195,265 @@
     .dpad-center { grid-column: 2; grid-row: 2; background: transparent; border: none; }
     .dpad-right { grid-column: 3; grid-row: 2; }
     .dpad-down { grid-column: 2; grid-row: 3; }
+
+    /* ====================================================
+       BARRA DE ACCIÓN (PODERES) & VITALES DEL JUGADOR
+       ==================================================== */
+    .action-bar {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      pointer-events: auto;
+      z-index: 25;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .skill-slot {
+      width: 64px;
+      height: 64px;
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+      transition: transform 0.1s, border-color 0.1s, box-shadow 0.15s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .skill-slot:hover {
+      border-color: rgba(255, 255, 255, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .skill-slot:active {
+      transform: scale(0.94);
+    }
+
+    .skill-slot .spell-icon {
+      font-size: 26px;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+
+    .skill-slot .spell-key-badge {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: #cbd5e1;
+    }
+
+    .player-vitals-card {
+      position: absolute;
+      bottom: 96px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(8px);
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      z-index: 24;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ====================================================
+       LAYOUT MÓVIL / TÁCTIL / PULGAR ERGONÓMICO (AUTO)
+       ==================================================== */
+    @media (max-width: 768px), (pointer: coarse) and (max-width: 1024px), (max-height: 520px) {
+      /* Mover los poderes a la derecha para el pulgar */
+      .action-bar {
+        bottom: 22px;
+        right: 22px;
+        left: auto;
+        transform: none;
+        display: grid;
+        grid-template-columns: repeat(2, 60px);
+        grid-template-rows: repeat(2, 60px);
+        gap: 10px;
+        align-items: end;
+        justify-items: end;
+      }
+
+      /* Poder 1: Principal (más grande, posición base del pulgar) */
+      .action-bar .skill-slot-1 {
+        grid-column: 2;
+        grid-row: 2;
+        width: 66px;
+        height: 66px;
+        border-radius: 18px;
+        border-color: rgba(56, 189, 248, 0.8);
+        background: rgba(15, 23, 42, 0.95);
+        box-shadow: 0 0 16px rgba(56, 189, 248, 0.45);
+      }
+      .action-bar .skill-slot-1 .spell-icon {
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+
+      /* Poder 2: Secundario (a la izquierda del pulgar) */
+      .action-bar .skill-slot-2 {
+        grid-column: 1;
+        grid-row: 2;
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+      }
+      .action-bar .skill-slot-2 .spell-icon {
+        font-size: 22px;
+        margin-bottom: 4px;
+      }
+
+      /* Poder 3: Especial / AOE (arriba del pulgar) */
+      .action-bar .skill-slot-3 {
+        grid-column: 2;
+        grid-row: 1;
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+      }
+      .action-bar .skill-slot-3 .spell-icon {
+        font-size: 22px;
+        margin-bottom: 4px;
+      }
+
+      /* Cruceta táctil ajustada a la izquierda */
+      .mobile-dpad {
+        bottom: 22px;
+        left: 20px;
+        width: 130px;
+        height: 130px;
+        gap: 4px;
+      }
+
+      /* Vitales compactos en la parte inferior central */
+      .player-vitals-card {
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 210px;
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      /* Elementos superiores más compactos */
+      .lan-banner {
+        padding: 4px 8px;
+        font-size: 11px;
+        gap: 6px;
+      }
+      .lan-url {
+        font-size: 10px;
+        padding: 2px 5px;
+      }
+      .btn-copy {
+        padding: 2px 6px;
+        font-size: 10px;
+      }
+
+      .class-selector-card {
+        padding: 3px 5px;
+        gap: 4px;
+      }
+      .class-selector-card button {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+      }
+    }
+
+    /* Teléfonos en modo vertical (Portrait) */
+    @media (max-width: 520px) and (orientation: portrait) {
+      .player-vitals-card {
+        top: 66px;
+        bottom: auto;
+        left: 16px;
+        transform: none;
+        width: 200px;
+      }
+    }
+
+    /* Clases explícitas para sobrescribir desde el menú de Ajustes ⚙️ */
+    body.layout-powers-right .action-bar {
+      bottom: 22px !important;
+      right: 22px !important;
+      left: auto !important;
+      transform: none !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, 60px) !important;
+      grid-template-rows: repeat(2, 60px) !important;
+      gap: 10px !important;
+      align-items: end !important;
+      justify-items: end !important;
+    }
+    body.layout-powers-right .action-bar .skill-slot-1 {
+      grid-column: 2 !important;
+      grid-row: 2 !important;
+      width: 66px !important;
+      height: 66px !important;
+      border-radius: 18px !important;
+      border-color: rgba(56, 189, 248, 0.8) !important;
+      background: rgba(15, 23, 42, 0.95) !important;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.45) !important;
+    }
+    body.layout-powers-right .action-bar .skill-slot-2 {
+      grid-column: 1 !important;
+      grid-row: 2 !important;
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 14px !important;
+    }
+    body.layout-powers-right .action-bar .skill-slot-3 {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 14px !important;
+    }
+    body.layout-powers-right .player-vitals-card {
+      bottom: 16px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 210px !important;
+      padding: 6px 10px !important;
+    }
+
+    body.layout-powers-center .action-bar {
+      bottom: 16px !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 10px !important;
+    }
+    body.layout-powers-center .action-bar .skill-slot {
+      width: 64px !important;
+      height: 64px !important;
+    }
+    body.layout-powers-center .player-vitals-card {
+      bottom: 96px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 280px !important;
+    }
   </style>
 </head>
 <body>

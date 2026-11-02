@@ -118,18 +118,9 @@ export class CombatHUD {
 
   private createPlayerVitals(): HTMLElement {
     const el = document.createElement('div');
-    el.style.position = 'absolute';
-    el.style.bottom = '96px';
-    el.style.left = '50%';
-    el.style.transform = 'translateX(-50%)';
-    el.style.width = '280px';
+    el.id = 'player-vitals-card';
+    el.className = 'player-vitals-card';
     el.style.pointerEvents = 'auto';
-    el.style.background = 'rgba(15, 23, 42, 0.88)';
-    el.style.backdropFilter = 'blur(8px)';
-    el.style.padding = '8px 12px';
-    el.style.borderRadius = '10px';
-    el.style.border = '1px solid rgba(255, 255, 255, 0.15)';
-    el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5)';
 
     el.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 4px; font-weight: bold;">
@@ -239,13 +230,8 @@ export class CombatHUD {
 
   private createActionBar(): HTMLElement {
     const el = document.createElement('div');
+    el.id = 'action-bar';
     el.className = 'action-bar';
-    el.style.position = 'absolute';
-    el.style.bottom = '16px';
-    el.style.left = '50%';
-    el.style.transform = 'translateX(-50%)';
-    el.style.display = 'flex';
-    el.style.gap = '10px';
     el.style.pointerEvents = 'auto';
 
     return el;
@@ -258,20 +244,6 @@ export class CombatHUD {
     classSpells.forEach((spell, idx) => {
       const btn = document.createElement('div');
       btn.className = `skill-slot skill-slot-${idx + 1}`;
-      btn.style.width = '64px';
-      btn.style.height = '64px';
-      btn.style.background = 'rgba(30, 41, 59, 0.9)';
-      btn.style.backdropFilter = 'blur(6px)';
-      btn.style.border = '2px solid rgba(255, 255, 255, 0.2)';
-      btn.style.borderRadius = '12px';
-      btn.style.display = 'flex';
-      btn.style.flexDirection = 'column';
-      btn.style.alignItems = 'center';
-      btn.style.justifyContent = 'center';
-      btn.style.position = 'relative';
-      btn.style.cursor = 'pointer';
-      btn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
-      btn.style.transition = 'transform 0.1s, border-color 0.1s';
 
       // Tooltip informativo detallado
       const effectDesc = spell.damage ? `⚔️ ${spell.damage} de Daño` : (spell.heal ? `💚 +${spell.heal} de Curación` : spell.description);
@@ -288,23 +260,23 @@ export class CombatHUD {
       }
 
       btn.innerHTML = `
-        <span style="font-size: 24px; margin-bottom: 8px;">${spell.icon}</span>
-        <span style="position: absolute; top: 3px; left: 5px; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.55); padding: 1px 4px; border-radius: 4px; color: #cbd5e1;">${idx + 1}</span>
+        <span class="spell-icon">${spell.icon}</span>
+        <span class="spell-key-badge">${idx + 1}</span>
         ${statBadge}
         <div id="cd-overlay-${spell.id}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); border-radius: 10px; display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: #fff;"></div>
       `;
 
       btn.onmousedown = () => {
-        btn.style.transform = 'scale(0.95)';
+        btn.style.transform = 'scale(0.94)';
         this.triggerCast(spell);
       };
-      btn.onmouseup = () => btn.style.transform = 'scale(1)';
+      btn.onmouseup = () => btn.style.transform = '';
       btn.ontouchstart = (e) => {
         e.preventDefault();
-        btn.style.transform = 'scale(0.95)';
+        btn.style.transform = 'scale(0.92)';
         this.triggerCast(spell);
       };
-      btn.ontouchend = () => btn.style.transform = 'scale(1)';
+      btn.ontouchend = () => btn.style.transform = '';
 
       this.actionBarEl.appendChild(btn);
     });

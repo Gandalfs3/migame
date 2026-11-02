@@ -5,6 +5,7 @@ export interface UXSettings {
   showRangeIndicator: boolean;
   showTouchControls: boolean;
   showFloatingCombatText: boolean;
+  actionBarPosition: 'auto' | 'right' | 'center';
 }
 
 const STORAGE_KEY = 'migame_ux_settings';
@@ -15,7 +16,8 @@ export const DEFAULT_SETTINGS: UXSettings = {
   showNetworkStats: false, // Minimalista por defecto
   showRangeIndicator: true,
   showTouchControls: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
-  showFloatingCombatText: true
+  showFloatingCombatText: true,
+  actionBarPosition: 'auto'
 };
 
 export class SettingsMenu {
@@ -165,6 +167,19 @@ export class SettingsMenu {
             </div>
             <input type="checkbox" id="toggle-combat-numbers" ${this.settings.showFloatingCombatText ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;" />
           </label>
+
+          <!-- Ubicación de Barra de Poderes -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.08);">
+            <div>
+              <div style="font-weight: 600;">✨ Ubicación de Poderes</div>
+              <div style="font-size: 11px; color: #94a3b8;">A la derecha para pulgar móvil o al centro para PC</div>
+            </div>
+            <select id="select-action-bar-pos" style="background: #1e293b; color: #fff; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+              <option value="auto" ${this.settings.actionBarPosition === 'auto' ? 'selected' : ''}>🤖 Auto (Derecha en móvil)</option>
+              <option value="right" ${this.settings.actionBarPosition === 'right' ? 'selected' : ''}>👉 Derecha (Pulgar)</option>
+              <option value="center" ${this.settings.actionBarPosition === 'center' ? 'selected' : ''}>🎯 Centro (Estilo PC)</option>
+            </select>
+          </div>
         </div>
 
         <button id="btn-save-settings" style="margin-top: 20px; width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
@@ -190,6 +205,7 @@ export class SettingsMenu {
     const checkRange = modal.querySelector('#toggle-range-circle') as HTMLInputElement;
     const checkTouch = modal.querySelector('#toggle-touch-controls') as HTMLInputElement;
     const checkCombat = modal.querySelector('#toggle-combat-numbers') as HTMLInputElement;
+    const selectPos = modal.querySelector('#select-action-bar-pos') as HTMLSelectElement;
 
     const onToggle = () => {
       this.settings.showControlsGuide = checkControls.checked;
@@ -198,6 +214,9 @@ export class SettingsMenu {
       this.settings.showRangeIndicator = checkRange.checked;
       this.settings.showTouchControls = checkTouch.checked;
       this.settings.showFloatingCombatText = checkCombat.checked;
+      if (selectPos) {
+        this.settings.actionBarPosition = selectPos.value as 'auto' | 'right' | 'center';
+      }
       this.saveSettings();
     };
 
@@ -207,6 +226,9 @@ export class SettingsMenu {
     checkRange.onchange = onToggle;
     checkTouch.onchange = onToggle;
     checkCombat.onchange = onToggle;
+    if (selectPos) {
+      selectPos.onchange = onToggle;
+    }
   }
 
   public toggleModal(show?: boolean): void {
@@ -238,6 +260,14 @@ export class SettingsMenu {
     const dpad = document.getElementById('mobile-dpad');
     if (dpad) {
       dpad.style.display = this.settings.showTouchControls ? 'grid' : 'none';
+    }
+
+    // 5. Ubicación de la barra de poderes
+    document.body.classList.remove('layout-powers-right', 'layout-powers-center');
+    if (this.settings.actionBarPosition === 'right') {
+      document.body.classList.add('layout-powers-right');
+    } else if (this.settings.actionBarPosition === 'center') {
+      document.body.classList.add('layout-powers-center');
     }
   }
 }
