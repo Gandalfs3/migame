@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T01:12:44.464Z",
+  "generatedAt": "2026-11-02T01:21:18.089Z",
   "totalFiles": 68,
   "tree": [
     {
@@ -274,7 +274,7 @@
               "type": "file",
               "name": "index.html",
               "path": "packages/client/index.html",
-              "size": 14360,
+              "size": 15401,
               "extension": ".html",
               "summary": "Source / Asset file"
             },
@@ -432,7 +432,7 @@
                       "type": "file",
                       "name": "SettingsMenu.ts",
                       "path": "packages/client/src/ui/SettingsMenu.ts",
-                      "size": 14091,
+                      "size": 17324,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -943,7 +943,7 @@
       "type": "file",
       "name": "index.html",
       "path": "packages/client/index.html",
-      "size": 14360,
+      "size": 15401,
       "extension": ".html",
       "summary": "Source / Asset file"
     },
@@ -1063,7 +1063,7 @@
       "type": "file",
       "name": "SettingsMenu.ts",
       "path": "packages/client/src/ui/SettingsMenu.ts",
-      "size": 14091,
+      "size": 17324,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },

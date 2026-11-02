@@ -23,20 +23,67 @@ export const DEFAULT_SETTINGS: UXSettings = {
 export class SettingsMenu {
   public settings: UXSettings;
   private modalEl: HTMLElement;
-  private gearBtn: HTMLElement;
+  private topRightControls: HTMLElement;
   private onSettingsChanged?: (settings: UXSettings) => void;
 
   constructor(onChange?: (settings: UXSettings) => void) {
     this.onSettingsChanged = onChange;
     this.settings = this.loadSettings();
 
-    this.gearBtn = this.createGearButton();
+    this.topRightControls = this.createTopRightControls();
     this.modalEl = this.createModal();
 
-    document.body.appendChild(this.gearBtn);
+    document.body.appendChild(this.topRightControls);
     document.body.appendChild(this.modalEl);
 
     this.applySettingsToDOM();
+  }
+
+  public isFullscreenActive(): boolean {
+    const doc = document as any;
+    return !!(
+      doc.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement
+    );
+  }
+
+  public toggleFullscreen(): void {
+    if (!this.isFullscreenActive()) {
+      const docEl = document.documentElement as any;
+      const req =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.msRequestFullscreen ||
+        docEl.mozRequestFullScreen;
+
+      if (req) {
+        req.call(docEl).catch((err: any) => {
+          console.warn('No se pudo activar pantalla completa:', err);
+        });
+        try {
+          if (screen.orientation && 'lock' in screen.orientation) {
+            (screen.orientation as any).lock('landscape').catch(() => {});
+          }
+        } catch (e) {}
+      } else {
+        alert(
+          'Tu navegador no soporta el modo pantalla completa automático. En iPhone/iPad, puedes añadir la web a la pantalla de inicio desde Compartir -> "Agregar a pantalla de inicio" para jugarlo como app nativa a pantalla completa.'
+        );
+      }
+    } else {
+      const doc = document as any;
+      const exit =
+        doc.exitFullscreen ||
+        doc.webkitExitFullscreen ||
+        doc.msExitFullscreen ||
+        doc.mozCancelFullScreen;
+
+      if (exit) {
+        exit.call(doc).catch(() => {});
+      }
+    }
   }
 
   private loadSettings(): UXSettings {
@@ -57,32 +104,51 @@ export class SettingsMenu {
     this.onSettingsChanged?.(this.settings);
   }
 
-  private createGearButton(): HTMLElement {
-    const btn = document.createElement('button');
-    btn.id = 'btn-settings-gear';
-    btn.innerHTML = '⚙️';
-    btn.title = 'Ajustes de Interfaz (UX)';
-    btn.style.position = 'absolute';
-    btn.style.top = '16px';
-    btn.style.right = '16px';
-    btn.style.width = '42px';
-    btn.style.height = '42px';
-    btn.style.background = 'rgba(15, 23, 42, 0.85)';
-    btn.style.backdropFilter = 'blur(8px)';
-    btn.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-    btn.style.borderRadius = '12px';
-    btn.style.color = '#fff';
-    btn.style.fontSize = '20px';
-    btn.style.cursor = 'pointer';
-    btn.style.zIndex = '30';
-    btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.4)';
-    btn.style.transition = 'transform 0.15s, background 0.2s';
+  private createTopRightControls(): HTMLElement {
+    const container = document.createElement('div');
+    container.id = 'top-right-controls';
+    container.style.position = 'absolute';
+    container.style.top = '14px';
+    container.style.right = '14px';
+    container.style.display = 'flex';
+    container.style.gap = '8px';
+    container.style.zIndex = '30';
+    container.style.pointerEvents = 'auto';
 
-    btn.onmouseover = () => btn.style.transform = 'rotate(30deg) scale(1.05)';
-    btn.onmouseout = () => btn.style.transform = 'rotate(0deg) scale(1)';
-    btn.onclick = () => this.toggleModal();
+    // 1. Botón de Pantalla Completa
+    const fsBtn = document.createElement('button');
+    fsBtn.id = 'btn-toggle-fullscreen';
+    fsBtn.innerHTML = '⛶';
+    fsBtn.title = 'Pantalla Completa (Ocultar barras del navegador)';
+    fsBtn.className = 'top-icon-btn';
+    fsBtn.onclick = () => this.toggleFullscreen();
 
-    return btn;
+    // 2. Botón de Ajustes (Engranaje)
+    const gearBtn = document.createElement('button');
+    gearBtn.id = 'btn-settings-gear';
+    gearBtn.innerHTML = '⚙️';
+    gearBtn.title = 'Ajustes de Interfaz (UX)';
+    gearBtn.className = 'top-icon-btn';
+    gearBtn.onclick = () => this.toggleModal();
+
+    container.appendChild(fsBtn);
+    container.appendChild(gearBtn);
+
+    // Escuchar eventos de cambio de pantalla completa para sincronizar iconos
+    const updateFsIcon = () => {
+      const isFs = this.isFullscreenActive();
+      fsBtn.innerHTML = isFs ? '🗗' : '⛶';
+      fsBtn.title = isFs ? 'Salir de Pantalla Completa' : 'Pantalla Completa';
+      const modalBtn = document.getElementById('btn-toggle-fullscreen-modal');
+      if (modalBtn) {
+        modalBtn.innerHTML = isFs ? '🗗 Salir' : '⛶ Activar';
+      }
+    };
+
+    document.addEventListener('fullscreenchange', updateFsIcon);
+    document.addEventListener('webkitfullscreenchange', updateFsIcon);
+
+    return container;
   }
 
   private createModal(): HTMLElement {
@@ -179,6 +245,17 @@ export class SettingsMenu {
             <input type="checkbox" id="toggle-combat-numbers" ${this.settings.showFloatingCombatText ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;" />
           </label>
 
+          <!-- Modo Pantalla Completa Inmersiva -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 8px 10px; border-radius: 8px;">
+            <div>
+              <div style="font-weight: 700; color: #60a5fa;">📺 Modo Pantalla Completa</div>
+              <div style="font-size: 11px; color: #cbd5e1;">Oculta la barra del navegador para máximo espacio</div>
+            </div>
+            <button id="btn-toggle-fullscreen-modal" type="button" style="background: #2563eb; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+              ${this.isFullscreenActive() ? '🗗 Salir' : '⛶ Activar'}
+            </button>
+          </div>
+
           <!-- Ubicación de Barra de Poderes -->
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px;">
             <div>
@@ -208,10 +285,12 @@ export class SettingsMenu {
     const closeBtn = modal.querySelector('#btn-close-settings') as HTMLButtonElement;
     const saveBtn = modal.querySelector('#btn-save-settings') as HTMLButtonElement;
     const saveTopBtn = modal.querySelector('#btn-save-settings-top') as HTMLButtonElement;
+    const modalFsBtn = modal.querySelector('#btn-toggle-fullscreen-modal') as HTMLButtonElement;
 
     if (closeBtn) closeBtn.onclick = () => this.toggleModal(false);
     if (saveBtn) saveBtn.onclick = () => this.toggleModal(false);
     if (saveTopBtn) saveTopBtn.onclick = () => this.toggleModal(false);
+    if (modalFsBtn) modalFsBtn.onclick = () => this.toggleFullscreen();
 
     const checkControls = modal.querySelector('#toggle-controls-guide') as HTMLInputElement;
     const checkLan = modal.querySelector('#toggle-lan-banner') as HTMLInputElement;
