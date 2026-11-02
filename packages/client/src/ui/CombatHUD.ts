@@ -118,6 +118,10 @@ export class CombatHUD {
     this.refreshActionBar();
   }
 
+  public resetClassCooldown(): void {
+    this.classSwitchEndsAt = 0;
+  }
+
   private createPlayerVitals(): HTMLElement {
     const el = document.createElement('div');
     el.id = 'player-vitals-card';

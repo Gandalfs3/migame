@@ -81,9 +81,14 @@ function showZoneAlert(message: string, isWarning: boolean = true): void {
 }
 
 // Modal de Gestión de Perfiles e Inicio (Cargar / Crear / Cambiar Personaje)
+let currentLocalPlayerName: string | null = null;
+
 const charModal = new CharacterLoginModal((name, classType) => {
+  currentLocalPlayerName = name;
+  charModal.setActiveCharacter(name);
   currentLocalClass = classType;
-  combatHud.onSelectClass?.(classType);
+  combatHud.setClass(classType);
+  combatHud.resetClassCooldown();
   rangeIndicator.setClass(classType);
   selectTarget(null);
   network.sendLogin(name, classType);
@@ -91,6 +96,7 @@ const charModal = new CharacterLoginModal((name, classType) => {
 
 // Conectar apertura del gestor de personajes desde el menú de ajustes o botón superior 🧙
 settingsMenu.onSwitchCharacter = () => {
+  charModal.setActiveCharacter(currentLocalPlayerName);
   charModal.open();
 };
 
@@ -179,6 +185,10 @@ network.onWorldState = (msg) => {
     }
 
     if (p.id === network.localPlayerId) {
+      if (currentLocalPlayerName !== p.name) {
+        currentLocalPlayerName = p.name;
+        charModal.setActiveCharacter(p.name);
+      }
       combatHud.updatePlayerVitals(p.name, p.level, p.health, p.maxHealth, p.experience, p.gold, p.defense, p.spellPowerPct);
       if (currentLocalClass !== p.classType) {
         currentLocalClass = p.classType;

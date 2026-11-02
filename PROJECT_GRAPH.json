@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T04:12:18.603Z",
+  "generatedAt": "2026-11-02T04:24:59.626Z",
   "totalFiles": 70,
   "tree": [
     {
@@ -380,7 +380,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 10548,
+                  "size": 10895,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -423,7 +423,7 @@
                       "type": "file",
                       "name": "CharacterLoginModal.ts",
                       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-                      "size": 19453,
+                      "size": 23787,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -431,7 +431,7 @@
                       "type": "file",
                       "name": "CombatHUD.ts",
                       "path": "packages/client/src/ui/CombatHUD.ts",
-                      "size": 16305,
+                      "size": 16380,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -638,7 +638,7 @@
                       "type": "file",
                       "name": "GameWorld.ts",
                       "path": "packages/server/src/game/GameWorld.ts",
-                      "size": 14836,
+                      "size": 15216,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -1046,7 +1046,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 10548,
+      "size": 10895,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1070,7 +1070,7 @@
       "type": "file",
       "name": "CharacterLoginModal.ts",
       "path": "packages/client/src/ui/CharacterLoginModal.ts",
-      "size": 19453,
+      "size": 23787,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1078,7 +1078,7 @@
       "type": "file",
       "name": "CombatHUD.ts",
       "path": "packages/client/src/ui/CombatHUD.ts",
-      "size": 16305,
+      "size": 16380,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1222,7 +1222,7 @@
       "type": "file",
       "name": "GameWorld.ts",
       "path": "packages/server/src/game/GameWorld.ts",
-      "size": 14836,
+      "size": 15216,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },

@@ -148,6 +148,12 @@ export class GameWorld {
   }
 
   public loginPlayer(player: Player, name: string, classType: PlayerClass): void {
+    // Si ya está usando este mismo personaje en esta sesión, no reiniciar posición ni recargar
+    if (player.name === name) {
+      console.log(`[GameWorld] Jugador ${name} ya activo en esta sesión. Omitiendo reset de posición.`);
+      return;
+    }
+
     if (player.name) {
       this.savePlayer(player);
     }
@@ -163,6 +169,9 @@ export class GameWorld {
       profile.gold,
       profile.current_zone || 'zone_forest'
     );
+
+    // Permitir cambio de rol inmediato tras entrar al juego (sin cooldown inicial)
+    player.lastClassSwitchTime = 0;
 
     const zone = this.mapManager.getZone(player.currentZone || 'zone_forest');
     if (zone && zone.spawnPoint) {

@@ -21,6 +21,8 @@ export class CharacterLoginModal {
   private viewMode: 'list' | 'create' = 'list';
   private selectedClass: PlayerClass = 'WARRIOR';
   private deletingProfileName: string | null = null;
+  private activePlayerName: string | null = null;
+  private typedHeroName: string = '';
 
   constructor(onLogin?: (name: string, classType: PlayerClass) => void) {
     this.onLoginCallback = onLogin;
@@ -43,10 +45,27 @@ export class CharacterLoginModal {
     this.overlay.style.overflowY = 'auto';
     this.overlay.style.boxSizing = 'border-box';
 
+    this.overlay.onclick = (e) => {
+      // Cerrar al hacer clic en el fondo solo si ya hay una partida en curso
+      if (e.target === this.overlay && this.activePlayerName) {
+        this.close();
+      }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.activePlayerName && this.overlay.style.display !== 'none') {
+        this.close();
+      }
+    });
+
     document.body.appendChild(this.overlay);
 
     this.render();
     this.fetchProfiles();
+  }
+
+  public setActiveCharacter(name: string | null): void {
+    this.activePlayerName = name;
   }
 
   private getApiBaseUrl(): string {
@@ -63,7 +82,6 @@ export class CharacterLoginModal {
       if (res.ok) {
         const data = await res.json();
         this.profiles = Array.isArray(data.profiles) ? data.profiles : [];
-        // Si no hay perfiles, cambiar directamente a la vista de creación
         if (this.profiles.length === 0) {
           this.viewMode = 'create';
         } else {
@@ -75,7 +93,6 @@ export class CharacterLoginModal {
       }
     } catch (err) {
       console.warn('[CharacterLoginModal] No se pudieron cargar perfiles vía REST:', err);
-      // Fallback si no hay conexión REST aún
       const localName = localStorage.getItem('migame_player_name');
       if (localName) {
         this.profiles = [{
@@ -107,6 +124,9 @@ export class CharacterLoginModal {
         this.profiles = this.profiles.filter(p => p.name !== name);
         if (localStorage.getItem('migame_player_name') === name) {
           localStorage.removeItem('migame_player_name');
+        }
+        if (this.activePlayerName === name) {
+          this.activePlayerName = null;
         }
         if (this.profiles.length === 0) {
           this.viewMode = 'create';
@@ -188,6 +208,7 @@ export class CharacterLoginModal {
     const cardsHtml = this.profiles.map(p => {
       const cls = this.getClassDetails(p.class_type);
       const isDeleting = this.deletingProfileName === p.name;
+      const isActive = this.activePlayerName === p.name;
       const zoneName = this.getZoneName(p.current_zone);
 
       if (isDeleting) {
@@ -203,8 +224,15 @@ export class CharacterLoginModal {
         `;
       }
 
+      const activeBadge = isActive
+        ? `<span style="font-size: 10px; font-weight: bold; background: #059669; color: #fff; padding: 1px 7px; border-radius: 6px; display: inline-flex; align-items: center; gap: 3px;">🟢 En Partida</span>`
+        : '';
+
+      const playBtnText = isActive ? '✓ Reanudar' : '▶️ Jugar';
+      const playBtnBg = isActive ? 'linear-gradient(135deg, #059669, #047857)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)';
+
       return `
-        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: transform 0.15s, border-color 0.15s; box-shadow: 0 4px 14px rgba(0,0,0,0.4);" onmouseover="this.style.borderColor='rgba(59,130,246,0.6)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)'">
+        <div style="background: ${isActive ? 'rgba(5, 150, 105, 0.12)' : 'rgba(15, 23, 42, 0.85)'}; border: 1.5px solid ${isActive ? '#10b981' : 'rgba(255, 255, 255, 0.12)'}; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: transform 0.15s, border-color 0.15s; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
           
           <!-- Info Personaje -->
           <div style="display: flex; align-items: center; gap: 12px; text-align: left; min-width: 0;">
@@ -216,6 +244,7 @@ export class CharacterLoginModal {
                 <span style="font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">${p.name}</span>
                 <span style="font-size: 10px; font-weight: bold; background: #2563eb; color: #fff; padding: 1px 6px; border-radius: 6px;">Nv. ${p.level}</span>
                 <span style="font-size: 11px; color: ${cls.color}; font-weight: 600;">${cls.label}</span>
+                ${activeBadge}
               </div>
               <div style="display: flex; gap: 10px; font-size: 11px; color: #94a3b8; margin-top: 3px; flex-wrap: wrap;">
                 <span style="color: #fbbf24;">🪙 ${p.gold} Oro</span>
@@ -227,8 +256,8 @@ export class CharacterLoginModal {
 
           <!-- Acciones -->
           <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-            <button class="btn-play-char" data-name="${p.name}" data-class="${p.class_type}" style="padding: 9px 15px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; border-radius: 8px; color: #fff; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(37,99,235,0.4); display: flex; align-items: center; gap: 4px;">
-              ▶️ Jugar
+            <button class="btn-play-char" data-name="${p.name}" data-class="${p.class_type}" style="padding: 9px 15px; background: ${playBtnBg}; border: none; border-radius: 8px; color: #fff; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 4px;">
+              ${playBtnText}
             </button>
             <button class="btn-ask-delete" data-name="${p.name}" title="Eliminar héroe" style="padding: 8px 10px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: #f87171; font-size: 13px; cursor: pointer;">
               🗑️
@@ -239,11 +268,21 @@ export class CharacterLoginModal {
       `;
     }).join('');
 
+    const closeBtnHtml = this.activePlayerName
+      ? `<button id="btn-header-close-modal" title="Volver al juego (Esc)" style="position: absolute; right: 14px; top: 14px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>`
+      : '';
+
+    const returnBtnHtml = this.activePlayerName
+      ? `<button id="btn-return-game" style="width: 100%; padding: 11px; margin-top: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #cbd5e1; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">⬅️ Volver a la Partida Actual</button>`
+      : '';
+
     this.overlay.innerHTML = `
-      <div style="background: rgba(30, 41, 59, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 18px; padding: 20px 24px; width: 95%; max-width: 520px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box;">
+      <div style="position: relative; background: rgba(30, 41, 59, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 18px; padding: 20px 24px; width: 95%; max-width: 520px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box;">
         
+        ${closeBtnHtml}
+
         <!-- Cabecera -->
-        <div style="text-align: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; flex-shrink: 0;">
+        <div style="text-align: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; padding-right: ${this.activePlayerName ? '32px' : '0'}; flex-shrink: 0;">
           <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 4px; background: linear-gradient(135deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             Gestor de Héroes y Perfiles
           </h2>
@@ -255,15 +294,23 @@ export class CharacterLoginModal {
           ${cardsHtml}
         </div>
 
-        <!-- Botón para Crear Nuevo Personaje -->
-        <div style="flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+        <!-- Botones de Acción -->
+        <div style="flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
           <button id="btn-goto-create" style="width: 100%; padding: 12px; background: rgba(59, 130, 246, 0.15); border: 1.5px dashed rgba(59, 130, 246, 0.6); border-radius: 10px; color: #93c5fd; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;">
             ➕ Crear Nuevo Personaje
           </button>
+          ${returnBtnHtml}
         </div>
 
       </div>
     `;
+
+    // Vincular botón de cerrar/volver si hay personaje activo
+    const headerCloseBtn = this.overlay.querySelector('#btn-header-close-modal') as HTMLButtonElement;
+    if (headerCloseBtn) headerCloseBtn.onclick = () => this.close();
+
+    const returnBtn = this.overlay.querySelector('#btn-return-game') as HTMLButtonElement;
+    if (returnBtn) returnBtn.onclick = () => this.close();
 
     // Vincular eventos de la lista
     const playBtns = this.overlay.querySelectorAll('.btn-play-char');
@@ -271,6 +318,13 @@ export class CharacterLoginModal {
       btn.addEventListener('click', () => {
         const charName = btn.getAttribute('data-name')!;
         const charClass = (btn.getAttribute('data-class') || 'WARRIOR') as PlayerClass;
+
+        // Si ya está jugando con este exacto personaje, solo cerramos el modal sin resetear nada
+        if (this.activePlayerName === charName) {
+          this.close();
+          return;
+        }
+
         localStorage.setItem('migame_player_name', charName);
         this.close();
         this.onLoginCallback?.(charName, charClass);
@@ -310,6 +364,20 @@ export class CharacterLoginModal {
     }
   }
 
+  private updateClassCardSelection(): void {
+    const cards = this.overlay.querySelectorAll('.class-card-opt');
+    cards.forEach(card => {
+      const cardClass = card.getAttribute('data-class') as PlayerClass;
+      const isSel = cardClass === this.selectedClass;
+      const details = this.getClassDetails(cardClass);
+      const el = card as HTMLElement;
+
+      el.style.background = isSel ? 'rgba(37,99,235,0.25)' : 'rgba(15,23,42,0.6)';
+      el.style.borderColor = isSel ? details.color : 'rgba(255,255,255,0.12)';
+      el.style.boxShadow = isSel ? `0 0 16px ${details.color}44` : 'none';
+    });
+  }
+
   private renderCreateProfile(): void {
     const classes: PlayerClass[] = ['WARRIOR', 'CLERIC', 'MAGE'];
 
@@ -334,8 +402,12 @@ export class CharacterLoginModal {
       ? `<button id="btn-back-to-list" style="padding: 6px 12px; background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #cbd5e1; font-size: 12px; cursor: pointer;">⬅️ Volver</button>`
       : '';
 
+    const closeBtnHtml = this.activePlayerName
+      ? `<button id="btn-header-close-create" title="Volver al juego (Esc)" style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px;">✕</button>`
+      : '';
+
     this.overlay.innerHTML = `
-      <div style="background: rgba(30, 41, 59, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 18px; padding: 20px 24px; width: 95%; max-width: 520px; max-height: 92vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box;">
+      <div style="position: relative; background: rgba(30, 41, 59, 0.96); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 18px; padding: 20px 24px; width: 95%; max-width: 520px; max-height: 92vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.85); color: #fff; box-sizing: border-box;">
         
         <!-- Cabecera con botón volver -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
@@ -345,24 +417,27 @@ export class CharacterLoginModal {
             </h2>
             <p style="font-size: 11px; color: #94a3b8; margin: 2px 0 0 0;">Elige tu nombre y tu rol heroico inicial.</p>
           </div>
-          ${backBtnHtml}
+          <div style="display: flex; align-items: center;">
+            ${backBtnHtml}
+            ${closeBtnHtml}
+          </div>
         </div>
 
-        <!-- Campo de Nombre -->
+        <!-- Campo de Nombre (conserva el texto ingresado) -->
         <div style="margin-bottom: 18px; text-align: left;">
           <label style="display: block; font-size: 12px; font-weight: bold; color: #cbd5e1; margin-bottom: 6px;">Nombre del Héroe</label>
-          <input id="input-new-char-name" type="text" maxlength="16" placeholder="Ej: León, Gandalf, Thor..." style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(59, 130, 246, 0.4); border-radius: 10px; color: #fff; font-size: 16px; font-weight: 600; outline: none; box-sizing: border-box;" autofocus />
+          <input id="input-new-char-name" type="text" maxlength="16" value="${this.typedHeroName.replace(/"/g, '&quot;')}" placeholder="Ej: León, Gandalf, Thor..." style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(59, 130, 246, 0.4); border-radius: 10px; color: #fff; font-size: 16px; font-weight: 600; outline: none; box-sizing: border-box;" autofocus />
           <div id="create-error-msg" style="color: #f87171; font-size: 11px; margin-top: 4px; display: none;"></div>
         </div>
 
         <!-- Selector de Clase -->
         <div style="margin-bottom: 22px; text-align: left;">
           <label style="display: block; font-size: 12px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px;">Elige tu Clase Inicial</label>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <div id="class-cards-container" style="display: flex; gap: 8px; flex-wrap: wrap;">
             ${classCardsHtml}
           </div>
           <div style="font-size: 11px; color: #64748b; margin-top: 6px;">
-            💡 Podrás cambiar entre roles en cualquier momento durante la partida con 6s de recarga.
+            💡 Podrás alternar entre roles en cualquier momento durante la partida con 6s de recarga.
           </div>
         </div>
 
@@ -378,6 +453,14 @@ export class CharacterLoginModal {
     const errorMsg = this.overlay.querySelector('#create-error-msg') as HTMLElement;
     const submitBtn = this.overlay.querySelector('#btn-submit-create') as HTMLButtonElement;
     const backBtn = this.overlay.querySelector('#btn-back-to-list') as HTMLButtonElement;
+    const closeCreateBtn = this.overlay.querySelector('#btn-header-close-create') as HTMLButtonElement;
+
+    if (closeCreateBtn) closeCreateBtn.onclick = () => this.close();
+
+    // Guardar el texto que el usuario escribe en tiempo real para no perderlo nunca
+    nameInput.addEventListener('input', () => {
+      this.typedHeroName = nameInput.value;
+    });
 
     if (backBtn) {
       backBtn.onclick = () => {
@@ -386,11 +469,12 @@ export class CharacterLoginModal {
       };
     }
 
+    // Cambiar de clase sin destruir el input ni borrar el texto
     const classCards = this.overlay.querySelectorAll('.class-card-opt');
     classCards.forEach(card => {
       card.addEventListener('click', () => {
         this.selectedClass = card.getAttribute('data-class') as PlayerClass;
-        this.render();
+        this.updateClassCardSelection();
       });
     });
 
@@ -416,6 +500,7 @@ export class CharacterLoginModal {
         return;
       }
 
+      this.typedHeroName = '';
       localStorage.setItem('migame_player_name', rawName);
       this.close();
       this.onLoginCallback?.(rawName, this.selectedClass);
