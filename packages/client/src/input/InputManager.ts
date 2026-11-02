@@ -57,34 +57,104 @@ export class InputManager {
   }
 
   private setupTouchControls(): void {
-    const attachButton = (id: string, key: keyof InputState) => {
-      const btn = document.getElementById(id);
-      if (!btn) return;
+    const dpad = document.getElementById('mobile-dpad');
+    if (!dpad) return;
 
-      const press = (e: Event) => {
-        e.preventDefault();
-        this.state[key] = true;
-        btn.classList.add('active');
-        this.notify();
-      };
+    const btnUp = document.getElementById('btn-up');
+    const btnDown = document.getElementById('btn-down');
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
 
-      const release = (e: Event) => {
-        e.preventDefault();
-        this.state[key] = false;
-        btn.classList.remove('active');
-        this.notify();
-      };
+    const buttons: { id: string; key: keyof InputState; el: HTMLElement | null }[] = [
+      { id: 'btn-up', key: 'up', el: btnUp },
+      { id: 'btn-down', key: 'down', el: btnDown },
+      { id: 'btn-left', key: 'left', el: btnLeft },
+      { id: 'btn-right', key: 'right', el: btnRight }
+    ];
 
-      btn.addEventListener('touchstart', press, { passive: false });
-      btn.addEventListener('touchend', release, { passive: false });
-      btn.addEventListener('mousedown', press);
-      btn.addEventListener('mouseup', release);
-      btn.addEventListener('mouseleave', release);
+    const resetAll = () => {
+      let changed = false;
+      for (const b of buttons) {
+        if (this.state[b.key]) {
+          this.state[b.key] = false;
+          changed = true;
+        }
+        b.el?.classList.remove('active');
+      }
+      if (changed) this.notify();
     };
 
-    attachButton('btn-up', 'up');
-    attachButton('btn-down', 'down');
-    attachButton('btn-left', 'left');
-    attachButton('btn-right', 'right');
+    const updateFromTouch = (touch: Touch) => {
+      const hit = document.elementFromPoint(touch.clientX, touch.clientY);
+      let changed = false;
+
+      for (const b of buttons) {
+        const isHit = b.el && (hit === b.el || b.el.contains(hit));
+        if (isHit) {
+          if (!this.state[b.key]) {
+            this.state[b.key] = true;
+            b.el?.classList.add('active');
+            changed = true;
+          }
+        } else {
+          if (this.state[b.key]) {
+            this.state[b.key] = false;
+            b.el?.classList.remove('active');
+            changed = true;
+          }
+        }
+      }
+
+      if (changed) this.notify();
+    };
+
+    // Soporte para gestos táctiles (flick / arrastrar pulgar fluido)
+    dpad.addEventListener('touchstart', (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        updateFromTouch(e.touches[0]);
+      }
+    }, { passive: false });
+
+    dpad.addEventListener('touchmove', (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        updateFromTouch(e.touches[0]);
+      }
+    }, { passive: false });
+
+    dpad.addEventListener('touchend', (e: TouchEvent) => {
+      e.preventDefault();
+      resetAll();
+    }, { passive: false });
+
+    dpad.addEventListener('touchcancel', (e: TouchEvent) => {
+      e.preventDefault();
+      resetAll();
+    }, { passive: false });
+
+    // Fallback para clicks con mouse
+    for (const b of buttons) {
+      if (!b.el) continue;
+      b.el.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        this.state[b.key] = true;
+        b.el?.classList.add('active');
+        this.notify();
+      });
+      b.el.addEventListener('mouseup', (e) => {
+        e.preventDefault();
+        this.state[b.key] = false;
+        b.el?.classList.remove('active');
+        this.notify();
+      });
+      b.el.addEventListener('mouseleave', () => {
+        if (this.state[b.key]) {
+          this.state[b.key] = false;
+          b.el?.classList.remove('active');
+          this.notify();
+        }
+      });
+    }
   }
 }

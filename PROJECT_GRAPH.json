@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T01:21:18.089Z",
+  "generatedAt": "2026-11-02T01:48:35.552Z",
   "totalFiles": 68,
   "tree": [
     {
@@ -274,7 +274,7 @@
               "type": "file",
               "name": "index.html",
               "path": "packages/client/index.html",
-              "size": 15401,
+              "size": 15956,
               "extension": ".html",
               "summary": "Source / Asset file"
             },
@@ -362,7 +362,7 @@
                       "type": "file",
                       "name": "InputManager.ts",
                       "path": "packages/client/src/input/InputManager.ts",
-                      "size": 2930,
+                      "size": 4985,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     }
@@ -452,7 +452,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86339,
+              "size": 86430,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -943,7 +943,7 @@
       "type": "file",
       "name": "index.html",
       "path": "packages/client/index.html",
-      "size": 15401,
+      "size": 15956,
       "extension": ".html",
       "summary": "Source / Asset file"
     },
@@ -1007,7 +1007,7 @@
       "type": "file",
       "name": "InputManager.ts",
       "path": "packages/client/src/input/InputManager.ts",
-      "size": 2930,
+      "size": 4985,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1079,7 +1079,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86339,
+      "size": 86430,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
