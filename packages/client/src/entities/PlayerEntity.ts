@@ -23,6 +23,7 @@ export class PlayerEntity {
   private healthTexture: THREE.CanvasTexture;
   private selectionRing: THREE.Mesh;
   private bodyMesh: THREE.Mesh;
+  private visorMesh: THREE.Mesh;
   private colorHex: string;
 
   private leftArmGroup: THREE.Group;
@@ -90,9 +91,9 @@ export class PlayerEntity {
     // Visor frontal con halo luminoso
     const visorGeo = new THREE.BoxGeometry(0.32, 0.18, 0.28);
     const visorMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const visor = new THREE.Mesh(visorGeo, visorMat);
-    visor.position.set(0, 1.18, 0.38);
-    this.group.add(visor);
+    this.visorMesh = new THREE.Mesh(visorGeo, visorMat);
+    this.visorMesh.position.set(0, 1.18, 0.38);
+    this.group.add(this.visorMesh);
 
     // 2. Extremidades superiores (Brazos y Manos)
     const armGeo = new THREE.CapsuleGeometry(0.11, 0.35, 6, 8);
@@ -263,6 +264,9 @@ export class PlayerEntity {
           this.group.remove(this.customModelMesh);
         }
         const mesh = gltf.scene.clone();
+        const container = new THREE.Group();
+        container.add(mesh);
+
         const bbox = new THREE.Box3().setFromObject(mesh);
         const size = new THREE.Vector3();
         bbox.getSize(size);
@@ -272,14 +276,27 @@ export class PlayerEntity {
           const scale = targetHeight / maxDim;
           mesh.scale.set(scale, scale, scale);
         }
-        mesh.position.y = targetHeight * 0.5;
+
+        const scaledBbox = new THREE.Box3().setFromObject(mesh);
+        mesh.position.y = -scaledBbox.min.y;
+        mesh.position.x = -(scaledBbox.min.x + scaledBbox.max.x) / 2;
+        mesh.position.z = -(scaledBbox.min.z + scaledBbox.max.z) / 2;
+
         mesh.traverse((child) => {
-          if ((child as THREE.Mesh).isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+          const meshChild = child as THREE.Mesh;
+          if (meshChild.isMesh) {
+            meshChild.castShadow = true;
+            meshChild.receiveShadow = true;
+            const mat = meshChild.material as THREE.MeshStandardMaterial;
+            if (mat && 'roughness' in mat) {
+              mat.roughness = 0.6;
+              mat.metalness = 0.15;
+              mat.needsUpdate = true;
+            }
           }
         });
-        this.customModelMesh = mesh;
+
+        this.customModelMesh = container;
         this.group.add(this.customModelMesh);
 
         // Ocultar partes procedurales cuando hay modelo 3D real
@@ -298,6 +315,7 @@ export class PlayerEntity {
 
   private setProceduralVisible(visible: boolean): void {
     this.bodyMesh.visible = visible;
+    if (this.visorMesh) this.visorMesh.visible = visible;
     this.leftArmGroup.visible = visible;
     this.rightArmGroup.visible = visible;
     this.leftLegGroup.visible = visible;
@@ -471,7 +489,7 @@ export class PlayerEntity {
       this.bodyMesh.position.y = 0.95 + Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
       this.bodyMesh.rotation.z = Math.sin(this.walkTimer) * 0.03;
       if (this.customModelMesh) {
-        this.customModelMesh.position.y = 0.95 + Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
+        this.customModelMesh.position.y = Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
         this.customModelMesh.rotation.z = Math.sin(this.walkTimer) * 0.03;
       }
     } else {
@@ -486,12 +504,15 @@ export class PlayerEntity {
       const breathe = Math.sin(now * 0.003) * 0.015;
       this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.95 + breathe, 0.2);
       if (this.customModelMesh) {
-        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, 0.95 + breathe, 0.2);
+        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, breathe, 0.2);
         this.customModelMesh.rotation.z = THREE.MathUtils.lerp(this.customModelMesh.rotation.z, 0, 0.2);
       }
     }
 
     this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, 0, 0.2);
+    if (this.customModelMesh) {
+      this.customModelMesh.rotation.x = THREE.MathUtils.lerp(this.customModelMesh.rotation.x, 0, 0.2);
+    }
 
     this.group.position.x += (this.targetX - this.group.position.x) * posLerp;
     this.group.position.z += (this.targetZ - this.group.position.z) * posLerp;

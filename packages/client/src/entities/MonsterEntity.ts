@@ -352,25 +352,40 @@ export class MonsterEntity {
       assetManager.loadGLTF(modelPath).then((gltf) => {
         if (gltf && gltf.scene) {
           const customMesh = gltf.scene.clone();
+          const container = new THREE.Group();
+          container.add(customMesh);
+
           const bbox = new THREE.Box3().setFromObject(customMesh);
           const size = new THREE.Vector3();
           bbox.getSize(size);
           const maxDim = Math.max(size.x, size.y, size.z);
-          const targetHeight = this.isBoss ? 3.5 : 1.8;
+          const targetHeight = this.isBoss ? 3.8 : 1.8;
           if (maxDim > 0) {
             const scale = targetHeight / maxDim;
             customMesh.scale.set(scale, scale, scale);
           }
-          customMesh.position.y = targetHeight * 0.5;
+
+          const scaledBbox = new THREE.Box3().setFromObject(customMesh);
+          customMesh.position.y = -scaledBbox.min.y;
+          customMesh.position.x = -(scaledBbox.min.x + scaledBbox.max.x) / 2;
+          customMesh.position.z = -(scaledBbox.min.z + scaledBbox.max.z) / 2;
+
           customMesh.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-              child.castShadow = true;
-              child.receiveShadow = true;
+            const meshChild = child as THREE.Mesh;
+            if (meshChild.isMesh) {
+              meshChild.castShadow = true;
+              meshChild.receiveShadow = true;
+              const mat = meshChild.material as THREE.MeshStandardMaterial;
+              if (mat && 'roughness' in mat) {
+                mat.roughness = 0.65;
+                mat.metalness = 0.2;
+                mat.needsUpdate = true;
+              }
             }
           });
 
           this.group.remove(this.bodyMesh);
-          this.bodyMesh = customMesh;
+          this.bodyMesh = container;
           this.group.add(this.bodyMesh);
         }
       }).catch(() => {});
