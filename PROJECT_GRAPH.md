@@ -1,6 +1,6 @@
 # Project Knowledge Graph (Grafify)
 
-> **Generado automáticamente**: 2026-11-02T04:24:59.628Z
+> **Generado automáticamente**: 2026-11-20T02:21:18.211Z
 > **Propósito**: Mapa de alta velocidad para que agentes de IA y desarrolladores ubiquen componentes, flujos de red y responsabilidades sin tener que leer todo el proyecto.
 
 ## 1. Índice Rápido de Componentes y Archivos
@@ -36,6 +36,8 @@
 | [`package.json`](file:///package.json) | `.json` | Source / Asset file |
 | [`packages/client/index.html`](file:///packages/client/index.html) | `.html` | Source / Asset file |
 | [`packages/client/package.json`](file:///packages/client/package.json) | `.json` | Source / Asset file |
+| [`packages/client/public/assets/models/boss_astral_titan.glb`](file:///packages/client/public/assets/models/boss_astral_titan.glb) | `.glb` | Source / Asset file |
+| [`packages/client/public/assets/models/character_mage.glb`](file:///packages/client/public/assets/models/character_mage.glb) | `.glb` | Source / Asset file |
 | [`packages/client/src/core/AssetManager.ts`](file:///packages/client/src/core/AssetManager.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/core/Engine.ts`](file:///packages/client/src/core/Engine.ts) | `.ts` | Source / Asset file |
 | [`packages/client/src/entities/MonsterEntity.ts`](file:///packages/client/src/entities/MonsterEntity.ts) | `.ts` | Source / Asset file |
@@ -74,7 +76,60 @@
 | [`packages/server/src/network/NetworkServer.ts`](file:///packages/server/src/network/NetworkServer.ts) | `.ts` | Source / Asset file |
 | [`packages/server/tsconfig.json`](file:///packages/server/tsconfig.json) | `.json` | Source / Asset file |
 | [`packages/server/tsconfig.tsbuildinfo`](file:///packages/server/tsconfig.tsbuildinfo) | `.tsbuildinfo` | Source / Asset file |
+| [`scripts/generate_3d.py`](file:///scripts/generate_3d.py) | `.py` | Source / Asset file |
 | [`scripts/grafify.js`](file:///scripts/grafify.js) | `.js` | !/usr/bin/env node |
+| [`tools/TripoSR/.gitignore`](file:///tools/TripoSR/.gitignore) | `none` | Byte-compiled / optimized / DLL files |
+| [`tools/TripoSR/examples/captured.jpeg`](file:///tools/TripoSR/examples/captured.jpeg) | `.jpeg` | Source / Asset file |
+| [`tools/TripoSR/examples/chair.png`](file:///tools/TripoSR/examples/chair.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/flamingo.png`](file:///tools/TripoSR/examples/flamingo.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/hamburger.png`](file:///tools/TripoSR/examples/hamburger.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/horse.png`](file:///tools/TripoSR/examples/horse.png) | `.png` | \}��̆RO�-o��'GpU�ĺ��j8���E��{�;���;0�[���#c��E�:v�E]���|d�@��+�n��p8�N s)ox�ű-'�q���ٰexf��z�n?���w}tW N���/�#���x8��L�����1�o������UA�mIs5s�����Eo��П@ x����hq 8��N ���k_�Z�eO��ڣ�}��u�3�x*4lO���A������[w��I�?�xb����8� G�q �	����[;���Y�/���?/�P"bth|Bxx|�=����vv~�o����� |
+| [`tools/TripoSR/examples/iso_house.png`](file:///tools/TripoSR/examples/iso_house.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/marble.png`](file:///tools/TripoSR/examples/marble.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/police_woman.png`](file:///tools/TripoSR/examples/police_woman.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/poly_fox.png`](file:///tools/TripoSR/examples/poly_fox.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/robot.png`](file:///tools/TripoSR/examples/robot.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/stripes.png`](file:///tools/TripoSR/examples/stripes.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/teapot.png`](file:///tools/TripoSR/examples/teapot.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/tiger_girl.png`](file:///tools/TripoSR/examples/tiger_girl.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/examples/unicorn.png`](file:///tools/TripoSR/examples/unicorn.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/figures/comparison800.gif`](file:///tools/TripoSR/figures/comparison800.gif) | `.gif` | Source / Asset file |
+| [`tools/TripoSR/figures/scatter-comparison.png`](file:///tools/TripoSR/figures/scatter-comparison.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/figures/teaser800.gif`](file:///tools/TripoSR/figures/teaser800.gif) | `.gif` | Source / Asset file |
+| [`tools/TripoSR/figures/visual_comparisons.jpg`](file:///tools/TripoSR/figures/visual_comparisons.jpg) | `.jpg` | Source / Asset file |
+| [`tools/TripoSR/gradio_app.py`](file:///tools/TripoSR/gradio_app.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/LICENSE`](file:///tools/TripoSR/LICENSE) | `none` | Source / Asset file |
+| [`tools/TripoSR/output/0/input.png`](file:///tools/TripoSR/output/0/input.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/output/0/mesh.obj`](file:///tools/TripoSR/output/0/mesh.obj) | `.obj` | https://github.com/mikedh/trimesh |
+| [`tools/TripoSR/output_glb/0/input.png`](file:///tools/TripoSR/output_glb/0/input.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/output_glb/0/mesh.glb`](file:///tools/TripoSR/output_glb/0/mesh.glb) | `.glb` | Source / Asset file |
+| [`tools/TripoSR/output_tmp/0/input.png`](file:///tools/TripoSR/output_tmp/0/input.png) | `.png` | Source / Asset file |
+| [`tools/TripoSR/output_tmp/0/mesh.glb`](file:///tools/TripoSR/output_tmp/0/mesh.glb) | `.glb` | Source / Asset file |
+| [`tools/TripoSR/README.md`](file:///tools/TripoSR/README.md) | `.md` | TripoSR |
+| [`tools/TripoSR/requirements.txt`](file:///tools/TripoSR/requirements.txt) | `.txt` | Source / Asset file |
+| [`tools/TripoSR/run.py`](file:///tools/TripoSR/run.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/bake_texture.py`](file:///tools/TripoSR/tsr/bake_texture.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/isosurface.py`](file:///tools/TripoSR/tsr/models/isosurface.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/nerf_renderer.py`](file:///tools/TripoSR/tsr/models/nerf_renderer.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/network_utils.py`](file:///tools/TripoSR/tsr/models/network_utils.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/tokenizers/image.py`](file:///tools/TripoSR/tsr/models/tokenizers/image.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/tokenizers/triplane.py`](file:///tools/TripoSR/tsr/models/tokenizers/triplane.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/tokenizers/__pycache__/image.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/tokenizers/__pycache__/image.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/tokenizers/__pycache__/triplane.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/tokenizers/__pycache__/triplane.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/transformer/attention.py`](file:///tools/TripoSR/tsr/models/transformer/attention.py) | `.py` | Copyright 2023 The HuggingFace Team. All rights reserved. |
+| [`tools/TripoSR/tsr/models/transformer/basic_transformer_block.py`](file:///tools/TripoSR/tsr/models/transformer/basic_transformer_block.py) | `.py` | Copyright 2023 The HuggingFace Team. All rights reserved. |
+| [`tools/TripoSR/tsr/models/transformer/transformer_1d.py`](file:///tools/TripoSR/tsr/models/transformer/transformer_1d.py) | `.py` | Copyright 2023 The HuggingFace Team. All rights reserved. |
+| [`tools/TripoSR/tsr/models/transformer/__pycache__/attention.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/transformer/__pycache__/attention.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/transformer/__pycache__/basic_transformer_block.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/transformer/__pycache__/basic_transformer_block.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/transformer/__pycache__/transformer_1d.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/transformer/__pycache__/transformer_1d.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/__pycache__/isosurface.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/__pycache__/isosurface.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/__pycache__/nerf_renderer.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/__pycache__/nerf_renderer.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/models/__pycache__/network_utils.cpython-311.pyc`](file:///tools/TripoSR/tsr/models/__pycache__/network_utils.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/system.py`](file:///tools/TripoSR/tsr/system.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/utils.py`](file:///tools/TripoSR/tsr/utils.py) | `.py` | Source / Asset file |
+| [`tools/TripoSR/tsr/__pycache__/bake_texture.cpython-311.pyc`](file:///tools/TripoSR/tsr/__pycache__/bake_texture.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/__pycache__/system.cpython-311.pyc`](file:///tools/TripoSR/tsr/__pycache__/system.cpython-311.pyc) | `.pyc` | Source / Asset file |
+| [`tools/TripoSR/tsr/__pycache__/utils.cpython-311.pyc`](file:///tools/TripoSR/tsr/__pycache__/utils.cpython-311.pyc) | `.pyc` | Source / Asset file |
 | [`tsconfig.base.json`](file:///tsconfig.base.json) | `.json` | Source / Asset file |
 | [`tsconfig.json`](file:///tsconfig.json) | `.json` | Source / Asset file |
 

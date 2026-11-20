@@ -171,7 +171,7 @@ network.onWorldState = (msg) => {
 
     if (!entity) {
       const isLocal = p.id === network.localPlayerId;
-      entity = new PlayerEntity(engine.scene, p.id, p.color, isLocal, p.name);
+      entity = new PlayerEntity(engine.scene, p.id, p.color, isLocal, p.name, assetManager);
       entity.group.position.set(p.x, 0, p.z);
       entity.group.rotation.y = p.rotation;
       playerEntities.set(p.id, entity);
@@ -213,7 +213,7 @@ network.onWorldState = (msg) => {
       let mon = monsterEntities.get(m.id);
 
       if (!mon) {
-        mon = new MonsterEntity(engine.scene, m);
+        mon = new MonsterEntity(engine.scene, m, assetManager);
         monsterEntities.set(m.id, mon);
       } else {
         mon.updateData(m);

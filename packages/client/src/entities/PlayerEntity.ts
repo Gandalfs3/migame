@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { PlayerClass } from '@migame/common';
 import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory';
+import { AssetManager } from '../core/AssetManager';
 
 
 export class PlayerEntity {
@@ -33,14 +34,24 @@ export class PlayerEntity {
   private leftLegMesh: THREE.Mesh;
   private rightLegMesh: THREE.Mesh;
   private weaponGroup?: THREE.Group;
+  private customModelMesh?: THREE.Object3D;
+  private assetManager?: AssetManager;
   private walkTimer: number = 0;
   private lastUpdateTime: number = performance.now();
 
-  constructor(scene: THREE.Scene, id: string, colorHex: string, isLocal: boolean, name: string = 'Aventurero') {
+  constructor(
+    scene: THREE.Scene,
+    id: string,
+    colorHex: string,
+    isLocal: boolean,
+    name: string = 'Aventurero',
+    assetManager?: AssetManager
+  ) {
     this.id = id;
     this.name = name;
     this.isLocal = isLocal;
     this.colorHex = colorHex;
+    this.assetManager = assetManager;
     this.group = new THREE.Group();
 
     // Sombra en el suelo
@@ -165,6 +176,9 @@ export class PlayerEntity {
 
     this.renderHealthBar();
 
+    // Carga de modelo 3D GLB personalizado si existe
+    this.loadCustomModel(this.classType);
+
     scene.add(this.group);
   }
 
@@ -240,6 +254,59 @@ export class PlayerEntity {
     this.rightArmGroup.add(wg);
   }
 
+  public loadCustomModel(classType: PlayerClass): void {
+    if (!this.assetManager) return;
+    const modelPath = `/assets/models/character_${classType.toLowerCase()}.glb`;
+    this.assetManager.loadGLTF(modelPath).then((gltf) => {
+      if (gltf && gltf.scene) {
+        if (this.customModelMesh) {
+          this.group.remove(this.customModelMesh);
+        }
+        const mesh = gltf.scene.clone();
+        const bbox = new THREE.Box3().setFromObject(mesh);
+        const size = new THREE.Vector3();
+        bbox.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const targetHeight = 1.9;
+        if (maxDim > 0) {
+          const scale = targetHeight / maxDim;
+          mesh.scale.set(scale, scale, scale);
+        }
+        mesh.position.y = targetHeight * 0.5;
+        mesh.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+        this.customModelMesh = mesh;
+        this.group.add(this.customModelMesh);
+
+        // Ocultar partes procedurales cuando hay modelo 3D real
+        this.setProceduralVisible(false);
+      } else {
+        if (this.customModelMesh) {
+          this.group.remove(this.customModelMesh);
+          this.customModelMesh = undefined;
+        }
+        this.setProceduralVisible(true);
+      }
+    }).catch(() => {
+      this.setProceduralVisible(true);
+    });
+  }
+
+  private setProceduralVisible(visible: boolean): void {
+    this.bodyMesh.visible = visible;
+    this.leftArmGroup.visible = visible;
+    this.rightArmGroup.visible = visible;
+    this.leftLegGroup.visible = visible;
+    this.rightLegGroup.visible = visible;
+    if (this.weaponGroup) {
+      this.weaponGroup.visible = visible;
+    }
+  }
+
   public setStats(
     health: number,
     maxHealth: number,
@@ -258,6 +325,7 @@ export class PlayerEntity {
         this.leftLegMesh.material = newMat;
         this.rightLegMesh.material = newMat;
         this.updateWeapon(classType);
+        this.loadCustomModel(classType);
       }
       this.health = health;
       this.maxHealth = maxHealth;
@@ -368,6 +436,10 @@ export class PlayerEntity {
     this.lastUpdateTime = now;
 
     if (this.health <= 0) {
+      if (this.customModelMesh) {
+        this.customModelMesh.rotation.x = THREE.MathUtils.lerp(this.customModelMesh.rotation.x, Math.PI / 2, 0.15);
+        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, 0.1, 0.15);
+      }
       this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, Math.PI / 2, 0.15);
       this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.1, 0.15);
       this.leftArmGroup.rotation.x = THREE.MathUtils.lerp(this.leftArmGroup.rotation.x, 0, 0.2);
@@ -398,6 +470,10 @@ export class PlayerEntity {
       // Bobbing vertical y leve balanceo lateral para transmitir peso físico
       this.bodyMesh.position.y = 0.95 + Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
       this.bodyMesh.rotation.z = Math.sin(this.walkTimer) * 0.03;
+      if (this.customModelMesh) {
+        this.customModelMesh.position.y = 0.95 + Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
+        this.customModelMesh.rotation.z = Math.sin(this.walkTimer) * 0.03;
+      }
     } else {
       // Reposo (IDLE): Suavizar extremidades a postura de descanso
       this.leftLegGroup.rotation.x = THREE.MathUtils.lerp(this.leftLegGroup.rotation.x, 0, 0.2);
@@ -409,6 +485,10 @@ export class PlayerEntity {
       // Suave respiración en IDLE
       const breathe = Math.sin(now * 0.003) * 0.015;
       this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.95 + breathe, 0.2);
+      if (this.customModelMesh) {
+        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, 0.95 + breathe, 0.2);
+        this.customModelMesh.rotation.z = THREE.MathUtils.lerp(this.customModelMesh.rotation.z, 0, 0.2);
+      }
     }
 
     this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, 0, 0.2);

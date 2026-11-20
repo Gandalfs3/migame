@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { MonsterDTO, MonsterState } from '@migame/common';
 import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory';
+import { AssetManager } from '../core/AssetManager';
 
 
 export class MonsterEntity {
@@ -27,7 +28,7 @@ export class MonsterEntity {
   private powerAuraRing?: THREE.Mesh;
   public isBoss: boolean;
 
-  constructor(scene: THREE.Scene, dto: MonsterDTO) {
+  constructor(scene: THREE.Scene, dto: MonsterDTO, assetManager?: AssetManager) {
     this.id = dto.id;
     this.name = dto.name;
     this.health = dto.health;
@@ -343,6 +344,36 @@ export class MonsterEntity {
 
       this.bodyMesh = goblinGroup;
       this.group.add(goblinGroup);
+    }
+
+    // Carga opcional de modelo 3D GLB personalizado (TripoSR / IA)
+    if (assetManager) {
+      const modelPath = `/assets/models/${dto.type.toLowerCase()}.glb`;
+      assetManager.loadGLTF(modelPath).then((gltf) => {
+        if (gltf && gltf.scene) {
+          const customMesh = gltf.scene.clone();
+          const bbox = new THREE.Box3().setFromObject(customMesh);
+          const size = new THREE.Vector3();
+          bbox.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const targetHeight = this.isBoss ? 3.5 : 1.8;
+          if (maxDim > 0) {
+            const scale = targetHeight / maxDim;
+            customMesh.scale.set(scale, scale, scale);
+          }
+          customMesh.position.y = targetHeight * 0.5;
+          customMesh.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          this.group.remove(this.bodyMesh);
+          this.bodyMesh = customMesh;
+          this.group.add(this.bodyMesh);
+        }
+      }).catch(() => {});
     }
 
     // 2. Anillo de Selección en el suelo

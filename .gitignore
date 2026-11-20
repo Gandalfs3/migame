@@ -29,3 +29,7 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Herramientas de IA locales (TripoSR / venv)
+tools/
+*.onnx

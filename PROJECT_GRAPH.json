@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-02T04:24:59.626Z",
-  "totalFiles": 70,
+  "generatedAt": "2026-11-20T02:21:18.209Z",
+  "totalFiles": 125,
   "tree": [
     {
       "type": "directory",
@@ -288,6 +288,43 @@
             },
             {
               "type": "directory",
+              "name": "public",
+              "path": "packages/client/public",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "assets",
+                  "path": "packages/client/public/assets",
+                  "children": [
+                    {
+                      "type": "directory",
+                      "name": "models",
+                      "path": "packages/client/public/assets/models",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "boss_astral_titan.glb",
+                          "path": "packages/client/public/assets/models/boss_astral_titan.glb",
+                          "size": 1755520,
+                          "extension": ".glb",
+                          "summary": "Source / Asset file"
+                        },
+                        {
+                          "type": "file",
+                          "name": "character_mage.glb",
+                          "path": "packages/client/public/assets/models/character_mage.glb",
+                          "size": 2536688,
+                          "extension": ".glb",
+                          "summary": "Source / Asset file"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "directory",
               "name": "src",
               "path": "packages/client/src",
               "children": [
@@ -323,7 +360,7 @@
                       "type": "file",
                       "name": "MonsterEntity.ts",
                       "path": "packages/client/src/entities/MonsterEntity.ts",
-                      "size": 22015,
+                      "size": 23252,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -339,7 +376,7 @@
                       "type": "file",
                       "name": "PlayerEntity.ts",
                       "path": "packages/client/src/entities/PlayerEntity.ts",
-                      "size": 16640,
+                      "size": 19624,
                       "extension": ".ts",
                       "summary": "Source / Asset file"
                     },
@@ -380,7 +417,7 @@
                   "type": "file",
                   "name": "main.ts",
                   "path": "packages/client/src/main.ts",
-                  "size": 10895,
+                  "size": 10923,
                   "extension": ".ts",
                   "summary": "Source / Asset file"
                 },
@@ -475,7 +512,7 @@
               "type": "file",
               "name": "tsconfig.tsbuildinfo",
               "path": "packages/client/tsconfig.tsbuildinfo",
-              "size": 86900,
+              "size": 86934,
               "extension": ".tsbuildinfo",
               "summary": "Source / Asset file"
             },
@@ -720,11 +757,561 @@
       "children": [
         {
           "type": "file",
+          "name": "generate_3d.py",
+          "path": "scripts/generate_3d.py",
+          "size": 2703,
+          "extension": ".py",
+          "summary": "Source / Asset file"
+        },
+        {
+          "type": "file",
           "name": "grafify.js",
           "path": "scripts/grafify.js",
           "size": 5341,
           "extension": ".js",
           "summary": "!/usr/bin/env node"
+        }
+      ]
+    },
+    {
+      "type": "directory",
+      "name": "tools",
+      "path": "tools",
+      "children": [
+        {
+          "type": "directory",
+          "name": "TripoSR",
+          "path": "tools/TripoSR",
+          "children": [
+            {
+              "type": "file",
+              "name": ".gitignore",
+              "path": "tools/TripoSR/.gitignore",
+              "size": 3287,
+              "extension": "",
+              "summary": "Byte-compiled / optimized / DLL files"
+            },
+            {
+              "type": "directory",
+              "name": "examples",
+              "path": "tools/TripoSR/examples",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "captured.jpeg",
+                  "path": "tools/TripoSR/examples/captured.jpeg",
+                  "size": 5944816,
+                  "extension": ".jpeg",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "chair.png",
+                  "path": "tools/TripoSR/examples/chair.png",
+                  "size": 114705,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "flamingo.png",
+                  "path": "tools/TripoSR/examples/flamingo.png",
+                  "size": 93420,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "hamburger.png",
+                  "path": "tools/TripoSR/examples/hamburger.png",
+                  "size": 125172,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "horse.png",
+                  "path": "tools/TripoSR/examples/horse.png",
+                  "size": 257687,
+                  "extension": ".png",
+                  "summary": "\\}��̆RO�-o��'G\u0001pU�ĺ��j8\u0002\u001c\u0001���E�\u0013�{�\u001d;���;0�[���#c��E�:v�E\u0017]���|d�\u000e@�\u0001�+�n�\u000b�\bp\u00048\u0002\u001c�\u0013\u0006\u0001N\u0000\u001es)ox�ű-'�q��\u0003\u0007�\u0019ٰexf�\u0012�z�n?���w}t\u000fW\u0000N���/�#�\u0011�\b�x\u00048\u0001��\u0002L�����1\u0014\u0017�o������UA�mIs5s�����Eo��П@\u0000x����hq\u00008\u0002\u001c\u0001��\u0013\u001b\u0001N\u0000���k_�Z�eO��ڣ\u000f�}��u�3�x*4lO���\u0011A������[w��I�?�\fxb����8\u0002\u001c\u0001�\u0000G�q �\t����[;���Y�/���?/�P\"\u0001bth|Bxx|�=����vv~�\u0003o��\u0017���"
+                },
+                {
+                  "type": "file",
+                  "name": "iso_house.png",
+                  "path": "tools/TripoSR/examples/iso_house.png",
+                  "size": 1260444,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "marble.png",
+                  "path": "tools/TripoSR/examples/marble.png",
+                  "size": 797408,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "police_woman.png",
+                  "path": "tools/TripoSR/examples/police_woman.png",
+                  "size": 240269,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "poly_fox.png",
+                  "path": "tools/TripoSR/examples/poly_fox.png",
+                  "size": 633575,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "robot.png",
+                  "path": "tools/TripoSR/examples/robot.png",
+                  "size": 151541,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "stripes.png",
+                  "path": "tools/TripoSR/examples/stripes.png",
+                  "size": 359613,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "teapot.png",
+                  "path": "tools/TripoSR/examples/teapot.png",
+                  "size": 275764,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "tiger_girl.png",
+                  "path": "tools/TripoSR/examples/tiger_girl.png",
+                  "size": 485849,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "unicorn.png",
+                  "path": "tools/TripoSR/examples/unicorn.png",
+                  "size": 530994,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "figures",
+              "path": "tools/TripoSR/figures",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "comparison800.gif",
+                  "path": "tools/TripoSR/figures/comparison800.gif",
+                  "size": 8871325,
+                  "extension": ".gif",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "scatter-comparison.png",
+                  "path": "tools/TripoSR/figures/scatter-comparison.png",
+                  "size": 326230,
+                  "extension": ".png",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "teaser800.gif",
+                  "path": "tools/TripoSR/figures/teaser800.gif",
+                  "size": 3842644,
+                  "extension": ".gif",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "visual_comparisons.jpg",
+                  "path": "tools/TripoSR/figures/visual_comparisons.jpg",
+                  "size": 10322597,
+                  "extension": ".jpg",
+                  "summary": "Source / Asset file"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "gradio_app.py",
+              "path": "tools/TripoSR/gradio_app.py",
+              "size": 7333,
+              "extension": ".py",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "LICENSE",
+              "path": "tools/TripoSR/LICENSE",
+              "size": 1101,
+              "extension": "",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "directory",
+              "name": "output",
+              "path": "tools/TripoSR/output",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "0",
+                  "path": "tools/TripoSR/output/0",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "input.png",
+                      "path": "tools/TripoSR/output/0/input.png",
+                      "size": 98375,
+                      "extension": ".png",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "mesh.obj",
+                      "path": "tools/TripoSR/output/0/mesh.obj",
+                      "size": 4544418,
+                      "extension": ".obj",
+                      "summary": "https://github.com/mikedh/trimesh"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "output_glb",
+              "path": "tools/TripoSR/output_glb",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "0",
+                  "path": "tools/TripoSR/output_glb/0",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "input.png",
+                      "path": "tools/TripoSR/output_glb/0/input.png",
+                      "size": 98375,
+                      "extension": ".png",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "mesh.glb",
+                      "path": "tools/TripoSR/output_glb/0/mesh.glb",
+                      "size": 1684160,
+                      "extension": ".glb",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "output_tmp",
+              "path": "tools/TripoSR/output_tmp",
+              "children": [
+                {
+                  "type": "directory",
+                  "name": "0",
+                  "path": "tools/TripoSR/output_tmp/0",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "input.png",
+                      "path": "tools/TripoSR/output_tmp/0/input.png",
+                      "size": 588785,
+                      "extension": ".png",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "mesh.glb",
+                      "path": "tools/TripoSR/output_tmp/0/mesh.glb",
+                      "size": 2536688,
+                      "extension": ".glb",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "README.md",
+              "path": "tools/TripoSR/README.md",
+              "size": 5498,
+              "extension": ".md",
+              "summary": "TripoSR"
+            },
+            {
+              "type": "file",
+              "name": "requirements.txt",
+              "path": "tools/TripoSR/requirements.txt",
+              "size": 215,
+              "extension": ".txt",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "file",
+              "name": "run.py",
+              "path": "tools/TripoSR/run.py",
+              "size": 6483,
+              "extension": ".py",
+              "summary": "Source / Asset file"
+            },
+            {
+              "type": "directory",
+              "name": "tsr",
+              "path": "tools/TripoSR/tsr",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "bake_texture.py",
+                  "path": "tools/TripoSR/tsr/bake_texture.py",
+                  "size": 5544,
+                  "extension": ".py",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "directory",
+                  "name": "models",
+                  "path": "tools/TripoSR/tsr/models",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "isosurface.py",
+                      "path": "tools/TripoSR/tsr/models/isosurface.py",
+                      "size": 2380,
+                      "extension": ".py",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "nerf_renderer.py",
+                      "path": "tools/TripoSR/tsr/models/nerf_renderer.py",
+                      "size": 5853,
+                      "extension": ".py",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "network_utils.py",
+                      "path": "tools/TripoSR/tsr/models/network_utils.py",
+                      "size": 3597,
+                      "extension": ".py",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "directory",
+                      "name": "tokenizers",
+                      "path": "tools/TripoSR/tsr/models/tokenizers",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "image.py",
+                          "path": "tools/TripoSR/tsr/models/tokenizers/image.py",
+                          "size": 2182,
+                          "extension": ".py",
+                          "summary": "Source / Asset file"
+                        },
+                        {
+                          "type": "file",
+                          "name": "triplane.py",
+                          "path": "tools/TripoSR/tsr/models/tokenizers/triplane.py",
+                          "size": 1282,
+                          "extension": ".py",
+                          "summary": "Source / Asset file"
+                        },
+                        {
+                          "type": "directory",
+                          "name": "__pycache__",
+                          "path": "tools/TripoSR/tsr/models/tokenizers/__pycache__",
+                          "children": [
+                            {
+                              "type": "file",
+                              "name": "image.cpython-311.pyc",
+                              "path": "tools/TripoSR/tsr/models/tokenizers/__pycache__/image.cpython-311.pyc",
+                              "size": 3835,
+                              "extension": ".pyc",
+                              "summary": "Source / Asset file"
+                            },
+                            {
+                              "type": "file",
+                              "name": "triplane.cpython-311.pyc",
+                              "path": "tools/TripoSR/tsr/models/tokenizers/__pycache__/triplane.cpython-311.pyc",
+                              "size": 2753,
+                              "extension": ".pyc",
+                              "summary": "Source / Asset file"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "directory",
+                      "name": "transformer",
+                      "path": "tools/TripoSR/tsr/models/transformer",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "attention.py",
+                          "path": "tools/TripoSR/tsr/models/transformer/attention.py",
+                          "size": 26994,
+                          "extension": ".py",
+                          "summary": "Copyright 2023 The HuggingFace Team. All rights reserved."
+                        },
+                        {
+                          "type": "file",
+                          "name": "basic_transformer_block.py",
+                          "path": "tools/TripoSR/tsr/models/transformer/basic_transformer_block.py",
+                          "size": 13536,
+                          "extension": ".py",
+                          "summary": "Copyright 2023 The HuggingFace Team. All rights reserved."
+                        },
+                        {
+                          "type": "file",
+                          "name": "transformer_1d.py",
+                          "path": "tools/TripoSR/tsr/models/transformer/transformer_1d.py",
+                          "size": 9544,
+                          "extension": ".py",
+                          "summary": "Copyright 2023 The HuggingFace Team. All rights reserved."
+                        },
+                        {
+                          "type": "directory",
+                          "name": "__pycache__",
+                          "path": "tools/TripoSR/tsr/models/transformer/__pycache__",
+                          "children": [
+                            {
+                              "type": "file",
+                              "name": "attention.cpython-311.pyc",
+                              "path": "tools/TripoSR/tsr/models/transformer/__pycache__/attention.cpython-311.pyc",
+                              "size": 24238,
+                              "extension": ".pyc",
+                              "summary": "Source / Asset file"
+                            },
+                            {
+                              "type": "file",
+                              "name": "basic_transformer_block.cpython-311.pyc",
+                              "path": "tools/TripoSR/tsr/models/transformer/__pycache__/basic_transformer_block.cpython-311.pyc",
+                              "size": 14763,
+                              "extension": ".pyc",
+                              "summary": "Source / Asset file"
+                            },
+                            {
+                              "type": "file",
+                              "name": "transformer_1d.cpython-311.pyc",
+                              "path": "tools/TripoSR/tsr/models/transformer/__pycache__/transformer_1d.cpython-311.pyc",
+                              "size": 7654,
+                              "extension": ".pyc",
+                              "summary": "Source / Asset file"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "directory",
+                      "name": "__pycache__",
+                      "path": "tools/TripoSR/tsr/models/__pycache__",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "isosurface.cpython-311.pyc",
+                          "path": "tools/TripoSR/tsr/models/__pycache__/isosurface.cpython-311.pyc",
+                          "size": 5078,
+                          "extension": ".pyc",
+                          "summary": "Source / Asset file"
+                        },
+                        {
+                          "type": "file",
+                          "name": "nerf_renderer.cpython-311.pyc",
+                          "path": "tools/TripoSR/tsr/models/__pycache__/nerf_renderer.cpython-311.pyc",
+                          "size": 9396,
+                          "extension": ".pyc",
+                          "summary": "Source / Asset file"
+                        },
+                        {
+                          "type": "file",
+                          "name": "network_utils.cpython-311.pyc",
+                          "path": "tools/TripoSR/tsr/models/__pycache__/network_utils.cpython-311.pyc",
+                          "size": 5867,
+                          "extension": ".pyc",
+                          "summary": "Source / Asset file"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "file",
+                  "name": "system.py",
+                  "path": "tools/TripoSR/tsr/system.py",
+                  "size": 6813,
+                  "extension": ".py",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "file",
+                  "name": "utils.py",
+                  "path": "tools/TripoSR/tsr/utils.py",
+                  "size": 15646,
+                  "extension": ".py",
+                  "summary": "Source / Asset file"
+                },
+                {
+                  "type": "directory",
+                  "name": "__pycache__",
+                  "path": "tools/TripoSR/tsr/__pycache__",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "bake_texture.cpython-311.pyc",
+                      "path": "tools/TripoSR/tsr/__pycache__/bake_texture.cpython-311.pyc",
+                      "size": 7591,
+                      "extension": ".pyc",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "system.cpython-311.pyc",
+                      "path": "tools/TripoSR/tsr/__pycache__/system.cpython-311.pyc",
+                      "size": 10565,
+                      "extension": ".pyc",
+                      "summary": "Source / Asset file"
+                    },
+                    {
+                      "type": "file",
+                      "name": "utils.cpython-311.pyc",
+                      "path": "tools/TripoSR/tsr/__pycache__/utils.cpython-311.pyc",
+                      "size": 26889,
+                      "extension": ".pyc",
+                      "summary": "Source / Asset file"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -980,6 +1567,22 @@
     },
     {
       "type": "file",
+      "name": "boss_astral_titan.glb",
+      "path": "packages/client/public/assets/models/boss_astral_titan.glb",
+      "size": 1755520,
+      "extension": ".glb",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "character_mage.glb",
+      "path": "packages/client/public/assets/models/character_mage.glb",
+      "size": 2536688,
+      "extension": ".glb",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "AssetManager.ts",
       "path": "packages/client/src/core/AssetManager.ts",
       "size": 849,
@@ -998,7 +1601,7 @@
       "type": "file",
       "name": "MonsterEntity.ts",
       "path": "packages/client/src/entities/MonsterEntity.ts",
-      "size": 22015,
+      "size": 23252,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1014,7 +1617,7 @@
       "type": "file",
       "name": "PlayerEntity.ts",
       "path": "packages/client/src/entities/PlayerEntity.ts",
-      "size": 16640,
+      "size": 19624,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1046,7 +1649,7 @@
       "type": "file",
       "name": "main.ts",
       "path": "packages/client/src/main.ts",
-      "size": 10895,
+      "size": 10923,
       "extension": ".ts",
       "summary": "Source / Asset file"
     },
@@ -1118,7 +1721,7 @@
       "type": "file",
       "name": "tsconfig.tsbuildinfo",
       "path": "packages/client/tsconfig.tsbuildinfo",
-      "size": 86900,
+      "size": 86934,
       "extension": ".tsbuildinfo",
       "summary": "Source / Asset file"
     },
@@ -1284,11 +1887,435 @@
     },
     {
       "type": "file",
+      "name": "generate_3d.py",
+      "path": "scripts/generate_3d.py",
+      "size": 2703,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
       "name": "grafify.js",
       "path": "scripts/grafify.js",
       "size": 5341,
       "extension": ".js",
       "summary": "!/usr/bin/env node"
+    },
+    {
+      "type": "file",
+      "name": ".gitignore",
+      "path": "tools/TripoSR/.gitignore",
+      "size": 3287,
+      "extension": "",
+      "summary": "Byte-compiled / optimized / DLL files"
+    },
+    {
+      "type": "file",
+      "name": "captured.jpeg",
+      "path": "tools/TripoSR/examples/captured.jpeg",
+      "size": 5944816,
+      "extension": ".jpeg",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "chair.png",
+      "path": "tools/TripoSR/examples/chair.png",
+      "size": 114705,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "flamingo.png",
+      "path": "tools/TripoSR/examples/flamingo.png",
+      "size": 93420,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "hamburger.png",
+      "path": "tools/TripoSR/examples/hamburger.png",
+      "size": 125172,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "horse.png",
+      "path": "tools/TripoSR/examples/horse.png",
+      "size": 257687,
+      "extension": ".png",
+      "summary": "\\}��̆RO�-o��'G\u0001pU�ĺ��j8\u0002\u001c\u0001���E�\u0013�{�\u001d;���;0�[���#c��E�:v�E\u0017]���|d�\u000e@�\u0001�+�n�\u000b�\bp\u00048\u0002\u001c�\u0013\u0006\u0001N\u0000\u001es)ox�ű-'�q��\u0003\u0007�\u0019ٰexf�\u0012�z�n?���w}t\u000fW\u0000N���/�#�\u0011�\b�x\u00048\u0001��\u0002L�����1\u0014\u0017�o������UA�mIs5s�����Eo��П@\u0000x����hq\u00008\u0002\u001c\u0001��\u0013\u001b\u0001N\u0000���k_�Z�eO��ڣ\u000f�}��u�3�x*4lO���\u0011A������[w��I�?�\fxb����8\u0002\u001c\u0001�\u0000G�q �\t����[;���Y�/���?/�P\"\u0001bth|Bxx|�=����vv~�\u0003o��\u0017���"
+    },
+    {
+      "type": "file",
+      "name": "iso_house.png",
+      "path": "tools/TripoSR/examples/iso_house.png",
+      "size": 1260444,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "marble.png",
+      "path": "tools/TripoSR/examples/marble.png",
+      "size": 797408,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "police_woman.png",
+      "path": "tools/TripoSR/examples/police_woman.png",
+      "size": 240269,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "poly_fox.png",
+      "path": "tools/TripoSR/examples/poly_fox.png",
+      "size": 633575,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "robot.png",
+      "path": "tools/TripoSR/examples/robot.png",
+      "size": 151541,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "stripes.png",
+      "path": "tools/TripoSR/examples/stripes.png",
+      "size": 359613,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "teapot.png",
+      "path": "tools/TripoSR/examples/teapot.png",
+      "size": 275764,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "tiger_girl.png",
+      "path": "tools/TripoSR/examples/tiger_girl.png",
+      "size": 485849,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "unicorn.png",
+      "path": "tools/TripoSR/examples/unicorn.png",
+      "size": 530994,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "comparison800.gif",
+      "path": "tools/TripoSR/figures/comparison800.gif",
+      "size": 8871325,
+      "extension": ".gif",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "scatter-comparison.png",
+      "path": "tools/TripoSR/figures/scatter-comparison.png",
+      "size": 326230,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "teaser800.gif",
+      "path": "tools/TripoSR/figures/teaser800.gif",
+      "size": 3842644,
+      "extension": ".gif",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "visual_comparisons.jpg",
+      "path": "tools/TripoSR/figures/visual_comparisons.jpg",
+      "size": 10322597,
+      "extension": ".jpg",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "gradio_app.py",
+      "path": "tools/TripoSR/gradio_app.py",
+      "size": 7333,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "LICENSE",
+      "path": "tools/TripoSR/LICENSE",
+      "size": 1101,
+      "extension": "",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "input.png",
+      "path": "tools/TripoSR/output/0/input.png",
+      "size": 98375,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "mesh.obj",
+      "path": "tools/TripoSR/output/0/mesh.obj",
+      "size": 4544418,
+      "extension": ".obj",
+      "summary": "https://github.com/mikedh/trimesh"
+    },
+    {
+      "type": "file",
+      "name": "input.png",
+      "path": "tools/TripoSR/output_glb/0/input.png",
+      "size": 98375,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "mesh.glb",
+      "path": "tools/TripoSR/output_glb/0/mesh.glb",
+      "size": 1684160,
+      "extension": ".glb",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "input.png",
+      "path": "tools/TripoSR/output_tmp/0/input.png",
+      "size": 588785,
+      "extension": ".png",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "mesh.glb",
+      "path": "tools/TripoSR/output_tmp/0/mesh.glb",
+      "size": 2536688,
+      "extension": ".glb",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "README.md",
+      "path": "tools/TripoSR/README.md",
+      "size": 5498,
+      "extension": ".md",
+      "summary": "TripoSR"
+    },
+    {
+      "type": "file",
+      "name": "requirements.txt",
+      "path": "tools/TripoSR/requirements.txt",
+      "size": 215,
+      "extension": ".txt",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "run.py",
+      "path": "tools/TripoSR/run.py",
+      "size": 6483,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "bake_texture.py",
+      "path": "tools/TripoSR/tsr/bake_texture.py",
+      "size": 5544,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "isosurface.py",
+      "path": "tools/TripoSR/tsr/models/isosurface.py",
+      "size": 2380,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "nerf_renderer.py",
+      "path": "tools/TripoSR/tsr/models/nerf_renderer.py",
+      "size": 5853,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "network_utils.py",
+      "path": "tools/TripoSR/tsr/models/network_utils.py",
+      "size": 3597,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "image.py",
+      "path": "tools/TripoSR/tsr/models/tokenizers/image.py",
+      "size": 2182,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "triplane.py",
+      "path": "tools/TripoSR/tsr/models/tokenizers/triplane.py",
+      "size": 1282,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "image.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/tokenizers/__pycache__/image.cpython-311.pyc",
+      "size": 3835,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "triplane.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/tokenizers/__pycache__/triplane.cpython-311.pyc",
+      "size": 2753,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "attention.py",
+      "path": "tools/TripoSR/tsr/models/transformer/attention.py",
+      "size": 26994,
+      "extension": ".py",
+      "summary": "Copyright 2023 The HuggingFace Team. All rights reserved."
+    },
+    {
+      "type": "file",
+      "name": "basic_transformer_block.py",
+      "path": "tools/TripoSR/tsr/models/transformer/basic_transformer_block.py",
+      "size": 13536,
+      "extension": ".py",
+      "summary": "Copyright 2023 The HuggingFace Team. All rights reserved."
+    },
+    {
+      "type": "file",
+      "name": "transformer_1d.py",
+      "path": "tools/TripoSR/tsr/models/transformer/transformer_1d.py",
+      "size": 9544,
+      "extension": ".py",
+      "summary": "Copyright 2023 The HuggingFace Team. All rights reserved."
+    },
+    {
+      "type": "file",
+      "name": "attention.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/transformer/__pycache__/attention.cpython-311.pyc",
+      "size": 24238,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "basic_transformer_block.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/transformer/__pycache__/basic_transformer_block.cpython-311.pyc",
+      "size": 14763,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "transformer_1d.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/transformer/__pycache__/transformer_1d.cpython-311.pyc",
+      "size": 7654,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "isosurface.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/__pycache__/isosurface.cpython-311.pyc",
+      "size": 5078,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "nerf_renderer.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/__pycache__/nerf_renderer.cpython-311.pyc",
+      "size": 9396,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "network_utils.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/models/__pycache__/network_utils.cpython-311.pyc",
+      "size": 5867,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "system.py",
+      "path": "tools/TripoSR/tsr/system.py",
+      "size": 6813,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "utils.py",
+      "path": "tools/TripoSR/tsr/utils.py",
+      "size": 15646,
+      "extension": ".py",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "bake_texture.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/__pycache__/bake_texture.cpython-311.pyc",
+      "size": 7591,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "system.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/__pycache__/system.cpython-311.pyc",
+      "size": 10565,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
+    },
+    {
+      "type": "file",
+      "name": "utils.cpython-311.pyc",
+      "path": "tools/TripoSR/tsr/__pycache__/utils.cpython-311.pyc",
+      "size": 26889,
+      "extension": ".pyc",
+      "summary": "Source / Asset file"
     },
     {
       "type": "file",
