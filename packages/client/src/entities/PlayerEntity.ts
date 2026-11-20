@@ -382,7 +382,7 @@ export class PlayerEntity {
             const newMesh = new THREE.Mesh(geom, mat);
             newMesh.castShadow = true;
             newMesh.receiveShadow = true;
-            newMesh.rotation.y = Math.PI; // Mirar hacia el frente (+Z)
+            newMesh.rotation.y = 0; // Rotación neutral interna (el contenedor aplica Math.PI)
             container.add(newMesh);
             this.customShaderMaterials.push(mat);
           }
