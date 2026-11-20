@@ -264,6 +264,7 @@ export class PlayerEntity {
           this.group.remove(this.customModelMesh);
         }
         const mesh = gltf.scene.clone();
+        mesh.rotation.y = Math.PI;
         const container = new THREE.Group();
         container.add(mesh);
 

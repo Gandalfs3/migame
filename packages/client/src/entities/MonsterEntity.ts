@@ -352,6 +352,7 @@ export class MonsterEntity {
       assetManager.loadGLTF(modelPath).then((gltf) => {
         if (gltf && gltf.scene) {
           const customMesh = gltf.scene.clone();
+          customMesh.rotation.y = Math.PI;
           const container = new THREE.Group();
           container.add(customMesh);
 
