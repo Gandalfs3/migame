@@ -38,7 +38,9 @@ export class PlayerEntity {
   private customModelMesh?: THREE.Object3D;
   private assetManager?: AssetManager;
   private walkTimer: number = 0;
+  private walkWeight: number = 0;
   private lastUpdateTime: number = performance.now();
+  private customShaderMaterials: THREE.MeshStandardMaterial[] = [];
 
   // Animación de casteo / lanzamiento de habilidades
   private isCasting: boolean = false;
@@ -269,37 +271,120 @@ export class PlayerEntity {
         if (this.customModelMesh) {
           this.group.remove(this.customModelMesh);
         }
-        const mesh = gltf.scene.clone();
-        mesh.rotation.y = Math.PI;
+        this.customShaderMaterials = [];
+
         const container = new THREE.Group();
-        container.add(mesh);
 
-        const bbox = new THREE.Box3().setFromObject(mesh);
-        const size = new THREE.Vector3();
-        bbox.getSize(size);
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const targetHeight = 1.9;
-        if (maxDim > 0) {
-          const scale = targetHeight / maxDim;
-          mesh.scale.set(scale, scale, scale);
-        }
-
-        const scaledBbox = new THREE.Box3().setFromObject(mesh);
-        mesh.position.y = -scaledBbox.min.y;
-        mesh.position.x = -(scaledBbox.min.x + scaledBbox.max.x) / 2;
-        mesh.position.z = -(scaledBbox.min.z + scaledBbox.max.z) / 2;
-
-        mesh.traverse((child) => {
+        gltf.scene.traverse((child) => {
           const meshChild = child as THREE.Mesh;
-          if (meshChild.isMesh) {
-            meshChild.castShadow = true;
-            meshChild.receiveShadow = true;
-            const mat = meshChild.material as THREE.MeshStandardMaterial;
-            if (mat && 'roughness' in mat) {
-              mat.roughness = 0.6;
-              mat.metalness = 0.15;
-              mat.needsUpdate = true;
-            }
+          if (meshChild.isMesh && meshChild.geometry) {
+            const geom = meshChild.geometry.clone();
+            geom.computeBoundingBox();
+            const bbox = geom.boundingBox!;
+            const minY = bbox.min.y;
+            const minX = bbox.min.x;
+            const maxX = bbox.max.x;
+            const minZ = bbox.min.z;
+            const maxZ = bbox.max.z;
+            const height = bbox.max.y - minY;
+            const scale = height > 0 ? 1.9 / height : 1.0;
+
+            // Centrar X y Z, fijar pies exactamente en Y = 0 y escalar a altura humana (1.9m)
+            geom.translate(-(minX + maxX) / 2, -minY, -(minZ + maxZ) / 2);
+            geom.scale(scale, scale, scale);
+            geom.computeVertexNormals();
+
+            // Clonar material para aplicar el Shader de Deformación Cinemática de extremidades
+            let origMat = meshChild.material as THREE.MeshStandardMaterial;
+            if (Array.isArray(origMat)) origMat = origMat[0] as THREE.MeshStandardMaterial;
+            const mat = origMat ? (origMat.clone() as THREE.MeshStandardMaterial) : new THREE.MeshStandardMaterial({ color: 0xcccccc });
+
+            mat.roughness = 0.6;
+            mat.metalness = 0.15;
+            mat.customProgramCacheKey = () => 'cinematic_humanoid_walk_v2';
+
+            // Inyectar deformación de zancada en piernas, braceo y túnica al Vertex Shader
+            mat.onBeforeCompile = (shader) => {
+              shader.uniforms.uWalkTime = { value: 0.0 };
+              shader.uniforms.uWalkWeight = { value: 0.0 };
+
+              shader.vertexShader = `
+                uniform float uWalkTime;
+                uniform float uWalkWeight;
+              ` + shader.vertexShader;
+
+              shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `
+                #include <begin_vertex>
+
+                if (uWalkWeight > 0.001) {
+                  // 1. ZANCADA Y PASOS DE PIERNAS (Cadera en y=0.88, pies en y=0.0)
+                  if (transformed.y < 0.88) {
+                    float legFactor = clamp((0.88 - transformed.y) / 0.88, 0.0, 1.0);
+                    float legWeight = legFactor * legFactor;
+
+                    if (transformed.x < -0.03) {
+                      // Pierna Izquierda: zancada alternada hacia adelante/atrás
+                      float stride = sin(uWalkTime) * 0.28 * uWalkWeight;
+                      transformed.z -= stride * legWeight;
+                      float stepUp = max(0.0, sin(uWalkTime)) * 0.09 * legWeight * uWalkWeight;
+                      transformed.y += stepUp;
+                      transformed.x += sin(uWalkTime) * 0.015 * legWeight * uWalkWeight;
+                    } else if (transformed.x > 0.03) {
+                      // Pierna Derecha: zancada inversa
+                      float stride = -sin(uWalkTime) * 0.28 * uWalkWeight;
+                      transformed.z -= stride * legWeight;
+                      float stepUp = max(0.0, -sin(uWalkTime)) * 0.09 * legWeight * uWalkWeight;
+                      transformed.y += stepUp;
+                      transformed.x -= sin(uWalkTime) * 0.015 * legWeight * uWalkWeight;
+                    }
+                  }
+
+                  // 2. BRACEO DINÁMICO (|x| > 0.20, y entre 0.65 y 1.40)
+                  float absX = abs(transformed.x);
+                  if (absX > 0.20 && transformed.y > 0.65 && transformed.y < 1.40) {
+                    float armWeight = clamp((absX - 0.20) / 0.22, 0.0, 1.0);
+                    if (transformed.x < 0.0) {
+                      // Brazo izquierdo: se mueve inverso a pierna izquierda
+                      float armSwing = -sin(uWalkTime) * 0.24 * uWalkWeight * armWeight;
+                      transformed.z -= armSwing;
+                      transformed.y += abs(armSwing) * 0.08;
+                    } else {
+                      // Brazo derecho
+                      float armSwing = sin(uWalkTime) * 0.24 * uWalkWeight * armWeight;
+                      transformed.z += armSwing;
+                      transformed.y += abs(armSwing) * 0.08;
+                    }
+                  }
+
+                  // 3. ONDULACIÓN DE TÚNICA / CAPA AL CORRER
+                  if (transformed.y < 0.75) {
+                    float clothFactor = (0.75 - transformed.y) / 0.75;
+                    float clothWave = sin(uWalkTime * 1.5 - transformed.y * 5.0) * 0.03 * uWalkWeight * clothFactor;
+                    transformed.z += clothWave + 0.04 * uWalkWeight * clothFactor;
+                  }
+                }
+
+                // 4. RESPIRACIÓN ORGÁNICA EN REPOSO
+                if (transformed.y > 0.85 && transformed.y < 1.45) {
+                  float chestWeight = sin((transformed.y - 0.85) / 0.6 * 3.14159);
+                  float breath = sin(uWalkTime * 0.25) * 0.012 * (1.0 - uWalkWeight * 0.7) * chestWeight;
+                  transformed.z -= breath;
+                  transformed.x += breath * 0.3 * sign(transformed.x);
+                }
+                `
+              );
+
+              mat.userData.shader = shader;
+            };
+
+            const newMesh = new THREE.Mesh(geom, mat);
+            newMesh.castShadow = true;
+            newMesh.receiveShadow = true;
+            newMesh.rotation.y = Math.PI; // Mirar hacia el frente (+Z)
+            container.add(newMesh);
+            this.customShaderMaterials.push(mat);
           }
         });
 
@@ -590,79 +675,60 @@ export class PlayerEntity {
       }
     }
 
-    // 2. Animación de Carrera / Caminata
-    if (isMoving) {
-      this.walkTimer += 13.5 * dt;
+    // 2. Transición suave de aceleración/desaceleración (Walk Weight)
+    this.walkTimer += 10.0 * dt;
+    const targetWalkWeight = isMoving ? 1.0 : 0.0;
+    this.walkWeight = THREE.MathUtils.lerp(this.walkWeight, targetWalkWeight, isMoving ? 0.22 : 0.12);
 
-      // Balanceo de extremidades para modelo procedural
-      this.leftLegGroup.rotation.x = Math.sin(this.walkTimer) * 0.75;
-      this.rightLegGroup.rotation.x = -Math.sin(this.walkTimer) * 0.75;
-      if (!this.isCasting) {
-        this.leftArmGroup.rotation.x = -Math.sin(this.walkTimer) * 0.65;
-        this.rightArmGroup.rotation.x = Math.sin(this.walkTimer) * 0.65;
+    // Actualizar uniforms de deformación en GPU para zancada de piernas y braceo
+    for (const mat of this.customShaderMaterials) {
+      if (mat.userData && mat.userData.shader) {
+        mat.userData.shader.uniforms.uWalkTime.value = this.walkTimer;
+        mat.userData.shader.uniforms.uWalkWeight.value = this.walkWeight;
       }
+    }
 
-      // Animación viva de pasos y desplazamiento para el modelo 3D
-      const stepLift = Math.abs(Math.sin(this.walkTimer * 2.0)) * 0.13;
-      const sprintLean = 0.12;
-      const hipSway = Math.sin(this.walkTimer) * 0.08;
-      const torsoTwist = Math.cos(this.walkTimer) * 0.07;
-      const squash = Math.sin(this.walkTimer * 2.0) * 0.045;
+    // Cinemática de locomoción fluida (sin saltos bruscos):
+    // - Ondulación pélvica sutil (solo 2.2cm, onda continua sinusoidal)
+    const verticalBob = -Math.cos(this.walkTimer * 2.0) * 0.022 * this.walkWeight;
 
-      this.bodyMesh.position.y = 0.95 + stepLift + castOffsetY;
-      this.bodyMesh.rotation.z = hipSway + castRotZ;
-      this.bodyMesh.rotation.x = sprintLean + castRotX;
+    // - Inclinación centrífuga en curvas (turn banking)
+    let diffRot = this.targetRot - this.group.rotation.y;
+    while (diffRot < -Math.PI) diffRot += Math.PI * 2;
+    while (diffRot > Math.PI) diffRot -= Math.PI * 2;
+    const turnBank = THREE.MathUtils.clamp(-diffRot * 0.35, -0.14, 0.14) * this.walkWeight;
 
-      if (this.customModelMesh) {
-        this.customModelMesh.position.y = stepLift + castOffsetY;
-        this.customModelMesh.position.z = castOffsetZ;
-        this.customModelMesh.rotation.x = sprintLean + castRotX;
-        this.customModelMesh.rotation.y = Math.PI + torsoTwist + castRotY;
-        this.customModelMesh.rotation.z = hipSway + castRotZ;
-        this.customModelMesh.scale.set(
-          (1.0 + squash) * castScale,
-          (1.0 - squash * 0.75) * castScale,
-          (1.0 + squash) * castScale
-        );
-      }
-    } else {
-      // Reposo (IDLE): Respiración y sutil desplazamiento de peso
-      this.leftLegGroup.rotation.x = THREE.MathUtils.lerp(this.leftLegGroup.rotation.x, 0, 0.2);
-      this.rightLegGroup.rotation.x = THREE.MathUtils.lerp(this.rightLegGroup.rotation.x, 0, 0.2);
-      if (!this.isCasting) {
-        this.leftArmGroup.rotation.x = THREE.MathUtils.lerp(this.leftArmGroup.rotation.x, 0, 0.2);
-        this.leftArmGroup.rotation.z = THREE.MathUtils.lerp(this.leftArmGroup.rotation.z, 0, 0.2);
-        this.rightArmGroup.rotation.x = THREE.MathUtils.lerp(this.rightArmGroup.rotation.x, 0, 0.2);
-        this.rightArmGroup.rotation.z = THREE.MathUtils.lerp(this.rightArmGroup.rotation.z, 0, 0.2);
-      }
+    // - Inclinación de inercia y balanceo suave de cadera
+    const forwardLean = 0.07 * this.walkWeight;
+    const hipSway = Math.sin(this.walkTimer) * 0.035 * this.walkWeight;
+    const breathe = Math.sin(now * 0.003) * 0.015 * (1.0 - this.walkWeight);
 
-      const breathe = Math.sin(now * 0.003) * 0.018;
-      const sway = Math.sin(now * 0.0015) * 0.02;
+    // Extremidades procedurales (cuando se usa fallback)
+    this.leftLegGroup.rotation.x = Math.sin(this.walkTimer) * 0.65 * this.walkWeight;
+    this.rightLegGroup.rotation.x = -Math.sin(this.walkTimer) * 0.65 * this.walkWeight;
+    if (!this.isCasting) {
+      this.leftArmGroup.rotation.x = -Math.sin(this.walkTimer) * 0.55 * this.walkWeight;
+      this.leftArmGroup.rotation.z = THREE.MathUtils.lerp(this.leftArmGroup.rotation.z, turnBank, 0.2);
+      this.rightArmGroup.rotation.x = Math.sin(this.walkTimer) * 0.55 * this.walkWeight;
+      this.rightArmGroup.rotation.z = THREE.MathUtils.lerp(this.rightArmGroup.rotation.z, -turnBank, 0.2);
+    }
 
-      this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.95 + breathe + castOffsetY, 0.2);
-      this.bodyMesh.rotation.z = THREE.MathUtils.lerp(this.bodyMesh.rotation.z, sway + castRotZ, 0.2);
-      this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, castRotX, 0.2);
+    this.bodyMesh.position.y = 0.95 + verticalBob + breathe + castOffsetY;
+    this.bodyMesh.position.z = castOffsetZ;
+    this.bodyMesh.rotation.x = forwardLean + castRotX;
+    this.bodyMesh.rotation.z = hipSway + turnBank + castRotZ;
 
-      if (this.customModelMesh) {
-        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, breathe + castOffsetY, 0.2);
-        this.customModelMesh.position.z = THREE.MathUtils.lerp(this.customModelMesh.position.z, castOffsetZ, 0.2);
-        this.customModelMesh.rotation.x = THREE.MathUtils.lerp(this.customModelMesh.rotation.x, castRotX, 0.2);
-        this.customModelMesh.rotation.y = THREE.MathUtils.lerp(this.customModelMesh.rotation.y, Math.PI + castRotY, 0.2);
-        this.customModelMesh.rotation.z = THREE.MathUtils.lerp(this.customModelMesh.rotation.z, sway + castRotZ, 0.2);
-        this.customModelMesh.scale.set(
-          THREE.MathUtils.lerp(this.customModelMesh.scale.x, castScale, 0.2),
-          THREE.MathUtils.lerp(this.customModelMesh.scale.y, (1.0 + breathe * 0.5) * castScale, 0.2),
-          THREE.MathUtils.lerp(this.customModelMesh.scale.z, castScale, 0.2)
-        );
-      }
+    if (this.customModelMesh) {
+      this.customModelMesh.position.y = verticalBob + breathe + castOffsetY;
+      this.customModelMesh.position.z = castOffsetZ;
+      this.customModelMesh.rotation.x = forwardLean + castRotX;
+      this.customModelMesh.rotation.y = Math.PI + castRotY;
+      this.customModelMesh.rotation.z = hipSway + turnBank + castRotZ;
+      this.customModelMesh.scale.set(castScale, castScale, castScale);
     }
 
     this.group.position.x += (this.targetX - this.group.position.x) * posLerp;
     this.group.position.z += (this.targetZ - this.group.position.z) * posLerp;
-
-    let diffRot = this.targetRot - this.group.rotation.y;
-    while (diffRot < -Math.PI) diffRot += Math.PI * 2;
-    while (diffRot > Math.PI) diffRot -= Math.PI * 2;
     this.group.rotation.y += diffRot * rotLerp;
   }
 
