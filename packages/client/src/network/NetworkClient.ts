@@ -30,6 +30,7 @@ export class NetworkClient {
   public onLevelUp?: (msg: LevelUpMessage) => void;
   public onZoneChange?: (msg: ZoneChangeMessage) => void;
   public onZoneAlert?: (msg: ZoneAlertMessage) => void;
+  public onSpellCast?: (msg: CastSpellMessage) => void;
   public onConnectionChange?: (connected: boolean) => void;
 
   constructor() {
@@ -86,6 +87,8 @@ export class NetworkClient {
       this.onWorldState?.(msg);
     } else if (msg.type === MessageType.COMBAT_FEEDBACK) {
       this.onCombatFeedback?.(msg.feedbacks);
+    } else if (msg.type === MessageType.CAST_SPELL) {
+      this.onSpellCast?.(msg);
     } else if (msg.type === MessageType.LEVEL_UP) {
       this.onLevelUp?.(msg);
     } else if (msg.type === MessageType.ZONE_CHANGE) {

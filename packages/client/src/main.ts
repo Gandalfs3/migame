@@ -13,6 +13,7 @@ import { PlayerEntity } from './entities/PlayerEntity.js';
 import { MonsterEntity } from './entities/MonsterEntity.js';
 import { ObstacleRenderer } from './entities/ObstacleRenderer.js';
 import { PortalRenderer } from './entities/PortalRenderer.js';
+import { SpellFXRenderer } from './effects/SpellFXRenderer.js';
 import { DEFAULT_CLIENT_PORT, PlayerClass } from '@migame/common';
 
 const engine = new Engine('canvas-container');
@@ -21,6 +22,7 @@ const combatHud = new CombatHUD();
 const floatingText = new FloatingTextManager();
 const obstacleRenderer = new ObstacleRenderer(engine.scene);
 const portalRenderer = new PortalRenderer(engine.scene);
+const spellFXRenderer = new SpellFXRenderer(engine.scene);
 const rangeIndicator = new RangeIndicator(engine.scene);
 const assetManager = new AssetManager();
 const network = new NetworkClient();
@@ -128,6 +130,7 @@ network.onZoneChange = (msg) => {
   engine.applyZoneTheme(msg.theme);
   obstacleRenderer.renderObstacles(msg.obstacles);
   portalRenderer.renderPortals(msg.portals);
+  spellFXRenderer.clear();
   showZoneBanner(msg.zoneName);
   selectTarget(null);
 };
@@ -150,6 +153,41 @@ combatHud.onSelectClass = (classType) => {
 
 combatHud.onCastSpell = (spellId) => {
   network.castSpell(spellId, selectedTargetId);
+  if (network.localPlayerId && playerEntities.has(network.localPlayerId)) {
+    const localPlayer = playerEntities.get(network.localPlayerId)!;
+    localPlayer.triggerSpellCast(spellId);
+  }
+};
+
+// Sincronización de Habilidades y VFX
+network.onSpellCast = (msg) => {
+  if (msg.casterId && playerEntities.has(msg.casterId)) {
+    const caster = playerEntities.get(msg.casterId)!;
+    caster.triggerSpellCast(msg.spellId);
+
+    // Determinar objetivo o proyección frontal
+    let targetPos: { x: number; y?: number; z: number } | undefined;
+    if (msg.targetId) {
+      if (monsterEntities.has(msg.targetId)) {
+        const mon = monsterEntities.get(msg.targetId)!;
+        targetPos = { x: mon.group.position.x, y: mon.group.position.y, z: mon.group.position.z };
+      } else if (playerEntities.has(msg.targetId)) {
+        const targetP = playerEntities.get(msg.targetId)!;
+        targetPos = { x: targetP.group.position.x, y: targetP.group.position.y, z: targetP.group.position.z };
+      }
+    }
+
+    if (!targetPos) {
+      const forwardAngle = caster.group.rotation.y;
+      targetPos = {
+        x: caster.group.position.x + Math.sin(forwardAngle) * 5.0,
+        y: caster.group.position.y,
+        z: caster.group.position.z + Math.cos(forwardAngle) * 5.0
+      };
+    }
+
+    spellFXRenderer.spawnSpellEffect(msg.spellId, caster.group.position, targetPos);
+  }
 };
 
 // Feedbacks de Combate
@@ -337,6 +375,7 @@ function renderLoop(): void {
   }
 
   portalRenderer.update(dt);
+  spellFXRenderer.update(dt);
 
   if (network.localPlayerId && playerEntities.has(network.localPlayerId)) {
     const localEntity = playerEntities.get(network.localPlayerId)!;

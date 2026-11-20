@@ -40,6 +40,12 @@ export class PlayerEntity {
   private walkTimer: number = 0;
   private lastUpdateTime: number = performance.now();
 
+  // Animación de casteo / lanzamiento de habilidades
+  private isCasting: boolean = false;
+  private castTimer: number = 0;
+  private castDuration: number = 0.4;
+  private castType: 'MELEE' | 'PROJECTILE' | 'METEOR' | 'HEAL' | 'BUFF' = 'PROJECTILE';
+
   constructor(
     scene: THREE.Scene,
     id: string,
@@ -365,6 +371,28 @@ export class PlayerEntity {
     }
   }
 
+  public triggerSpellCast(spellId: string): void {
+    this.isCasting = true;
+    this.castTimer = 0;
+
+    if (spellId === 'slash' || spellId === 'shield_slam') {
+      this.castType = 'MELEE';
+      this.castDuration = 0.35;
+    } else if (spellId === 'meteor') {
+      this.castType = 'METEOR';
+      this.castDuration = 0.65;
+    } else if (spellId === 'heal' || spellId === 'sanctuary') {
+      this.castType = 'HEAL';
+      this.castDuration = 0.5;
+    } else if (spellId === 'taunt') {
+      this.castType = 'BUFF';
+      this.castDuration = 0.45;
+    } else {
+      this.castType = 'PROJECTILE';
+      this.castDuration = 0.4;
+    }
+  }
+
   private drawRoundedRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -475,44 +503,158 @@ export class PlayerEntity {
     const distToTarget = Math.hypot(this.targetX - this.group.position.x, this.targetZ - this.group.position.z);
     const isMoving = distToTarget > 0.04;
 
-    if (isMoving) {
-      this.walkTimer += 14.0 * dt;
+    // 1. Progresión y cinemática de lanzamiento de poderes (casting)
+    let castOffsetY = 0;
+    let castOffsetZ = 0;
+    let castRotX = 0;
+    let castRotY = 0;
+    let castRotZ = 0;
+    let castScale = 1.0;
 
-      // Balanceo dinámico y alternado de piernas (adelante / atrás)
-      this.leftLegGroup.rotation.x = Math.sin(this.walkTimer) * 0.7;
-      this.rightLegGroup.rotation.x = -Math.sin(this.walkTimer) * 0.7;
+    if (this.isCasting) {
+      this.castTimer += dt;
+      const cp = Math.min(1.0, this.castTimer / this.castDuration);
 
-      // Balanceo coordinado de brazos (inverso al paso de las piernas)
-      this.leftArmGroup.rotation.x = -Math.sin(this.walkTimer) * 0.6;
-      this.rightArmGroup.rotation.x = Math.sin(this.walkTimer) * 0.6;
-
-      // Bobbing vertical y leve balanceo lateral para transmitir peso físico
-      this.bodyMesh.position.y = 0.95 + Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
-      this.bodyMesh.rotation.z = Math.sin(this.walkTimer) * 0.03;
-      if (this.customModelMesh) {
-        this.customModelMesh.position.y = Math.abs(Math.sin(this.walkTimer * 2)) * 0.05;
-        this.customModelMesh.rotation.z = Math.sin(this.walkTimer) * 0.03;
+      if (this.castType === 'MELEE') {
+        // Ataque cuerpo a cuerpo (Guerrero): Estocada frontal y tajo de espada
+        if (cp < 0.28) {
+          const p = cp / 0.28;
+          castRotX = -p * 0.18;
+          castOffsetZ = -p * 0.12;
+        } else if (cp < 0.75) {
+          const p = (cp - 0.28) / 0.47;
+          const strike = Math.sin(p * Math.PI);
+          castOffsetZ = strike * 0.48;
+          castRotX = strike * 0.38;
+          castRotZ = strike * 0.28;
+          castScale = 1.0 + strike * 0.12;
+        } else {
+          const p = (cp - 0.75) / 0.25;
+          castOffsetZ = (1 - p) * 0.12;
+          castRotX = (1 - p) * 0.12;
+        }
+        if (this.rightArmGroup) {
+          this.rightArmGroup.rotation.x = -Math.PI / 3 + Math.sin(cp * Math.PI) * 1.9;
+        }
+      } else if (this.castType === 'METEOR') {
+        // Invocación celestial (Mago): Elevación y canalización estelar hacia el cielo
+        const p = Math.sin(cp * Math.PI);
+        castOffsetY = p * 0.45;
+        castRotX = -p * 0.35;
+        castScale = 1.0 + p * 0.15;
+        if (this.rightArmGroup) this.rightArmGroup.rotation.x = -Math.PI * 0.85 * p;
+        if (this.leftArmGroup) this.leftArmGroup.rotation.x = -Math.PI * 0.85 * p;
+      } else if (this.castType === 'HEAL') {
+        // Bendición sagrada (Clérigo): Ascenso divino y apertura de brazos
+        const p = Math.sin(cp * Math.PI);
+        castOffsetY = p * 0.32;
+        castRotX = -p * 0.28;
+        castScale = 1.0 + p * 0.1;
+        if (this.rightArmGroup) {
+          this.rightArmGroup.rotation.x = -Math.PI * 0.6 * p;
+          this.rightArmGroup.rotation.z = p * 0.5;
+        }
+        if (this.leftArmGroup) {
+          this.leftArmGroup.rotation.x = -Math.PI * 0.6 * p;
+          this.leftArmGroup.rotation.z = -p * 0.5;
+        }
+      } else if (this.castType === 'BUFF') {
+        // Grito de guerra / Rugido (Provocación): Salto firme y pecho erguido
+        const p = Math.sin(cp * Math.PI);
+        castOffsetY = p * 0.26;
+        castRotX = p * 0.26;
+        castScale = 1.0 + p * 0.18;
+        if (this.rightArmGroup) this.rightArmGroup.rotation.x = -Math.PI * 0.5 * p;
+        if (this.leftArmGroup) this.leftArmGroup.rotation.x = -Math.PI * 0.5 * p;
+      } else {
+        // Proyectiles (Mago Bola de Fuego / Ráfaga Gélida / Castigo Sagrado):
+        // Carga de energía y retroceso explosivo
+        if (cp < 0.38) {
+          const p = cp / 0.38;
+          castOffsetY = p * 0.22;
+          castRotX = -p * 0.22;
+        } else {
+          const p = (cp - 0.38) / 0.62;
+          const thrust = Math.sin(p * Math.PI);
+          castOffsetZ = thrust * 0.25;
+          castRotX = thrust * 0.28;
+          castOffsetY = (1 - p) * 0.16;
+        }
+        if (this.rightArmGroup) {
+          this.rightArmGroup.rotation.x = -Math.PI * 0.75 * Math.sin(cp * Math.PI);
+        }
       }
-    } else {
-      // Reposo (IDLE): Suavizar extremidades a postura de descanso
-      this.leftLegGroup.rotation.x = THREE.MathUtils.lerp(this.leftLegGroup.rotation.x, 0, 0.2);
-      this.rightLegGroup.rotation.x = THREE.MathUtils.lerp(this.rightLegGroup.rotation.x, 0, 0.2);
-      this.leftArmGroup.rotation.x = THREE.MathUtils.lerp(this.leftArmGroup.rotation.x, 0, 0.2);
-      this.rightArmGroup.rotation.x = THREE.MathUtils.lerp(this.rightArmGroup.rotation.x, 0, 0.2);
-      this.bodyMesh.rotation.z = THREE.MathUtils.lerp(this.bodyMesh.rotation.z, 0, 0.2);
 
-      // Suave respiración en IDLE
-      const breathe = Math.sin(now * 0.003) * 0.015;
-      this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.95 + breathe, 0.2);
-      if (this.customModelMesh) {
-        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, breathe, 0.2);
-        this.customModelMesh.rotation.z = THREE.MathUtils.lerp(this.customModelMesh.rotation.z, 0, 0.2);
+      if (cp >= 1.0) {
+        this.isCasting = false;
       }
     }
 
-    this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, 0, 0.2);
-    if (this.customModelMesh) {
-      this.customModelMesh.rotation.x = THREE.MathUtils.lerp(this.customModelMesh.rotation.x, 0, 0.2);
+    // 2. Animación de Carrera / Caminata
+    if (isMoving) {
+      this.walkTimer += 13.5 * dt;
+
+      // Balanceo de extremidades para modelo procedural
+      this.leftLegGroup.rotation.x = Math.sin(this.walkTimer) * 0.75;
+      this.rightLegGroup.rotation.x = -Math.sin(this.walkTimer) * 0.75;
+      if (!this.isCasting) {
+        this.leftArmGroup.rotation.x = -Math.sin(this.walkTimer) * 0.65;
+        this.rightArmGroup.rotation.x = Math.sin(this.walkTimer) * 0.65;
+      }
+
+      // Animación viva de pasos y desplazamiento para el modelo 3D
+      const stepLift = Math.abs(Math.sin(this.walkTimer * 2.0)) * 0.13;
+      const sprintLean = 0.12;
+      const hipSway = Math.sin(this.walkTimer) * 0.08;
+      const torsoTwist = Math.cos(this.walkTimer) * 0.07;
+      const squash = Math.sin(this.walkTimer * 2.0) * 0.045;
+
+      this.bodyMesh.position.y = 0.95 + stepLift + castOffsetY;
+      this.bodyMesh.rotation.z = hipSway + castRotZ;
+      this.bodyMesh.rotation.x = sprintLean + castRotX;
+
+      if (this.customModelMesh) {
+        this.customModelMesh.position.y = stepLift + castOffsetY;
+        this.customModelMesh.position.z = castOffsetZ;
+        this.customModelMesh.rotation.x = sprintLean + castRotX;
+        this.customModelMesh.rotation.y = Math.PI + torsoTwist + castRotY;
+        this.customModelMesh.rotation.z = hipSway + castRotZ;
+        this.customModelMesh.scale.set(
+          (1.0 + squash) * castScale,
+          (1.0 - squash * 0.75) * castScale,
+          (1.0 + squash) * castScale
+        );
+      }
+    } else {
+      // Reposo (IDLE): Respiración y sutil desplazamiento de peso
+      this.leftLegGroup.rotation.x = THREE.MathUtils.lerp(this.leftLegGroup.rotation.x, 0, 0.2);
+      this.rightLegGroup.rotation.x = THREE.MathUtils.lerp(this.rightLegGroup.rotation.x, 0, 0.2);
+      if (!this.isCasting) {
+        this.leftArmGroup.rotation.x = THREE.MathUtils.lerp(this.leftArmGroup.rotation.x, 0, 0.2);
+        this.leftArmGroup.rotation.z = THREE.MathUtils.lerp(this.leftArmGroup.rotation.z, 0, 0.2);
+        this.rightArmGroup.rotation.x = THREE.MathUtils.lerp(this.rightArmGroup.rotation.x, 0, 0.2);
+        this.rightArmGroup.rotation.z = THREE.MathUtils.lerp(this.rightArmGroup.rotation.z, 0, 0.2);
+      }
+
+      const breathe = Math.sin(now * 0.003) * 0.018;
+      const sway = Math.sin(now * 0.0015) * 0.02;
+
+      this.bodyMesh.position.y = THREE.MathUtils.lerp(this.bodyMesh.position.y, 0.95 + breathe + castOffsetY, 0.2);
+      this.bodyMesh.rotation.z = THREE.MathUtils.lerp(this.bodyMesh.rotation.z, sway + castRotZ, 0.2);
+      this.bodyMesh.rotation.x = THREE.MathUtils.lerp(this.bodyMesh.rotation.x, castRotX, 0.2);
+
+      if (this.customModelMesh) {
+        this.customModelMesh.position.y = THREE.MathUtils.lerp(this.customModelMesh.position.y, breathe + castOffsetY, 0.2);
+        this.customModelMesh.position.z = THREE.MathUtils.lerp(this.customModelMesh.position.z, castOffsetZ, 0.2);
+        this.customModelMesh.rotation.x = THREE.MathUtils.lerp(this.customModelMesh.rotation.x, castRotX, 0.2);
+        this.customModelMesh.rotation.y = THREE.MathUtils.lerp(this.customModelMesh.rotation.y, Math.PI + castRotY, 0.2);
+        this.customModelMesh.rotation.z = THREE.MathUtils.lerp(this.customModelMesh.rotation.z, sway + castRotZ, 0.2);
+        this.customModelMesh.scale.set(
+          THREE.MathUtils.lerp(this.customModelMesh.scale.x, castScale, 0.2),
+          THREE.MathUtils.lerp(this.customModelMesh.scale.y, (1.0 + breathe * 0.5) * castScale, 0.2),
+          THREE.MathUtils.lerp(this.customModelMesh.scale.z, castScale, 0.2)
+        );
+      }
     }
 
     this.group.position.x += (this.targetX - this.group.position.x) * posLerp;

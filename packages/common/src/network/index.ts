@@ -86,6 +86,9 @@ export interface CastSpellMessage {
   type: MessageType.CAST_SPELL;
   spellId: string;
   targetId?: string | null;
+  casterId?: string;
+  casterX?: number;
+  casterZ?: number;
 }
 
 export interface CombatFeedbackMessage {

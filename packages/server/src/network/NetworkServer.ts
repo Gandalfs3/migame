@@ -9,6 +9,7 @@ import {
   PlayerJoinedMessage,
   PlayerLeftMessage,
   CombatFeedbackMessage,
+  CastSpellMessage,
   MAP_BOUND,
   TICK_RATE
 } from '@migame/common';
@@ -150,6 +151,15 @@ export class NetworkServer {
             player.targetId = msg.targetId || null;
           } else if (msg.type === MessageType.CAST_SPELL) {
             const feedbacks = this.gameWorld.castSpell(player.id, msg.spellId, msg.targetId || player.targetId);
+            const castBroadcast: CastSpellMessage = {
+              type: MessageType.CAST_SPELL,
+              casterId: player.id,
+              spellId: msg.spellId,
+              targetId: msg.targetId || player.targetId,
+              casterX: player.x,
+              casterZ: player.z
+            };
+            this.broadcast(castBroadcast);
             if (feedbacks.length > 0) {
               const feedbackMsg: CombatFeedbackMessage = {
                 type: MessageType.COMBAT_FEEDBACK,
