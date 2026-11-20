@@ -303,6 +303,50 @@ export class PlayerEntity {
             // Centrar X y Z, fijar pies exactamente en Y = 0 y escalar a altura humana (1.9m)
             geom.translate(-(minX + maxX) / 2, -minY, -(minZ + maxZ) / 2);
             geom.scale(scale, scale, scale);
+
+            // Nivelación automática de postura (Stance Normalization):
+            // Elimina la asimetría de la pose 2D original donde el pie derecho quedaba 30cm rezagado.
+            const posAttr = geom.attributes.position;
+            let leftSumZ = 0, leftCount = 0;
+            let rightSumZ = 0, rightCount = 0;
+            for (let i = 0; i < posAttr.count; i++) {
+              const y = posAttr.getY(i);
+              if (y < 0.35) {
+                const x = posAttr.getX(i);
+                const z = posAttr.getZ(i);
+                if (x < -0.04) {
+                  leftSumZ += z;
+                  leftCount++;
+                } else if (x > 0.04) {
+                  rightSumZ += z;
+                  rightCount++;
+                }
+              }
+            }
+            if (leftCount > 0 && rightCount > 0) {
+              const meanLeftZ = leftSumZ / leftCount;
+              const meanRightZ = rightSumZ / rightCount;
+              const centerZ = (meanLeftZ + meanRightZ) / 2.0;
+              const leftOffset = centerZ - meanLeftZ;
+              const rightOffset = centerZ - meanRightZ;
+
+              for (let i = 0; i < posAttr.count; i++) {
+                const y = posAttr.getY(i);
+                if (y < 0.88) {
+                  const x = posAttr.getX(i);
+                  const z = posAttr.getZ(i);
+                  const legFactor = Math.max(0, (0.88 - y) / 0.88);
+                  if (x < -0.04) {
+                    posAttr.setZ(i, z + leftOffset * legFactor);
+                  } else if (x > 0.04) {
+                    posAttr.setZ(i, z + rightOffset * legFactor);
+                  }
+                }
+              }
+              posAttr.needsUpdate = true;
+              geom.computeBoundingBox();
+            }
+
             geom.computeVertexNormals();
 
             // Clonar material para aplicar el Shader de Deformación Cinemática de extremidades
@@ -370,18 +414,18 @@ export class PlayerEntity {
                     transformed.z += transformed.x * shoulderTwist;
                   }
 
-                  // 4. BRACEO DINÁMICO (|x| > 0.20, y entre 0.65 y 1.40)
+                  // 4. BRACEO DINÁMICO ALTERNADO (|x| > 0.20, y entre 0.65 y 1.40)
                   float absX = abs(transformed.x);
                   if (absX > 0.20 && transformed.y > 0.65 && transformed.y < 1.40) {
                     float armWeight = clamp((absX - 0.20) / 0.22, 0.0, 1.0);
                     if (transformed.x < 0.0) {
-                      // Brazo izquierdo: se mueve inverso a pierna izquierda
-                      float armSwing = -sin(uWalkTime) * 0.25 * uWalkWeight * armWeight;
-                      transformed.z -= armSwing;
+                      // Brazo izquierdo: oscila en oposición (+sin)
+                      float armSwing = sin(uWalkTime) * 0.25 * uWalkWeight * armWeight;
+                      transformed.z += armSwing;
                       transformed.y += abs(armSwing) * 0.08;
                     } else {
-                      // Brazo derecho
-                      float armSwing = sin(uWalkTime) * 0.25 * uWalkWeight * armWeight;
+                      // Brazo derecho: oscila en fase inversa (-sin)
+                      float armSwing = -sin(uWalkTime) * 0.25 * uWalkWeight * armWeight;
                       transformed.z += armSwing;
                       transformed.y += abs(armSwing) * 0.08;
                     }
