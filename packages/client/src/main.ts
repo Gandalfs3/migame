@@ -107,7 +107,8 @@ network.onConnectionChange = (connected) => {
 
 network.onWelcome = (msg) => {
   hud.setPlayerId(msg.playerId);
-  hud.setLanUrl(msg.hostIp, DEFAULT_CLIENT_PORT);
+  const clientPort = window.location.port ? parseInt(window.location.port, 10) : 3005;
+  hud.setLanUrl(msg.hostIp, clientPort);
 
   if (msg.theme) {
     engine.applyZoneTheme(msg.theme);
