@@ -4,6 +4,12 @@ import { ProceduralTextureFactory } from '../textures/ProceduralTextureFactory';
 import { AssetManager } from '../core/AssetManager';
 
 
+interface FootstepDust {
+  mesh: THREE.Mesh;
+  elapsed: number;
+  duration: number;
+}
+
 export class PlayerEntity {
   public id: string;
   public group: THREE.Group;
@@ -17,11 +23,13 @@ export class PlayerEntity {
   public maxHealth: number = 100;
   public classType: PlayerClass = 'WARRIOR';
 
+  private scene: THREE.Scene;
   private healthBarMesh: THREE.Sprite;
   private healthCanvas: HTMLCanvasElement;
   private healthCtx: CanvasRenderingContext2D;
   private healthTexture: THREE.CanvasTexture;
   private selectionRing: THREE.Mesh;
+  private shadowMesh: THREE.Mesh;
   private bodyMesh: THREE.Mesh;
   private visorMesh: THREE.Mesh;
   private colorHex: string;
@@ -41,6 +49,8 @@ export class PlayerEntity {
   private walkWeight: number = 0;
   private lastUpdateTime: number = performance.now();
   private customShaderMaterials: THREE.MeshStandardMaterial[] = [];
+  private footstepDusts: FootstepDust[] = [];
+  private lastStepSign: number = 0;
 
   // Animación de casteo / lanzamiento de habilidades
   private isCasting: boolean = false;
@@ -56,6 +66,7 @@ export class PlayerEntity {
     name: string = 'Aventurero',
     assetManager?: AssetManager
   ) {
+    this.scene = scene;
     this.id = id;
     this.name = name;
     this.isLocal = isLocal;
@@ -63,17 +74,17 @@ export class PlayerEntity {
     this.assetManager = assetManager;
     this.group = new THREE.Group();
 
-    // Sombra en el suelo
-    const shadowGeo = new THREE.CircleGeometry(0.7, 32);
+    // Sombra de contacto suave en el suelo (ambient occlusion grounded)
+    const shadowGeo = new THREE.CircleGeometry(0.55, 32);
     const shadowMat = new THREE.MeshBasicMaterial({
-      color: isLocal ? 0x38bdf8 : 0x000000,
+      color: 0x050811,
       transparent: true,
-      opacity: isLocal ? 0.6 : 0.45
+      opacity: 0.45
     });
-    const shadow = new THREE.Mesh(shadowGeo, shadowMat);
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = 0.03;
-    this.group.add(shadow);
+    this.shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+    this.shadowMesh.rotation.x = -Math.PI / 2;
+    this.shadowMesh.position.y = 0.02;
+    this.group.add(this.shadowMesh);
 
     // Anillo de Selección en el suelo
     const ringGeo = new THREE.RingGeometry(0.85, 1.0, 32);
@@ -319,59 +330,77 @@ export class PlayerEntity {
                 #include <begin_vertex>
 
                 if (uWalkWeight > 0.001) {
-                  // 1. ZANCADA Y PASOS DE PIERNAS (Cadera en y=0.88, pies en y=0.0)
+                  // 1. TORSIÓN PÉLVICA Y GIRO DE CADERA (Hip Twist en y entre 0.60 y 1.08)
+                  if (transformed.y >= 0.60 && transformed.y <= 1.08) {
+                    float hipFactor = sin((transformed.y - 0.60) / 0.48 * 3.14159);
+                    float hipTwist = sin(uWalkTime) * 0.045 * uWalkWeight * hipFactor;
+                    transformed.z += transformed.x * hipTwist;
+                  }
+
+                  // 2. ZANCADA Y FLEXIÓN ARTICULAR DE PIERNAS (Cadera en y=0.88, pies en y=0.0)
                   if (transformed.y < 0.88) {
                     float legFactor = clamp((0.88 - transformed.y) / 0.88, 0.0, 1.0);
                     float legWeight = legFactor * legFactor;
 
                     if (transformed.x < -0.03) {
                       // Pierna Izquierda: zancada alternada hacia adelante/atrás
-                      float stride = sin(uWalkTime) * 0.28 * uWalkWeight;
+                      float stride = sin(uWalkTime) * 0.30 * uWalkWeight;
                       transformed.z -= stride * legWeight;
-                      float stepUp = max(0.0, sin(uWalkTime)) * 0.09 * legWeight * uWalkWeight;
+                      // Elevación del pie en la fase de vuelo
+                      float stepUp = max(0.0, sin(uWalkTime)) * 0.10 * legWeight * uWalkWeight;
                       transformed.y += stepUp;
-                      transformed.x += sin(uWalkTime) * 0.015 * legWeight * uWalkWeight;
+                      // Flexión articular de rodilla en el aire
+                      float kneeFlex = max(0.0, sin(uWalkTime)) * 0.045 * sin(legFactor * 3.14159) * uWalkWeight;
+                      transformed.z += kneeFlex;
                     } else if (transformed.x > 0.03) {
                       // Pierna Derecha: zancada inversa
-                      float stride = -sin(uWalkTime) * 0.28 * uWalkWeight;
+                      float stride = -sin(uWalkTime) * 0.30 * uWalkWeight;
                       transformed.z -= stride * legWeight;
-                      float stepUp = max(0.0, -sin(uWalkTime)) * 0.09 * legWeight * uWalkWeight;
+                      float stepUp = max(0.0, -sin(uWalkTime)) * 0.10 * legWeight * uWalkWeight;
                       transformed.y += stepUp;
-                      transformed.x -= sin(uWalkTime) * 0.015 * legWeight * uWalkWeight;
+                      float kneeFlex = max(0.0, -sin(uWalkTime)) * 0.045 * sin(legFactor * 3.14159) * uWalkWeight;
+                      transformed.z += kneeFlex;
                     }
                   }
 
-                  // 2. BRACEO DINÁMICO (|x| > 0.20, y entre 0.65 y 1.40)
+                  // 3. CONTRATORSIÓN DE HOMBROS (Shoulder Counter-Torque en y entre 1.10 y 1.55)
+                  if (transformed.y > 1.10 && transformed.y < 1.55) {
+                    float shoulderFactor = sin((transformed.y - 1.10) / 0.45 * 3.14159);
+                    float shoulderTwist = -sin(uWalkTime) * 0.035 * uWalkWeight * shoulderFactor;
+                    transformed.z += transformed.x * shoulderTwist;
+                  }
+
+                  // 4. BRACEO DINÁMICO (|x| > 0.20, y entre 0.65 y 1.40)
                   float absX = abs(transformed.x);
                   if (absX > 0.20 && transformed.y > 0.65 && transformed.y < 1.40) {
                     float armWeight = clamp((absX - 0.20) / 0.22, 0.0, 1.0);
                     if (transformed.x < 0.0) {
                       // Brazo izquierdo: se mueve inverso a pierna izquierda
-                      float armSwing = -sin(uWalkTime) * 0.24 * uWalkWeight * armWeight;
+                      float armSwing = -sin(uWalkTime) * 0.25 * uWalkWeight * armWeight;
                       transformed.z -= armSwing;
                       transformed.y += abs(armSwing) * 0.08;
                     } else {
                       // Brazo derecho
-                      float armSwing = sin(uWalkTime) * 0.24 * uWalkWeight * armWeight;
+                      float armSwing = sin(uWalkTime) * 0.25 * uWalkWeight * armWeight;
                       transformed.z += armSwing;
                       transformed.y += abs(armSwing) * 0.08;
                     }
                   }
 
-                  // 3. ONDULACIÓN DE TÚNICA / CAPA AL CORRER
-                  if (transformed.y < 0.75) {
-                    float clothFactor = (0.75 - transformed.y) / 0.75;
-                    float clothWave = sin(uWalkTime * 1.5 - transformed.y * 5.0) * 0.03 * uWalkWeight * clothFactor;
-                    transformed.z += clothWave + 0.04 * uWalkWeight * clothFactor;
+                  // 5. ONDULACIÓN Y ARRASTRE DE TÚNICA / CAPA
+                  if (transformed.y < 0.80) {
+                    float clothFactor = (0.80 - transformed.y) / 0.80;
+                    float clothWave = sin(uWalkTime * 1.6 - transformed.y * 5.0) * 0.035 * uWalkWeight * clothFactor;
+                    transformed.z += clothWave + 0.05 * uWalkWeight * clothFactor;
                   }
                 }
 
-                // 4. RESPIRACIÓN ORGÁNICA EN REPOSO
-                if (transformed.y > 0.85 && transformed.y < 1.45) {
-                  float chestWeight = sin((transformed.y - 0.85) / 0.6 * 3.14159);
-                  float breath = sin(uWalkTime * 0.25) * 0.012 * (1.0 - uWalkWeight * 0.7) * chestWeight;
+                // 6. RESPIRACIÓN ORGÁNICA Y MICRO-MOVIMIENTOS EN REPOSO
+                if (transformed.y > 0.85 && transformed.y < 1.50) {
+                  float chestFactor = sin((transformed.y - 0.85) / 0.65 * 3.14159);
+                  float breath = sin(uWalkTime * 0.22) * 0.015 * (1.0 - uWalkWeight * 0.8) * chestFactor;
                   transformed.z -= breath;
-                  transformed.x += breath * 0.3 * sign(transformed.x);
+                  transformed.x += breath * 0.35 * sign(transformed.x);
                 }
                 `
               );
@@ -676,9 +705,9 @@ export class PlayerEntity {
     }
 
     // 2. Transición suave de aceleración/desaceleración (Walk Weight)
-    this.walkTimer += 10.0 * dt;
+    this.walkTimer += 9.2 * dt;
     const targetWalkWeight = isMoving ? 1.0 : 0.0;
-    this.walkWeight = THREE.MathUtils.lerp(this.walkWeight, targetWalkWeight, isMoving ? 0.22 : 0.12);
+    this.walkWeight = THREE.MathUtils.lerp(this.walkWeight, targetWalkWeight, isMoving ? 0.20 : 0.10);
 
     // Actualizar uniforms de deformación en GPU para zancada de piernas y braceo
     for (const mat of this.customShaderMaterials) {
@@ -689,19 +718,52 @@ export class PlayerEntity {
     }
 
     // Cinemática de locomoción fluida (sin saltos bruscos):
-    // - Ondulación pélvica sutil (solo 2.2cm, onda continua sinusoidal)
-    const verticalBob = -Math.cos(this.walkTimer * 2.0) * 0.022 * this.walkWeight;
+    // - Ondulación pélvica suave y continua (solo 2.0 cm)
+    const verticalBob = -Math.cos(this.walkTimer * 2.0) * 0.020 * this.walkWeight;
 
     // - Inclinación centrífuga en curvas (turn banking)
     let diffRot = this.targetRot - this.group.rotation.y;
     while (diffRot < -Math.PI) diffRot += Math.PI * 2;
     while (diffRot > Math.PI) diffRot -= Math.PI * 2;
-    const turnBank = THREE.MathUtils.clamp(-diffRot * 0.35, -0.14, 0.14) * this.walkWeight;
+    const turnBank = THREE.MathUtils.clamp(-diffRot * 0.35, -0.15, 0.15) * this.walkWeight;
 
-    // - Inclinación de inercia y balanceo suave de cadera
-    const forwardLean = 0.07 * this.walkWeight;
+    // - Inclinación aerodinámica de carrera hacia adelante
+    const forwardLean = 0.075 * this.walkWeight;
+
+    // - Transferencia suave de peso lateral
     const hipSway = Math.sin(this.walkTimer) * 0.035 * this.walkWeight;
-    const breathe = Math.sin(now * 0.003) * 0.015 * (1.0 - this.walkWeight);
+
+    // - Respiración orgánica y micro-movimiento en reposo
+    const breathe = Math.sin(now * 0.003) * 0.014 * (1.0 - this.walkWeight);
+    const idleWeightShift = Math.sin(now * 0.001) * 0.012 * (1.0 - this.walkWeight);
+
+    // Pulso dinámico de sombra de contacto en el suelo
+    if (this.shadowMesh) {
+      const shadowPulse = 1.0 - (verticalBob * 2.5);
+      this.shadowMesh.scale.set(shadowPulse, shadowPulse, shadowPulse);
+    }
+
+    // Detección de impacto de pisada para generar polvo sutil en el terreno
+    const currentStepSign = Math.sin(this.walkTimer) > 0 ? 1 : -1;
+    if (this.walkWeight > 0.45 && currentStepSign !== this.lastStepSign) {
+      this.lastStepSign = currentStepSign;
+      this.spawnFootstepDust(currentStepSign < 0 ? -0.18 : 0.18);
+    }
+
+    // Actualizar partículas de pisada
+    for (let i = this.footstepDusts.length - 1; i >= 0; i--) {
+      const dust = this.footstepDusts[i];
+      dust.elapsed += dt;
+      const p = dust.elapsed / dust.duration;
+      if (p >= 1.0) {
+        this.scene.remove(dust.mesh);
+        this.footstepDusts.splice(i, 1);
+      } else {
+        const s = 1.0 + p * 1.5;
+        dust.mesh.scale.set(s, s, s);
+        (dust.mesh.material as THREE.MeshBasicMaterial).opacity = (1 - p) * 0.32;
+      }
+    }
 
     // Extremidades procedurales (cuando se usa fallback)
     this.leftLegGroup.rotation.x = Math.sin(this.walkTimer) * 0.65 * this.walkWeight;
@@ -716,14 +778,14 @@ export class PlayerEntity {
     this.bodyMesh.position.y = 0.95 + verticalBob + breathe + castOffsetY;
     this.bodyMesh.position.z = castOffsetZ;
     this.bodyMesh.rotation.x = forwardLean + castRotX;
-    this.bodyMesh.rotation.z = hipSway + turnBank + castRotZ;
+    this.bodyMesh.rotation.z = hipSway + turnBank + idleWeightShift + castRotZ;
 
     if (this.customModelMesh) {
       this.customModelMesh.position.y = verticalBob + breathe + castOffsetY;
       this.customModelMesh.position.z = castOffsetZ;
       this.customModelMesh.rotation.x = forwardLean + castRotX;
       this.customModelMesh.rotation.y = Math.PI + castRotY;
-      this.customModelMesh.rotation.z = hipSway + turnBank + castRotZ;
+      this.customModelMesh.rotation.z = hipSway + turnBank + idleWeightShift + castRotZ;
       this.customModelMesh.scale.set(castScale, castScale, castScale);
     }
 
@@ -732,7 +794,36 @@ export class PlayerEntity {
     this.group.rotation.y += diffRot * rotLerp;
   }
 
+  private spawnFootstepDust(offsetLocalX: number): void {
+    const rot = this.group.rotation.y;
+    const worldX = this.group.position.x + Math.cos(rot) * offsetLocalX;
+    const worldZ = this.group.position.z - Math.sin(rot) * offsetLocalX;
+
+    const ringGeo = new THREE.RingGeometry(0.08, 0.22, 16);
+    ringGeo.rotateX(-Math.PI / 2);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x94a3b8,
+      transparent: true,
+      opacity: 0.35,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const mesh = new THREE.Mesh(ringGeo, ringMat);
+    mesh.position.set(worldX, 0.025, worldZ);
+    this.scene.add(mesh);
+
+    this.footstepDusts.push({
+      mesh,
+      elapsed: 0,
+      duration: 0.28
+    });
+  }
+
   public destroy(scene: THREE.Scene): void {
+    for (const d of this.footstepDusts) {
+      scene.remove(d.mesh);
+    }
+    this.footstepDusts = [];
     scene.remove(this.group);
   }
 }
